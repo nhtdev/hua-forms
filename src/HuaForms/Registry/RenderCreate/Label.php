@@ -1,11 +1,11 @@
 <?php
 
-namespace HuaForms\Registry\Label;
+namespace HuaForms\Registry\RenderCreate;
 
-class Renderer implements \HuaForms\Registry\Renderer
+class Label implements \HuaForms\Registry\RegistryCallableInterface
 {
     
-    public function render($element)
+    public function process($element)
     {
         $oldElement = $element->getDomMappingLabel();
         if ($oldElement === null) {

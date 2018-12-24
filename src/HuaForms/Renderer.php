@@ -3,7 +3,7 @@
 namespace HuaForms;
 
 use HuaForms\Elements\Element;
-use HuaForms\Registry\DefaultRegistry;
+use HuaForms\Registry\DefaultRegistrySet;
 
 class Renderer
 {
@@ -18,31 +18,39 @@ class Renderer
         
     protected function runRegistryRenderers(Form $form)
     {
-        $registry = DefaultRegistry::get();
+        $registrySet = DefaultRegistrySet::get();
         
-        foreach ($form->getAttributes() as $attrName => $attrValue) {
-            $renderers = $registry->getRenderers('form', $attrName, $attrValue);
-            foreach ($renderers as $renderer) {
-                $renderer->render($form);
-            }
+        $renderers = $registrySet->registryRenderCreate->get('form');
+        foreach ($renderers as $renderer) {
+            $renderer->process($form);
         }
         
-        $labelRenderers = $registry->getRenderers('label', '*', '*');
-        $form->mapElements(function (Element $element) use ($registry, $labelRenderers) {
+        $form->mapElements(function (Element $element) use ($registrySet) {
             
+            $labelRenderers = $registrySet->registryRenderCreate->get('label');
             foreach ($labelRenderers as $rendererClass) {
                 $renderer = new $rendererClass();
-                $renderer->render($element);
+                $renderer->process($element);
             }
             
             $type = $element->getMainType();
-            foreach ($element->getAttributes() as $attrName => $attrValue) {
-                $renderers = $registry->getRenderers($type, $attrName, $attrValue);
-                foreach ($renderers as $rendererClass) {
-                    $renderer = new $rendererClass();
-                    $renderer->render($element);
-                }
+            $renderersCreate = $registrySet->registryRenderCreate->get($type);
+            foreach ($renderersCreate as $rendererClass) {
+                $renderer = new $rendererClass();
+                $renderer->process($element);
             }
+            
+        });
+            
+        $form->mapElements(function (Element $element) use ($registrySet) {
+            
+            $type = $element->getMainType();
+            $renderersUpdate = $registrySet->registryRenderUpdate->get($type);
+            foreach ($renderersUpdate as $rendererClass) {
+                $renderer = new $rendererClass();
+                $renderer->process($element);
+            }
+            
         });
         
     }
