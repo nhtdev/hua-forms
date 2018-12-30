@@ -5,10 +5,18 @@ namespace HuaForms;
 use HuaForms\Elements\Element;
 use HuaForms\Registry\DefaultRegistrySet;
 
+/**
+ * Form renderer : converts a form object to HTML, using its layout
+ * @author x
+ *
+ */
 class Renderer
 {
-    protected $form;
-    
+    /**
+     * Converts the given form to HTML, using form layout
+     * @param Form $form
+     * @return string
+     */
     public function render(Form $form) : string
     {
         $this->runRegistryRenderers($form);
@@ -16,7 +24,11 @@ class Renderer
         return $form->getLayout()->saveXML();
     }
         
-    protected function runRegistryRenderers(Form $form)
+    /**
+     * Call all the registered "unit renderers" of the form
+     * @param Form $form
+     */
+    protected function runRegistryRenderers(Form $form) : void
     {
         $registrySet = DefaultRegistrySet::get();
         

@@ -2,7 +2,16 @@
 
 namespace HuaForms\Registry;
 
+/**
+ * Interface for any class that may be called via a registry
+ * @author x
+ *
+ */
 interface RegistryCallableInterface
 {
-    public function process($element);
+    /**
+     * Executes the treatment for the given element
+     * @param \HuaForms\Elements\Element|\HuaForms\Form $element
+     */
+    public function process($element) : void;
 }

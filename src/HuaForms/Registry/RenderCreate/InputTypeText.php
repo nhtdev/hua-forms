@@ -2,10 +2,18 @@
 
 namespace HuaForms\Registry\RenderCreate;
 
+/**
+ * Create DOM element for an <input type="text" />
+ * @author x
+ *
+ */
 class InputTypeText implements \HuaForms\Registry\RegistryCallableInterface
 {
-    
-    public function process($element)
+    /**
+     * {@inheritDoc}
+     * @see \HuaForms\Registry\RegistryCallableInterface::process()
+     */
+    public function process($element) : void
     {
         if ($element->getAttribute('type') === 'text') {
             $oldElement = $element->getDomMapping();

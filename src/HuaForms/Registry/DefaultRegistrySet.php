@@ -2,6 +2,11 @@
 
 namespace HuaForms\Registry;
 
+/**
+ * This class creates and returns a complete Registry set for handling a HUA form
+ * @author x
+ *
+ */
 class DefaultRegistrySet
 {
     /**
@@ -9,6 +14,10 @@ class DefaultRegistrySet
      */
     protected static $registrySet = null;
     
+    /**
+     * Returns a complete Registry set for handling a HUA form
+     * @return RegistrySet
+     */
     public static function get() : RegistrySet
     {
         if (static::$registrySet === null) {

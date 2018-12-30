@@ -2,10 +2,15 @@
 
 namespace HuaForms\Registry\RenderCreate;
 
+/**
+ * Create DOM element for a <label></label>
+ * @author x
+ *
+ */
 class Label implements \HuaForms\Registry\RegistryCallableInterface
 {
     
-    public function process($element)
+    public function process($element) : void
     {
         $oldElement = $element->getDomMappingLabel();
         if ($oldElement === null) {

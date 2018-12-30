@@ -2,20 +2,56 @@
 
 namespace HuaForms;
 
+/**
+ * Form factory : for easy creation of Form objects
+ * @author x
+ *
+ */
 class FormFactory
 {
+    /**
+     * Global instance of FormFactory (if used as a singleton)
+     * @var FormFactory
+     */
     protected static $global = null;
     
+    /**
+     * Paths where form files are located
+     * @var array
+     */
     protected $paths = [];
+    
+    /**
+     * Form parser
+     * @var Parser
+     */
     protected $parser;
+    
+    /**
+     * Parsed forms : ['file_name' => $object]
+     * @var array
+     */
     protected $forms = [];
+    
+    /**
+     * List of functions that will be called after form parsing
+     * ['file_name' => [$function1, $function2] ]
+     * @var array
+     */
     protected $callback = [];
     
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->parser = new Parser();
     }
     
+    /**
+     * Returns the global instance of FormFactory (used as a singleton)
+     * @return FormFactory
+     */
     public static function global() : FormFactory
     {
         if (static::$global === null) {
@@ -24,12 +60,21 @@ class FormFactory
         return static::$global;
     }
     
-    public function addPath(string $path) : FormFactory
+    /**
+     * Add one path where form files are located
+     * @param string $path Path
+     */
+    public function addPath(string $path) : void
     {
         $this->paths[] = $path;
-        return $this;
     }
     
+    /**
+     * Parse and create a new Form using the specified file.
+     * If the file has already been parsed, returns the existing instance.
+     * @param string $formFile
+     * @return \HuaForms\Form
+     */
     public function get(string $formFile) : \HuaForms\Form
     {
         if (isset($this->forms[$formFile])) {
@@ -44,6 +89,12 @@ class FormFactory
         }
     }
     
+    /**
+     * Parse and create a new Form using the specified file.
+     * @param string $formFile
+     * @throws \RuntimeException
+     * @return \HuaForms\Form
+     */
     public function parse(string $formFile) : \HuaForms\Form
     {
         foreach ($this->paths as $path) {
@@ -56,9 +107,13 @@ class FormFactory
                 .' (form paths : '.implode(' ; ', $this->paths).')');
     }
     
-    public function builder(string $fileName, Callable $callback) : FormFactory
+    /**
+     * Defines a function that will be called after form parsing
+     * @param string $fileName File containing the form definition
+     * @param callable $callback Function to call if the file is parsed
+     */
+    public function builder(string $fileName, Callable $callback) : void
     {
         $this->callback[$fileName] = $callback;
-        return $this;
     }
 }

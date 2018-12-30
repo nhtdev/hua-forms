@@ -2,14 +2,38 @@
 
 namespace HuaForms;
 
+use HuaForms\Elements\Element;
+
+/**
+ * Form parser : converts a HTML file to a Form object with HTML layout
+ * @author x
+ *
+ */
 class Parser
 {
+    /**
+     * Parsed form
+     * @var \HuaForms\Form
+     */
     protected $form;
     
+    /**
+     * Parsed HTML, Form layout
+     * @var \DOMDocument
+     */
     protected $dom;
     
-    protected $prevLabel;
+    /**
+     * Previous label found in HTML, temporary variable for parsing
+     * @var \DOMNode|null
+     */
+    private $prevLabel;
     
+    /**
+     * Parse the specified file and returns the built Form
+     * @param string $file File name and path
+     * @return \HuaForms\Form
+     */
     public function parse(string $file) : \HuaForms\Form
     {
         $this->form = new Form();
@@ -21,7 +45,11 @@ class Parser
         return $this->form;
     }
     
-    protected function parsePart(\DOMNode $node)
+    /**
+     * Parse a Dom node
+     * @param \DOMNode $node
+     */
+    protected function parsePart(\DOMNode $node) : void
     {
         switch ($node->nodeName) {
             case 'form':
@@ -47,7 +75,11 @@ class Parser
         }
     }
     
-    protected function handleForm(\DOMNode $node)
+    /**
+     * Parse a <form> node
+     * @param \DOMNode $node
+     */
+    protected function handleForm(\DOMNode $node) : void
     {
         $this->form->setDomMapping($node);
         foreach ($node->attributes as $attr) {
@@ -55,12 +87,22 @@ class Parser
         }
     }
     
-    protected function handleLabel(\DOMNode $node)
+    /**
+     * Parse a <label> node
+     * @param \DOMNode $node
+     */
+    protected function handleLabel(\DOMNode $node) : void
     {
         $this->prevLabel = $node;
     }
     
-    protected function handleField(\DOMNode $node)
+    /**
+     * Parse a field node (<input>, <select>, <textarea>...)
+     * @param \DOMNode $node
+     * @throws ParsingException
+     * @return \HuaForms\Elements\Element Parsed element
+     */
+    protected function handleField(\DOMNode $node) : Element
     {
         $attr = $node->attributes->getNamedItem('type');
         if ($attr === null) {
@@ -93,14 +135,23 @@ class Parser
         return $el;
     }
     
-    protected function handleSelect(\DOMNode $node)
+    /**
+     * Parse a <select> node
+     * @param \DOMNode $node
+     */
+    protected function handleSelect(\DOMNode $node) : void
     {
         $el = $this->handleField($node);
         $options = $this->getOptions($node);
         $el->setOptions($options);
     }
     
-    protected function getOptions(\DOMNode $node)
+    /**
+     * Parse the <option> or <optgroup> of a <select> node
+     * @param \DOMNode $node
+     * @return array
+     */
+    protected function getOptions(\DOMNode $node) : array
     {
         $options = [];
         if ($node->hasChildNodes()) {
