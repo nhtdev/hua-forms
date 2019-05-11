@@ -11,7 +11,7 @@ interface RegistryCallableInterface
 {
     /**
      * Executes the treatment for the given element
-     * @param \HuaForms\Elements\Element|\HuaForms\Form $element
+     * @param \HuaForms\Entity $element
      */
-    public function process($element) : void;
+    public function process(\HuaForms\Entity $element) : void;
 }

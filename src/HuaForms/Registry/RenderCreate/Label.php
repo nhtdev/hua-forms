@@ -10,13 +10,23 @@ namespace HuaForms\Registry\RenderCreate;
 class Label implements \HuaForms\Registry\RegistryCallableInterface
 {
     
-    public function process($element) : void
+    public function process(\HuaForms\Entity $element) : void
     {
-        $oldElement = $element->getDomMappingLabel();
-        if ($oldElement === null) {
-            // Todo Inline label
+        $domLabel = $element->getDomMappingLabel();
+        if ($domLabel === null) {
+            $domInput = $element->getDomMapping();
+            
+            $domLabel = $domInput->ownerDocument->createElement('label');
+            $domLabel->nodeValue = $element->getAttribute('label');
+            $domLabel->setAttribute('for', $element->getName());
+            $domLabel = $domInput->parentNode->insertBefore($domLabel, $domInput);
+            
+            $domNewLine = $domInput->ownerDocument->createTextNode("\n");
+            $domInput->parentNode->insertBefore($domNewLine, $domInput);
+            
+            $element->setDomMappingLabel($domLabel);
         } else {
-            $oldElement->setAttribute('for', $element->getName());
+            $domLabel->setAttribute('for', $element->getName());
         }
     }
     

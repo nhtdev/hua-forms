@@ -10,7 +10,7 @@ use HuaForms\Elements\Element;
  * @author x
  *
  */
-class Form
+class Form implements Entity
 {
     use ObjAttributes;
     use DomMapping;
@@ -132,6 +132,16 @@ class Form
                 $element->setDomMapping($newNode);
             }
         });
+    }
+    
+    /**
+     * Returns the attribute value, checking all ancestrors if the element does not have this attribute
+     * @param string $attrName Attribute name
+     * @return mixed|NULL Attribute value
+     */
+    public function getGlobalAttribute(string $attrName)
+    {
+        return $this->getAttribute($attrName);
     }
     
 }

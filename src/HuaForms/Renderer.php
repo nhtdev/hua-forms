@@ -21,7 +21,8 @@ class Renderer
     {
         $this->runRegistryRenderers($form);
         // TODO set values
-        return $form->getLayout()->saveXML();
+        $dom = $form->getLayout();
+        return $dom->saveXML($dom->documentElement);
     }
         
     /**

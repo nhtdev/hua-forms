@@ -3,6 +3,7 @@
 namespace HuaForms;
 
 use HuaForms\Elements\Element;
+use HuaForms\Registry\DefaultRegistrySet;
 
 /**
  * Form parser : converts a HTML file to a Form object with HTML layout
@@ -38,11 +39,36 @@ class Parser
     {
         $this->form = new Form();
         $this->dom = new \DOMDocument();
-        $this->dom->loadHTMLFile($file);
+        $this->dom->loadHTMLFile($file, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $this->form->setLayout($this->dom);
         $this->prevLabel = null;
         $this->parsePart($this->dom);
+        $this->runRegistryRenderers();
         return $this->form;
+    }
+    
+    /**
+     * Call all the registered "unit renderers" of the form
+     */
+    protected function runRegistryRenderers() : void
+    {
+        $registrySet = DefaultRegistrySet::get();
+        
+        $renderers = $registrySet->registryBuild->get('form');
+        foreach ($renderers as $rendererClass) {
+            $renderer = new $rendererClass();
+            $renderer->process($this->form);
+        }
+        
+        $this->form->mapElements(function (Element $element) use ($registrySet) {
+            $type = $element->getMainType();
+            $renderersCreate = $registrySet->registryBuild->get($type);
+            foreach ($renderersCreate as $rendererClass) {
+                $renderer = new $rendererClass();
+                $renderer->process($element);
+            }
+            
+        });
     }
     
     /**

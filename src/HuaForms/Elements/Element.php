@@ -6,13 +6,14 @@ use HuaForms\DomMappingLabel;
 use HuaForms\ObjAttributes;
 use HuaForms\Form;
 use HuaForms\DomMapping;
+use HuaForms\Entity;
 
 /**
  * Abstract form element
  * @author x
  *
  */
-abstract class Element
+abstract class Element implements Entity
 {
     use ObjAttributes;
     use DomMapping;
@@ -48,12 +49,6 @@ abstract class Element
         $this->name = $name;
         $this->parent = $parent;
     }
-    
-    /**
-     * Returns the type of the element
-     * @return string
-     */
-    abstract public function getMainType() : string;
     
     /**
      * Returns the form to which the element is belonging to
