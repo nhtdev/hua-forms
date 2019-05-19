@@ -1,1 +1,49 @@
-{"method":"post","fields":[{"label":"Le Nom","name":"name","type":"text","formatters":[],"rules":[]},{"label":"Le Gender","name":"gender","type":"select","formatters":[],"rules":[]}],"submits":[{"label":"OK","name":"ok"}]}
+{
+    "method": "post",
+    "fields": [
+        {
+            "label": "Le Nom",
+            "name": "name",
+            "type": "text",
+            "formatters": [
+                {
+                    "type": "trim"
+                }
+            ],
+            "rules": [
+                {
+                    "type": "required",
+                    "message": "N'oubliez pas le nom"
+                },
+                {
+                    "type": "maxlength",
+                    "maxlength": 60
+                }
+            ]
+        },
+        {
+            "label": "Le Gender",
+            "name": "gender",
+            "type": "select",
+            "formatters": [],
+            "rules": [
+                {
+                    "type": "required"
+                },
+                {
+                    "type": "inArray",
+                    "values": [
+                        "M",
+                        "F"
+                    ]
+                }
+            ]
+        }
+    ],
+    "submits": [
+        {
+            "label": "OK",
+            "name": "ok"
+        }
+    ]
+}

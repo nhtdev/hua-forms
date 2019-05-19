@@ -30,10 +30,7 @@ class Parser
         // 4- Write JSON
         $this->writeJson($data, $outputJson);
         
-        // 5- Clean DOM
-        $this->cleanDom($dom);
-        
-        // 6- Write DOM
+        // 5- Write DOM
         $this->writeDom($dom, $outputPhp);
     }
     
@@ -217,10 +214,10 @@ class Parser
         }
         
         // Formatters
-        $formatters = [];
+        $formatters = $this->buildJsonFormatters($type, $node);
         
         // Rules
-        $rules = [];
+        $rules = $this->buildJsonRules($type, $node);
         
         // Save
         $data['fields'][] = [
@@ -231,6 +228,67 @@ class Parser
             'rules' => $rules
         ];
         
+    }
+    
+    protected function buildJsonFormatters(string $type, \DOMElement $node) : array
+    {
+        $formatters = [];
+        if ($node->hasAttribute('trim')) {
+            $formatters[] = [
+                'type' => 'trim'
+            ];
+            $node->removeAttribute('trim');
+        }
+        return $formatters;
+    }
+    
+    protected function buildJsonRules(string $type, \DOMElement $node) : array
+    {
+        $rules = [];
+        
+        if ($node->hasAttribute('required')) {
+            $rule = ['type' => 'required'];
+            if ($node->hasAttribute('required-message')) {
+                $rule['message'] = $node->getAttribute('required-message');
+                $node->removeAttribute('required-message');
+            }
+            $rules[] = $rule;
+            // Keep required attribute in html
+        }
+        
+        if ($node->hasAttribute('maxlength')) {
+            $value = (int) $node->getAttribute('maxlength');
+            $rule = ['type' => 'maxlength', 'maxlength' => $value];
+            if ($node->hasAttribute('maxlength-message')) {
+                $rule['message'] = $node->getAttribute('maxlength-message');
+                $node->removeAttribute('maxlength-message');
+            }
+            $rules[] = $rule;
+            // Keep maxlength attribute in html
+        }
+        
+        if ($node->nodeName === 'select') {
+            $optionsValues = [];
+            $this->walkElements($node, function (\DOMElement $element) use (&$optionsValues) {
+                if ($element->nodeName === 'option') {
+                    if ($element->hasAttribute('value')) {
+                        $value = $element->getAttribute('value');
+                    } else {
+                        $value = trim($element->textContent);
+                    }
+                    if (!empty($value)) {
+                        $optionsValues[] = $value;
+                    }
+                }
+            });
+            $rule = [
+                'type' => 'inArray',
+                'values' => $optionsValues
+            ];
+            $rules[] = $rule;
+        }
+        
+        return $rules;
     }
     
     protected function findLabelNode(\DOMElement $input) : ?\DOMNode
@@ -252,12 +310,7 @@ class Parser
     
     protected function writeJson(array $data, string $file) : void
     {
-        file_put_contents($file, json_encode($data));
-    }
-    
-    protected function cleanDom(\DOMDocument $dom) : void
-    {
-        // TODO
+        file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
     }
     
     protected function writeDom(\DOMDocument $dom, string $file) : void

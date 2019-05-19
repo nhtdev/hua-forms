@@ -5,7 +5,7 @@
 	
 	<div>
 		<label>Le Nom</label>
-		<input type="text" name="name" required maxlength="60" trim="" value="<?php echo htmlentities($this->getValue('name'));  ?>"/>
+		<input type="text" name="name" required maxlength="60" value="<?php echo htmlentities($this->getValue('name'));  ?>"/>
 	</div>
 	
 	<div>
