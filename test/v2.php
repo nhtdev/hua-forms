@@ -4,18 +4,21 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 $loader = require __DIR__ . '/../vendor/autoload.php';
 
-$renderer = new \HuaForms2\Renderer('forms2/built/test.form.php');
+$parser = new \HuaForms2\Parser('forms2/test2.form.html');
+$parser->parse('forms2/built/test2.form.php', 'forms2/built/test2.form.json');
+
+$renderer = new \HuaForms2\Renderer('forms2/built/test2.form.php');
 $renderer->setValues(['name' => 'Huguet', 'gender' => 'M']);
 $renderer->setCsrf('test_csrf', 'xxx');
 
-$handler = new \HuaForms2\Handler('forms2/built/test.form.json');
+$handler = new \HuaForms2\Handler('forms2/built/test2.form.json');
 $handler->setCsrf('test_csrf', 'xxx');
 $ok = false;
 $errors = [];
 if ($handler->isSubmitted()) {
     if ($handler->isValid()) {
         $ok = true;
-        $data = $handler->getFilteredData();
+        $data = $handler->getFormattedData();
     } else {
         $errors = $handler->getErrorMessages();
         $renderer->setErrors($errors);

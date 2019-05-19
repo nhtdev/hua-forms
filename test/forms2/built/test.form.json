@@ -5,7 +5,7 @@
 			"name": "name",
 			"label": "Nom",
 			"type": "text",
-			"filters": [
+			"formatters": [
 				{
 					"type": "trim"
 				}

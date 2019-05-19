@@ -1,0 +1,1 @@
+{"method":"post","fields":[{"label":"Le Nom","name":"name","type":"text","formatters":[],"rules":[]},{"label":"Le Gender","name":"gender","type":"select","formatters":[],"rules":[]}],"submits":[{"label":"OK","name":"ok"}]}

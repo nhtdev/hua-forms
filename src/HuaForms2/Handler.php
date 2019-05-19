@@ -2,7 +2,7 @@
 
 namespace HuaForms2;
 
-use HuaForms2\Filter;
+use HuaForms2\Formatter;
 use HuaForms2\Validator;
 
 class Handler
@@ -16,7 +16,7 @@ class Handler
     protected $validationResult = null;
     protected $validationMsg = [];
     
-    protected $filteredData = null;
+    protected $formattedData = null;
     
     public function __construct(string $file)
     {
@@ -77,28 +77,28 @@ class Handler
         return $selectiveData;
     }
     
-    public function getFilteredData() : array
+    public function getFormattedData() : array
     {
-        $filter = new Filter();
+        $formatter = new Formatter();
         $rawData = $this->getRawData();
-        if ($this->filteredData === null) {
-            $this->filteredData = [];
+        if ($this->formattedData === null) {
+            $this->formattedData = [];
             foreach ($this->conf['fields'] as $field) {
                 $name = $field['name'];
                 if (isset($rawData[$name])) {
                     $value = $rawData[$name];
-                    if (isset($field['filters'])) {
-                        foreach ($field['filters'] as $oneFilter) {
-                            $value = $filter->filter($oneFilter, $value);
+                    if (isset($field['formatters'])) {
+                        foreach ($field['formatters'] as $oneFormat) {
+                            $value = $formatter->format($oneFormat, $value);
                         }
                     }
-                    $this->filteredData[$name] = $value;
+                    $this->formattedData[$name] = $value;
                 } else {
-                    $this->filteredData[$name] = null;
+                    $this->formattedData[$name] = null;
                 }
             }
         }
-        return $this->filteredData;
+        return $this->formattedData;
     }
     
     public function isValid() : bool
@@ -124,7 +124,7 @@ class Handler
             return;
         }
         
-        $data = $this->getFilteredData();
+        $data = $this->getFormattedData();
         $validator = new Validator();
         foreach ($this->conf['fields'] as $field) {
             $name = $field['name'];
