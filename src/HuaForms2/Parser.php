@@ -13,6 +13,9 @@ class Parser
     public function __construct(string $inputFile)
     {
         $this->inputFile = $inputFile;
+        if (!is_readable($inputFile)) {
+            throw new \RuntimeException('File not found: '.$inputFile);
+        }
     }
     
     public function parse(string $outputPhp, string $outputJson) : void

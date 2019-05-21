@@ -22,7 +22,7 @@
             ]
         },
         {
-            "label": "Le Gender",
+            "label": "Gender",
             "name": "gender",
             "type": "select",
             "formatters": [],

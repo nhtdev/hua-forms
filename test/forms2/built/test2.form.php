@@ -9,7 +9,7 @@
 	</div>
 	
 	<div>
-		<label>Le Gender</label>
+		<label>Gender</label>
 		<select name="gender" required>
 			<option value="" selected="selected" <?php echo $this->attrSelected('gender', '');  ?>>- Aucune sÃ©lection -</option>
 			<option value="M" <?php echo $this->attrSelected('gender', 'M');  ?>>Male</option>

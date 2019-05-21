@@ -2,8 +2,20 @@
 
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
-$loader = require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
+\HuaForms2\Factory::setOptions(['formPath' => 'forms2/']);
+$form = \HuaForms2\Factory::form('test2');
+
+$form->setDefaults(['name' => 'Huguet', 'gender' => 'M']);
+
+$ok = false;
+if ($form->isSubmitted() && $form->validate()) {
+    $data = $form->exportValues();
+    $ok = true;
+}
+
+/*
 $parser = new \HuaForms2\Parser('forms2/test2.form.html');
 $parser->parse('forms2/built/test2.form.php', 'forms2/built/test2.form.json');
 
@@ -24,7 +36,7 @@ if ($handler->isSubmitted()) {
         $renderer->setErrors($errors);
         $renderer->setValues($handler->getSelectiveData());
     }
-}
+}*/
 
 ?>
 <!doctype html>
@@ -46,7 +58,7 @@ if ($handler->isSubmitted()) {
 		<h2>Success</h2>
 		<pre><?php var_dump($data); ?></pre>
 	<?php else: ?>
-	<?= $renderer->render(); ?>
+	<?= $form->render(); ?>
 	<?php endif; ?>
 
     <!-- Optional JavaScript -->
