@@ -30,6 +30,11 @@ class Handler
         $this->conf = $conf;
     }
     
+    public function getDescription() : array
+    {
+        return $this->conf;
+    }
+    
     public function setCsrf(string $key, string $value) : void
     {
         $this->csrfKey = $key;

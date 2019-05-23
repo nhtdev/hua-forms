@@ -97,4 +97,9 @@ class Facade
         return $this->renderer->render();
     }
     
+    public function getDescription() : array
+    {
+        return $this->handler->getDescription();
+    }
+    
 }
