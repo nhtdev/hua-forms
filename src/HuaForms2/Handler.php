@@ -5,19 +5,61 @@ namespace HuaForms2;
 use HuaForms2\Formatter;
 use HuaForms2\Validator;
 
+/**
+ * Form handler : class to process the form data an validation
+ * 
+ */
 class Handler
 {
-    
+    /**
+     * Form information (type, field list, ...)
+     * @var array
+     */
     protected $conf;
+    
+    /**
+     * Key of the CSRF token
+     * @var string
+     */
     protected $csrfKey = '';
+    
+    /**
+     * Value of the CSRF token
+     * @var string
+     */
     protected $csrfValue = '';
     
+    /**
+     * True if the form validation has already been executed
+     * @var bool
+     */
     protected $validationRun = false;
-    protected $validationResult = null;
-    protected $validationMsg = [];
     
+    /**
+     * Result of the form validation, if it has already been executed
+     * @var bool|null
+     */
+    protected $validationResult = null;
+    
+    /**
+     * Validation message (errors)
+     * array('field_name' => ['Error msg 1', 'Error msg 2', ...], ...) 
+     * @var array
+     */
+    protected $validationMsg = [];
+
+    /**
+     * Form values, formatted using fields formatters
+     * Defined only if getFormattedData has been called
+     * @var array|null
+     */
     protected $formattedData = null;
     
+    /**
+     * Constructor
+     * @param string $file File name containing the JSON description of the form
+     * @throws \RuntimeException
+     */
     public function __construct(string $file)
     {
         if (!is_readable($file)) {
@@ -30,22 +72,39 @@ class Handler
         $this->conf = $conf;
     }
     
+    /**
+     * Return the form information (type, field list, ...)
+     * @return array
+     */
     public function getDescription() : array
     {
         return $this->conf;
     }
     
+    /**
+     * Set the key and value of the CSRF token
+     * @param string $key Key of the CSRF token
+     * @param string $value Value of the CSRF token
+     */
     public function setCsrf(string $key, string $value) : void
     {
         $this->csrfKey = $key;
         $this->csrfValue = $value;
     }
     
+    /**
+     * Return true if the form has been submitted
+     * @return bool
+     */
     public function isSubmitted() : bool
     {
         return ( $this->getSubmittedButton() !== null);
     }
     
+    /**
+     * Return the name of the submit button which has been clicked to submit the form
+     * @return string|NULL
+     */
     public function getSubmittedButton() : ?string
     {
         $data = $this->getRawData();
@@ -58,6 +117,10 @@ class Handler
         return null;
     }
     
+    /**
+     * Return the form submitted data, without any formatting or validation
+     * @return array
+     */
     public function getRawData() : array
     {
         if ($this->conf['method'] === 'get') {
@@ -67,6 +130,11 @@ class Handler
         }
     }
     
+    /**
+     * Return the form submitted data, without any formatting or validation,
+     * but ignore the data which are not form fields
+     * @return array
+     */
     public function getSelectiveData() : array
     {
         $selectiveData = [];
@@ -82,6 +150,10 @@ class Handler
         return $selectiveData;
     }
     
+    /**
+     * Return the form submitted data after formatting
+     * @return array
+     */
     public function getFormattedData() : array
     {
         $formatter = new Formatter();
@@ -106,6 +178,10 @@ class Handler
         return $this->formattedData;
     }
     
+    /**
+     * Return true if the submitted data are valid
+     * @return bool
+     */
     public function isValid() : bool
     {
         if (!$this->validationRun) {
@@ -114,6 +190,9 @@ class Handler
         return $this->validationResult;
     }
     
+    /**
+     * Run the form validation, and store the result in the attributes "validation*" of the object
+     */
     protected function validate() : void
     {
         $this->validationResult = true;
@@ -149,6 +228,12 @@ class Handler
         $this->validationRun = true;
     }
     
+    /**
+     * Generate the error message for a given field and validation rule
+     * @param array $field Field description
+     * @param array $rule Rule description
+     * @return string Error message
+     */
     protected function validationErrorMessage(array $field, array $rule) : string
     {
         if (isset($rule['message'])) {
@@ -171,6 +256,11 @@ class Handler
         }
     }
     
+    /**
+     * Return the validation errors - array('field_name' => ['Error msg 1', 'Error msg 2', ...], ...)
+     * The "isValid" method must be called before "getErrorMessages"
+     * @return array
+     */
     public function getErrorMessages() : array
     {
         return $this->validationMsg;

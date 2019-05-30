@@ -2,16 +2,47 @@
 
 namespace HuaForms2;
 
+/**
+ * Class for easy usage of forms objects
+ *
+ */
 class Facade
 {
+    /**
+     * Options
+     * @var array
+     */
     protected $options = [];
     
+    /**
+     * Handler object
+     * @var \HuaForms2\Handler
+     */
     protected $handler;
+    
+    /**
+     * Renderer object
+     * @var \HuaForms2\Renderer
+     */
     protected $renderer;
     
+    /**
+     * True if the form validation has already been executed
+     * @var bool
+     */
     protected $validationRun = false;
+    
+    /**
+     * Result of the form validation, if it has already been executed
+     * @var bool|null
+     */
     protected $validationResult = null;
     
+    /**
+     * Constructor
+     * @param string $formName Form name
+     * @param array $options Form options
+     */
     public function __construct(string $formName, array $options)
     {
         $this->options = $options;
@@ -19,6 +50,10 @@ class Facade
         $this->handleCsrf();
     }
     
+    /**
+     * Parse the given form (if needed) and generate the Handler and Renderer objects
+     * @param string $formName
+     */
     protected function parse(string $formName) : void
     {
         $srcPath = isset($this->options['formPath']) ? $this->options['formPath'] : 'forms/';
@@ -41,6 +76,9 @@ class Facade
         $this->renderer = new Renderer($tplFile);
     }
     
+    /**
+     * Generate and handle the CSRF token in both Handler and Renderer objects.
+     */
     protected function handleCsrf() : void
     {
         $csrfKey = isset($this->options['csrfKey']) ? $this->options['csrfKey'] : 'csrf';
@@ -60,16 +98,28 @@ class Facade
         $this->renderer->setCsrf($csrfKey, $csrfValue);
     }
     
+    /**
+     * Set the default values of the form field
+     * @param array $values Form default values
+     */
     public function setDefaults(array $values) : void
     {
         $this->renderer->setValues($values);
     }
     
+    /**
+     * Return true if the form has been submitted
+     * @return bool
+     */
     public function isSubmitted() : bool
     {
         return $this->handler->isSubmitted();
     }
     
+    /**
+     * Return true if the submitted data are valid
+     * @return bool
+     */
     public function validate() : bool
     {
         if (!$this->validationRun) {
@@ -83,6 +133,10 @@ class Facade
         return $this->validationResult;
     }
     
+    /**
+     * Return the form submitted data after formatting
+     * @return array
+     */
     public function exportValues() : array
     {
         if ($this->validate()) {
@@ -92,11 +146,19 @@ class Facade
         }
     }
     
+    /**
+     * Render the HTML code for displaying the form
+     * @return string HTML
+     */
     public function render() : string
     {
         return $this->renderer->render();
     }
     
+    /**
+     * Return the form information (type, field list, ...)
+     * @return array
+     */
     public function getDescription() : array
     {
         return $this->handler->getDescription();

@@ -2,14 +2,35 @@
 
 namespace HuaForms2;
 
+/**
+ * Form parser : parse an HTML file, and generate the PHP template + JSON structure information
+ * The HTML file can then be used by the "Renderer" class, and the JSON by the "Handler" class
+ */
 class Parser
 {
+    /**
+     * File name containing the HTML of the form
+     * @var string
+     */
     protected $inputFile;
     
+    /**
+     * Internal counter for submit buttons
+     * @var integer
+     */
     protected $submitCpt = 1;
     
+    /**
+     * Tag used for injecting PHP code into the template file
+     * @var string
+     */
     const PHP_CODE = 'PHP_CODE';
     
+    /**
+     * Constructor
+     * @param string $inputFile File name containing the HTML of the form
+     * @throws \RuntimeException
+     */
     public function __construct(string $inputFile)
     {
         $this->inputFile = $inputFile;
@@ -18,6 +39,12 @@ class Parser
         }
     }
     
+    /**
+     * Execute the form parsing, and save the PHP template
+     * + JSON structure information to the specified files
+     * @param string $outputPhp Name of the file where the php template of the form will be saved
+     * @param string $outputJson Name of the file where the JSON description of the form will be saved
+     */
     public function parse(string $outputPhp, string $outputJson) : void
     {
         // 1- Parse DOM HTML
@@ -37,6 +64,11 @@ class Parser
         $this->writeDom($dom, $outputPhp);
     }
     
+    /**
+     * Tool method : Recursively call the $fct function on the DOM node and all of its children
+     * @param \DOMNode $node DOM node
+     * @param callable $fct Callback function - will receive the \DOMElement as parameter
+     */
     protected function walkElements(\DOMNode $node, callable $fct) : void
     {
         if ($node instanceof \DOMElement) {
@@ -52,6 +84,12 @@ class Parser
         }
     }
     
+    /**
+     * Tool method : Search for a given node name in all the ancestors of a DOM node
+     * @param \DomNode $node DOM node
+     * @param string $nodeName Node name to look for
+     * @return \DomNode|NULL
+     */
     protected function findClosest(\DomNode $node, string $nodeName) : ?\DomNode
     {
         if ($node->parentNode === null) {
@@ -63,17 +101,29 @@ class Parser
         return $this->findClosest($node->parentNode, $nodeName);
     }
     
+    /**
+     * Run all the HTML modification so that the form will look better! 
+     * @param \DOMDocument $dom
+     */
     protected function modifyDom(\DOMDocument $dom) : void
     {
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
     }
     
+    /**
+     * Add an "id" attribute to all form elements
+     * @param \DOMDocument $dom
+     */
     protected function addIdAttributes(\DOMDocument $dom) : void
     {
         // TODO
     }
     
+    /**
+     * Create a div with a "form-errors" attribute, if none is already present in the HTML
+     * @param \DOMDocument $dom
+     */
     protected function addAlertDivIfNotFound(\DOMDocument $dom) : void
     {
         $found = false;
@@ -96,6 +146,11 @@ class Parser
         }
     }
     
+    /**
+     * Generate and returns the whole JSON information of the form by reading the DOM structure 
+     * @param \DOMDocument $dom
+     * @return array
+     */
     protected function buildJsonFromDom(\DOMDocument $dom) : array
     {
         $data = [
@@ -163,6 +218,11 @@ class Parser
         return $data;
     }
     
+    /**
+     * Add information about the form itself in the JSON object
+     * @param \DOMElement $node DOM node of the form
+     * @param array $data JSON object which will be modified by reference
+     */
     protected function buildJsonForm(\DOMElement $node, array &$data) : void
     {
         if ($node->hasAttribute('method')) {
@@ -170,11 +230,21 @@ class Parser
         }
     }
     
+    /**
+     * Add information about a form button in the JSON object
+     * @param \DOMElement $node DOM node of the button
+     * @param array $data JSON object which will be modified by reference
+     */
     protected function buildJsonButton(\DOMElement $node, array &$data) : void
     {
         // Do nothing
     }
     
+    /**
+     * Add information about a form submit button in the JSON object
+     * @param \DOMElement $node DOM node of the submit button
+     * @param array $data JSON object which will be modified by reference
+     */
     protected function buildJsonSubmit(\DOMElement $node, array &$data) : void
     {
         // Label
@@ -199,6 +269,12 @@ class Parser
         $data['submits'][] = ['label' => $label, 'name' => $name];
     }
     
+    /**
+     * Add information about a form element (input) in the JSON object
+     * @param string $type Field type : "text", "select", "textarea", "date", ...
+     * @param \DOMElement $node DOM node of the element
+     * @param array $data JSON object which will be modified by reference
+     */
     protected function buildJsonInput(string $type, \DOMElement $node, array &$data) : void
     {
         // Name
@@ -233,6 +309,12 @@ class Parser
         
     }
     
+    /**
+     * Generate and return the formatters for an element of the DOM
+     * @param string $type Field type : "text", "select", "textarea", "date", ...
+     * @param \DOMElement $node
+     * @return array
+     */
     protected function buildJsonFormatters(string $type, \DOMElement $node) : array
     {
         $formatters = [];
@@ -245,6 +327,12 @@ class Parser
         return $formatters;
     }
     
+    /**
+     * Generate and return the validation rules for an element of the DOM
+     * @param string $type Field type : "text", "select", "textarea", "date", ...
+     * @param \DOMElement $node
+     * @return array
+     */
     protected function buildJsonRules(string $type, \DOMElement $node) : array
     {
         $rules = [];
@@ -294,6 +382,11 @@ class Parser
         return $rules;
     }
     
+    /**
+     * Search form DOM Node of the label associated to an input field
+     * @param \DOMElement $input
+     * @return \DOMNode|NULL
+     */
     protected function findLabelNode(\DOMElement $input) : ?\DOMNode
     {
         // TODO : + intelligent
@@ -311,11 +404,21 @@ class Parser
         return null;
     }
     
+    /**
+     * Save the JSON description of the form on disk file
+     * @param array $data JSON description of the form
+     * @param string $file File name
+     */
     protected function writeJson(array $data, string $file) : void
     {
         file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
     }
     
+    /**
+     * Save the PHP template of the form on disk file
+     * @param \DOMDocument $dom DOM document representing the form template
+     * @param string $file File name
+     */
     protected function writeDom(\DOMDocument $dom, string $file) : void
     {
         $this->injectValuesIntoDom($dom);
@@ -331,6 +434,11 @@ class Parser
         file_put_contents($file, $html);
     }
     
+    /**
+     * Search DOM document for all input fields, and add to each of them
+     * PHP code for setting their values
+     * @param \DOMDocument $dom
+     */
     protected function injectValuesIntoDom(\DOMDocument $dom) : void
     {
         $this->walkElements($dom, function (\DOMElement $node) {
@@ -342,6 +450,11 @@ class Parser
         });
     }
     
+    /**
+     * Search DOM document for all <select> fields, and add to each of them
+     * PHP code for setting their selected option
+     * @param \DOMDocument $dom
+     */
     protected function injectSelectedIntoDom(\DOMDocument $dom) : void
     {
         $this->walkElements($dom, function (\DOMElement $node) {
@@ -357,6 +470,11 @@ class Parser
         });
     }
     
+    /**
+     * Search DOM document for all forms, and add to each of them
+     * PHP code for the CSRF token
+     * @param \DOMDocument $dom
+     */
     protected function injectCsrfIntoDom(\DOMDocument $dom) : void
     {
         $this->walkElements($dom, function (\DOMElement $node) {
@@ -373,6 +491,11 @@ class Parser
         });
     }
     
+    /**
+     * Search the DOM document a node with the "form-errors" attribute, and add
+     * PHP code so that the form error messages will be displayed in this node
+     * @param \DOMDocument $dom
+     */
     protected function injectCodeAroundFormErrors(\DOMDocument $dom) : void
     {
         $this->walkElements($dom, function (\DOMElement $node) {
@@ -396,6 +519,11 @@ class Parser
         });
     }
     
+    /**
+     * Convert the PHP code injected in the DOM, via the "inject*" methods, to real PHP code
+     * @param string $html Initial HTML
+     * @return string Modified HTML containing PHP code
+     */
     protected function replacePhpCodeInHtml(string $html) : string
     {
         $html = preg_replace(
@@ -410,11 +538,21 @@ class Parser
         return $html;
     }
     
+    /**
+     * Add quotes and escape special characters in a PHP variable
+     * @param string $varName
+     * @return string
+     */
     protected function quotePhpVar(string $varName) : string
     {
         return '\'' . str_replace('\'', '\\\'', $varName) . '\'';
     }
     
+    /**
+     * Modify the HTML to be HTML5 compliant
+     * @param string $html
+     * @return string
+     */
     protected function convertToHtml5(string $html) : string
     {
         $html = str_replace('required=""', 'required', $html);

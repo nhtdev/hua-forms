@@ -2,9 +2,20 @@
 
 namespace HuaForms2;
 
+/**
+ * validators : function called to check if a field value is valid (required, length, ...)
+ *
+ */
 class Validator
 {
     
+    /**
+     * Test one validation rule against the given value
+     * @param array $rule Rule type and options
+     * @param mixed $value Field value
+     * @throws \InvalidArgumentException
+     * @return bool True if value is valid, false otherwise
+     */
     public function validate(array $rule, $value) : bool
     {
         if (empty($rule['type'])) {
@@ -17,6 +28,12 @@ class Validator
         return $this->$method($rule, $value);
     }
     
+    /**
+     * Required : the value must not be empty
+     * @param array $rule Not used
+     * @param mixed $value Field value
+     * @return bool True if value is valid, false otherwise
+     */
     public function validateRequired(array $rule, $value) : bool
     {
         if (empty($value) && $value !== '0') {
@@ -26,6 +43,12 @@ class Validator
         }
     }
     
+    /**
+     * MaxLength : the string value must have at least n characters
+     * @param array $rule ['maxlength' => n]
+     * @param mixed $value Field value
+     * @return bool True if value is valid, false otherwise
+     */
     public function validateMaxlength(array $rule, $value) : bool
     {
         if (!is_string($value)) {
@@ -41,6 +64,12 @@ class Validator
         }
     }
     
+    /**
+     * InArray : the value(s) are limited to a given list of values
+     * @param array $rule ['values' => [array of allowed values] ]
+     * @param mixed $value Field value
+     * @return bool True if value is valid, false otherwise
+     */
     public function validateInArray(array $rule, $value) : bool
     {
         if (!isset($rule['values'])) {
