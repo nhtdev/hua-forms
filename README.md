@@ -34,7 +34,7 @@ Le formulaire est écrit en HTML et analysé pour être validé et traité en PH
 ```php
 $form = \HuaForms\Factory::form('test');
 if ($form->isSubmitted() && $form->validate()) {
-	echo '<pre>';
+    echo '<pre>';
     var_dump($form->exportValues());
     echo '</pre>';
 } else {
@@ -44,6 +44,7 @@ if ($form->isSubmitted() && $form->validate()) {
 
 ## Fonctionnalités
 
+### Correction automatique
 
 ## Types des champs
 

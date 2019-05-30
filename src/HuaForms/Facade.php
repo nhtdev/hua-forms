@@ -128,6 +128,8 @@ class Facade
                 $errors = $this->handler->getErrorMessages();
                 $this->renderer->setErrors($errors);
                 $this->renderer->setValues($this->handler->getSelectiveData());
+            } else {
+                $this->renderer->setValues($this->handler->getFormattedData());
             }
         }
         return $this->validationResult;
