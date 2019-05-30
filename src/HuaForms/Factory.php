@@ -1,6 +1,6 @@
 <?php
 
-namespace HuaForms2;
+namespace HuaForms;
 
 /**
  * Form factory : easy generation of form facades

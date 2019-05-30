@@ -1,6 +1,6 @@
 <?php
 
-namespace HuaForms2;
+namespace HuaForms;
 
 /**
  * validators : function called to check if a field value is valid (required, length, ...)

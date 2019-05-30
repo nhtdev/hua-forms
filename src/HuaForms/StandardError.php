@@ -1,6 +1,6 @@
 <?php
 
-namespace HuaForms2;
+namespace HuaForms;
 
 /**
  * Standard error messages for validation errors

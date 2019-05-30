@@ -1,6 +1,6 @@
 <?php
 
-namespace HuaForms2;
+namespace HuaForms;
 
 /**
  * Class for easy usage of forms objects
@@ -16,13 +16,13 @@ class Facade
     
     /**
      * Handler object
-     * @var \HuaForms2\Handler
+     * @var \HuaForms\Handler
      */
     protected $handler;
     
     /**
      * Renderer object
-     * @var \HuaForms2\Renderer
+     * @var \HuaForms\Renderer
      */
     protected $renderer;
     
@@ -82,7 +82,7 @@ class Facade
     protected function handleCsrf() : void
     {
         $csrfKey = isset($this->options['csrfKey']) ? $this->options['csrfKey'] : 'csrf';
-        $csrfClass = isset($this->options['csrfClass']) ? $this->options['csrfClass'] : \HuaForms2\Csrf\PhpSession::class;
+        $csrfClass = isset($this->options['csrfClass']) ? $this->options['csrfClass'] : \HuaForms\Csrf\PhpSession::class;
         $csrfOptions = isset($this->options['csrfOptions']) ? $this->options['csrfOptions'] : [];
         $csrf = new $csrfClass($csrfOptions);
         

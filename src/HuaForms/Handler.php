@@ -1,9 +1,9 @@
 <?php
 
-namespace HuaForms2;
+namespace HuaForms;
 
-use HuaForms2\Formatter;
-use HuaForms2\Validator;
+use HuaForms\Formatter;
+use HuaForms\Validator;
 
 /**
  * Form handler : class to process the form data an validation

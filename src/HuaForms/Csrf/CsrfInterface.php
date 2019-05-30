@@ -1,6 +1,6 @@
 <?php
 
-namespace HuaForms2\Csrf;
+namespace HuaForms\Csrf;
 
 /**
  * Interface for CSRF storage engine

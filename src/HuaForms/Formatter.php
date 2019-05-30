@@ -1,6 +1,6 @@
 <?php
 
-namespace HuaForms2;
+namespace HuaForms;
 
 /**
  * Formatters : functions called on field values in order to modify the value (trim, uppercase, ...)
