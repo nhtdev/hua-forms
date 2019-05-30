@@ -41,3 +41,24 @@ if ($form->isSubmitted() && $form->validate()) {
 	echo $form->render();
 }
 ```
+
+## Fonctionnalités
+
+
+## Types des champs
+
+## Attributs
+
+## Options de configuration
+
+Option | Valeur par défaut | Description
+--- | --- | ---
+formPath | forms/ | Chemin vers les fichiers sources des formulaires
+srcExtension | form.html | Extension des fichiers sources des formulaires
+builtPath | forms/built | Répertoire de compilation des formulaires
+builtTplExtension | form.php | Extension pour les fichiers compilés Template PHP
+builtJsonExtension | form.json | extension pour les fichiers compilés JSON
+csrfKey | csrf | Clé des tokens CSRF
+csrfClass | \HuaForms\Csrf\PhpSession | Classe utilisée pour le stockage serveur des tokens CSRF
+csrfOptions | [] | Options pour le stockage des tokens CSRF
+
