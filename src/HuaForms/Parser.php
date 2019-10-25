@@ -288,6 +288,12 @@ class Parser
         }
         $name = $node->getAttribute('name');
         
+        // Check type
+        if (!in_array($type, ['text', 'select'])) {
+            $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
+            $type = 'text';
+        }
+        
         // Label
         $labelNode = $this->findLabelNode($node);
         if ($labelNode === null) {
