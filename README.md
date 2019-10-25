@@ -58,6 +58,8 @@ if ($form->isSubmitted() && $form->validate()) {
 
 ### Règles de validation
 
+Nom de l'attribut | Type | Description
+--- | --- | ---
 required | tag | Champ obligatoire
 maxlength | int | Taille maximale d'un champ texte
 inarray | string | Liste des valeurs acceptées, séparées par des virgules
@@ -67,6 +69,8 @@ en remplacement du message standard.
 
 ### Formateurs de contenu
 
+Nom de l'attribut | Type | Description
+--- | --- | ---
 trim | tag | Supprimer les espaces en début et fin d'un champ texte
 
 ## Options de configuration
