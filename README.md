@@ -62,7 +62,7 @@ Nom de l'attribut | Type | Description
 --- | --- | ---
 required | tag | Champ obligatoire
 maxlength | int | Taille maximale d'un champ texte
-inarray | string | Liste des valeurs acceptées, séparées par des virgules
+inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
 
 Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur
 en remplacement du message standard.

@@ -279,9 +279,11 @@ class Parser
      */
     protected function buildJsonInput(string $type, \DOMElement $node, array &$data) : void
     {
+        
         // Name
         if (!$node->hasAttribute('name')) {
             // Field is not sent to server when submitted
+            $this->triggerWarning('Input field has no "name" attribute', $node);
             return;
         }
         $name = $node->getAttribute('name');
@@ -309,6 +311,16 @@ class Parser
             'rules' => $rules
         ];
         
+    }
+    
+    /**
+     * Generate a php warning
+     * @param string $warning Message
+     * @param \DOMElement $node DOM Node
+     */
+    protected function triggerWarning(string $warning, \DOMElement $node) : void
+    {
+        trigger_error($warning.' in form "'.$this->inputFile.'" line '.$node->getLineNo(), E_USER_WARNING);
     }
     
     /**
