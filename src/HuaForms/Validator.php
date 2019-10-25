@@ -65,12 +65,12 @@ class Validator
     }
     
     /**
-     * InArray : the value(s) are limited to a given list of values
+     * inarray : the value(s) are limited to a given list of values
      * @param array $rule ['values' => [array of allowed values] ]
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
-    public function validateInArray(array $rule, $value) : bool
+    public function validateInarray(array $rule, $value) : bool
     {
         if (!isset($rule['values'])) {
             throw new \InvalidArgumentException('Rule maxlength : missing param "values"');

@@ -339,10 +339,6 @@ class Parser
         
         if ($node->hasAttribute('required')) {
             $rule = ['type' => 'required'];
-            if ($node->hasAttribute('required-message')) {
-                $rule['message'] = $node->getAttribute('required-message');
-                $node->removeAttribute('required-message');
-            }
             $rules[] = $rule;
             // Keep required attribute in html
         }
@@ -350,12 +346,15 @@ class Parser
         if ($node->hasAttribute('maxlength')) {
             $value = (int) $node->getAttribute('maxlength');
             $rule = ['type' => 'maxlength', 'maxlength' => $value];
-            if ($node->hasAttribute('maxlength-message')) {
-                $rule['message'] = $node->getAttribute('maxlength-message');
-                $node->removeAttribute('maxlength-message');
-            }
             $rules[] = $rule;
             // Keep maxlength attribute in html
+        }
+        
+        if ($node->hasAttribute('inarray')) {
+            $values = explode(',', $node->getAttribute('inarray'));
+            $rule = ['type' => 'inarray', 'values' => $values];
+            $rules[] = $rule;
+            $node->removeAttribute('inarray');
         }
         
         if ($node->nodeName === 'select') {
@@ -373,10 +372,19 @@ class Parser
                 }
             });
             $rule = [
-                'type' => 'inArray',
+                'type' => 'inarray',
                 'values' => $optionsValues
             ];
             $rules[] = $rule;
+        }
+        
+        // Override rule-message for each rule
+        foreach ($rules as &$rule) {
+            $ruleType = strtolower($rule['type']);
+            if ($node->hasAttribute($ruleType.'-message')) {
+                $rule['message'] = $node->getAttribute($ruleType.'-message');
+                $node->removeAttribute($ruleType.'-message');
+            }
         }
         
         return $rules;

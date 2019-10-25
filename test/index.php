@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 require __DIR__ . '/../vendor/autoload.php';
 
-\HuaForms\Factory::setOptions(['formPath' => 'forms/']);
+\HuaForms\Factory::setOptions(['formPath' => 'forms/', 'cache' => false]);
 $form = \HuaForms\Factory::form('test');
 
 $form->setDefaults(['name' => 'Huguet', 'gender' => 'M']);

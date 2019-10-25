@@ -46,9 +46,28 @@ if ($form->isSubmitted() && $form->validate()) {
 
 ### Correction automatique
 
+* Ajoute et vérifie automatique un jeton de protection CSRF
+* TODO Ajoute automatiquement un attribut "id" correspondant au "name"
+* TODO Convertit un attribut "label" en un élément html <label>
+* TODO Ajoute automatiquement un attribut "for" à l'élément <label>
+* TODO Ajoute automatiquement un <div> englobant l'élément et son label
+
 ## Types des champs
 
 ## Attributs
+
+### Règles de validation
+
+required | tag | Champ obligatoire
+maxlength | int | Taille maximale d'un champ texte
+inarray | string | Liste des valeurs acceptées, séparées par des virgules
+
+Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur
+en remplacement du message standard.
+
+### Formateurs de contenu
+
+trim | tag | Supprimer les espaces en début et fin d'un champ texte
 
 ## Options de configuration
 
@@ -62,4 +81,5 @@ builtJsonExtension | form.json | extension pour les fichiers compilés JSON
 csrfKey | csrf | Clé des tokens CSRF
 csrfClass | \HuaForms\Csrf\PhpSession | Classe utilisée pour le stockage serveur des tokens CSRF
 csrfOptions | [] | Options pour le stockage des tokens CSRF
+cache | true | Mise en cache du parsing du formulaire
 

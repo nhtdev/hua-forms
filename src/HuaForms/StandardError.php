@@ -16,7 +16,7 @@ class StandardError
         'csrf'          => 'Invalid CSRF token',
         'required'      => '{label}: field is required',
         'maxlength'     => '{label}: maximum {maxlength} characters',
-        'inArray'       => '{label}: value is not in the authorized values list ({values})',
+        'inarray'       => '{label}: value is not in the authorized values list ({values})',
     ];
     
     /**

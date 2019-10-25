@@ -45,6 +45,9 @@ class Facade
      */
     public function __construct(string $formName, array $options)
     {
+        if (!isset($options['cache'])) {
+            $options['cache'] = true;
+        }
         $this->options = $options;
         $this->parse($formName);
         $this->handleCsrf();
@@ -67,7 +70,11 @@ class Facade
         $tplFile = $builtPath . $formName . '.' . $builtTplExtension;
         $jsonFile = $builtPath . $formName . '.' . $builtJsonExtension;
         $srcTime = filemtime($srcFile);
-        if (!file_exists($tplFile) || !file_exists($jsonFile) || $srcTime > filemtime($tplFile) || $srcTime > filemtime($jsonFile)) {
+        if (!$this->options['cache'] 
+            || !file_exists($tplFile) 
+            || !file_exists($jsonFile) 
+            || $srcTime > filemtime($tplFile) 
+            || $srcTime > filemtime($jsonFile)) {
             $parser = new Parser($srcFile);
             $parser->parse($tplFile, $jsonFile);
         }
