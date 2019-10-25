@@ -49,7 +49,9 @@ class Parser
     {
         // 1- Parse DOM HTML
         $dom = new \DOMDocument();
-        $dom->loadHTMLFile($this->inputFile, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $dom->loadHTML(
+            '<?xml encoding="utf-8" ?>' . file_get_contents($this->inputFile), 
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         // 2- Modify DOM HTML
         $this->modifyDom($dom);
