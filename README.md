@@ -47,9 +47,9 @@ if ($form->isSubmitted() && $form->validate()) {
 ### Correction automatique
 
 * Ajoute et vérifie automatique un jeton de protection CSRF
-* TODO Ajoute automatiquement un attribut "id" correspondant au "name"
+* Ajoute automatiquement un attribut "id" correspondant au "name"
 * TODO Convertit un attribut "label" en un élément html <label>
-* TODO Ajoute automatiquement un attribut "for" à l'élément <label>
+* Ajoute automatiquement un attribut "for" à l'élément <label>
 * TODO Ajoute automatiquement un <div> englobant l'élément et son label
 
 ## Types des champs

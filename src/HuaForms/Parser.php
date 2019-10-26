@@ -111,6 +111,7 @@ class Parser
     {
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
+        $this->addForInLabelNodes($dom);
     }
     
     /**
@@ -119,7 +120,14 @@ class Parser
      */
     protected function addIdAttributes(\DOMDocument $dom) : void
     {
-        // TODO
+        $this->walkElements($dom, function (\DOMElement $node) {
+            if ($this->isInputNode($node) || $this->isButtonNode($node) || $this->isSubmitNode($node)) {
+                if ($node->hasAttribute('name') && !$node->hasAttribute('id')) {
+                    $id = str_replace(['[', ']'], '', $node->getAttribute('name'));
+                    $node->setAttribute('id', $id);
+                }
+            }
+        });
     }
     
     /**
@@ -136,7 +144,7 @@ class Parser
         });
         if (!$found) {
             $this->walkElements($dom, function (\DOMElement $node) {
-                if ($node->nodeName === 'form') {
+                if ($this->isFormNode($node)) {
                     
                     $div = $node->ownerDocument->createElement('div');
                     $div->setAttribute('form-errors', 'true');
@@ -146,6 +154,24 @@ class Parser
                 }
             });
         }
+    }
+    
+    /**
+     * Add "for" attribute in every <label> nodes
+     * @param \DOMDocument $dom
+     */
+    protected function addForInLabelNodes(\DOMDocument $dom) : void
+    {
+        $this->walkElements($dom, function (\DOMElement $node) {
+            if ($this->isInputNode($node) && $node->hasAttribute('id')) {
+                $label = $this->findLabelNode($node);
+                if ($label !== null) {
+                    if (!$label->hasAttribute('for')) {
+                        $label->setAttribute('for', $node->getAttribute('id'));
+                    }
+                }
+            }
+        });
     }
     
     /**
@@ -162,52 +188,27 @@ class Parser
         ];
         
         $this->walkElements($dom, function (\DOMElement $node) use (&$data) {
-            switch ($node->nodeName) {
+            
+            if ($this->isFormNode($node)) {
+                $this->buildJsonForm($node, $data);
                 
-                case 'form':
-                    $this->buildJsonForm($node, $data);
-                    break;
-                    
-                case 'input':
+            } else if ($this->isInputNode($node)) {
+                if ($node->nodeName === 'input') {
                     if ($node->hasAttribute('type')) {
                         $type = $node->getAttribute('type');
                     } else {
                         $type = 'text';
                     }
-                    switch ($type) {
-                        case 'button':
-                            $this->buildJsonButton($node, $data);
-                            break;
-                        case 'submit':
-                            $this->buildJsonSubmit($node, $data);
-                            break;
-                        default:
-                            $this->buildJsonInput($type, $node, $data);
-                            break;
-                    }
-                    break;
-                case 'textarea':
-                    $this->buildJsonInput('textarea', $node, $data);
-                    break;
-                case 'select':
-                    $this->buildJsonInput('select', $node, $data);
-                    break;
-                case 'button':
-                    if ($node->hasAttribute('type')) {
-                        $type = $node->getAttribute('type');
-                    } else {
-                        $type = 'button';
-                    }
-                    switch ($type) {
-                        case 'submit':
-                            $this->buildJsonSubmit($node, $data);
-                            break;
-                        case 'button':
-                        default:
-                            $this->buildJsonButton($node, $data);
-                            break;
-                    }
-                    break;
+                } else {
+                    $type = $node->nodeName; // textarea, select, ...
+                }
+                $this->buildJsonInput($type, $node, $data);
+                
+            } else if ($this->isButtonNode($node)) {
+                $this->buildJsonButton($node, $data);
+                
+            } else if ($this->isSubmitNode($node)) {
+                $this->buildJsonSubmit($node, $data);
             }
             
             // Do not parse DOM structure of select elements
@@ -218,6 +219,111 @@ class Parser
             }
         });
         return $data;
+    }
+    
+    /**
+     * Return true if the given DOM node is a form
+     * @param \DOMElement $node
+     * @return bool
+     */
+    protected function isFormNode(\DOMElement $node) : bool
+    {
+        if ($node->nodeName === 'form') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Return true if the given DOM node is an input field
+     * @param \DOMElement $node
+     * @return bool
+     */
+    protected function isInputNode(\DOMElement $node) : bool
+    {
+        if ($node->nodeName === 'input') {
+            if ($node->hasAttribute('type')) {
+                $type = $node->getAttribute('type');
+                if ($type === 'button' || $type === 'submit') {
+                    return false;
+                }
+            }
+            return true;
+        } else if ($node->nodeName === 'textarea'
+            || $node->nodeName === 'select') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Return true if the given DOM node is a form button
+     * @param \DOMElement $node
+     * @return bool
+     */
+    protected function isButtonNode(\DOMElement $node) : bool
+    {
+        if ($node->nodeName === 'button') {
+            if ($node->hasAttribute('type')) {
+                $type = $node->getAttribute('type');
+                if ($type === 'submit') {
+                    return false;
+                }
+                return true;
+            } else {
+                return true;
+            }
+            
+        } else if ($node->nodeName === 'input') {
+            if ($node->hasAttribute('type')) {
+                $type = $node->getAttribute('type');
+                if ($type === 'button') {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Return true if the given DOM node is a form submit button
+     * @param \DOMElement $node
+     * @return bool
+     */
+    protected function isSubmitNode(\DOMElement $node) : bool
+    {
+        if ($node->nodeName === 'button') {
+            return !$this->isButtonNode($node);
+            
+        } else if ($node->nodeName === 'input') {
+            if ($node->hasAttribute('type')) {
+                $type = $node->getAttribute('type');
+                if ($type === 'submit') {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Return true if the given DOM node is a field label
+     * @param \DOMElement $node
+     * @return bool
+     */
+    protected function isLabelNode(\DOMElement $node) : bool
+    {
+        if ($node->nodeName === 'label') {
+            return true;
+        } else {
+            return false;
+        }
     }
     
     /**
