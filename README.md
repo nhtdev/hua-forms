@@ -48,6 +48,7 @@ if ($form->isSubmitted() && $form->validate()) {
 
 * Ajoute et vérifie automatique un jeton de protection CSRF
 * Ajoute automatiquement un attribut "id" correspondant au "name"
+* Ajoute au type "text" aux champs input sans type
 * TODO Convertit un attribut "label" en un élément html <label>
 * Ajoute automatiquement un attribut "for" à l'élément <label>
 * TODO Ajoute automatiquement un <div> englobant l'élément et son label

@@ -109,9 +109,23 @@ class Parser
      */
     protected function modifyDom(\DOMDocument $dom) : void
     {
+        $this->addTypeToInput($dom);
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
         $this->addForInLabelNodes($dom);
+    }
+    
+    /**
+     * Add a "type=text" attribute input without "type" attribute
+     * @param \DOMDocument $dom
+     */
+    protected function addTypeToInput(\DOMDocument $dom) : void
+    {
+        $this->walkElements($dom, function (\DOMElement $node) {
+            if ($node->nodeName === 'input' && !$node->hasAttribute('type')) {
+                $node->setAttribute('type', 'text');
+            }
+        });
     }
     
     /**

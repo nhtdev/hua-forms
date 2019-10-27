@@ -54,6 +54,24 @@ class Facade
     }
     
     /**
+     * Return the form renderer object
+     * @return \HuaForms\Renderer
+     */
+    public function renderer() : \HuaForms\Renderer
+    {
+        return $this->renderer;
+    }
+    
+    /**
+     * Return the form handler object
+     * @return \HuaForms\Handler
+     */
+    public function handler() : \HuaForms\Handler
+    {
+        return $this->handler;
+    }
+    
+    /**
      * Parse the given form (if needed) and generate the Handler and Renderer objects
      * @param string $formName
      */
@@ -69,6 +87,11 @@ class Facade
         $srcFile = $srcPath . $formName . '.' . $srcExtension;
         $tplFile = $builtPath . $formName . '.' . $builtTplExtension;
         $jsonFile = $builtPath . $formName . '.' . $builtJsonExtension;
+        
+        if (!file_exists($srcFile)) {
+            throw new \RuntimeException('Form not found: '.$formName);
+        }
+        
         $srcTime = filemtime($srcFile);
         if (!$this->options['cache'] 
             || !file_exists($tplFile) 
