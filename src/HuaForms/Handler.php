@@ -198,9 +198,9 @@ class Handler
         $this->validationResult = true;
         $this->validationMsg = [];
         
-        
         // CSRF validation
         $rawData = $this->getRawData();
+        
         if (!isset($rawData[$this->csrfKey]) || $rawData[$this->csrfKey] !== $this->csrfValue) {
             $this->validationResult = false;
             $stdError = new StandardError();
