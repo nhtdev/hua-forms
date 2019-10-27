@@ -679,7 +679,7 @@ class Parser
             '<?php \\1 ?>',
             $html);
         $html = preg_replace(
-            '/'.preg_quote(self::PHP_CODE.'="').'(.*)'.preg_quote('"').'/U',
+            '/ ?'.preg_quote(self::PHP_CODE.'="').'(.*)'.preg_quote('"').'/U',
             '<?php \\1 ?>',
             $html);
         $html = preg_replace('/<\?php (.*)\$this-&gt;(.*)\?>/U', '<?php \\1$this->\\2 ?>', $html);

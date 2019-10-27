@@ -153,7 +153,7 @@ class Renderer
     public function attr(string $attrName, string $name, $value) : string
     {
         if ($this->hasValue($name, $value)) {
-            return ' '.$attrName.' ';
+            return ' '.$attrName;
         } else {
             return '';
         }
