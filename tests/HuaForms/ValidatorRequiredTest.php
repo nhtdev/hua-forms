@@ -30,6 +30,8 @@ HTML;
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'Value1', 'field2' => 'b'], $form->exportValues());
+        $this->assertEquals([['type' => 'required']],
+            $form->getDescription()['fields'][0]['rules']);
         
         // Test de rendu du formulaire
         

@@ -26,6 +26,8 @@ HTML;
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '123456789012345'], $form->exportValues());
+        $this->assertEquals([['type' => 'maxlength', 'maxlength' => 15]],
+            $form->getDescription()['fields'][0]['rules']);
     }
     
     /**
@@ -35,7 +37,7 @@ HTML;
     {
         $html = <<<HTML
 <form method="post" action="">
-    <input type="text" name="field1" maxlength="15"/>
+    <input type="text" name="field1" maxlength="15" maxlength-message="Too long"/>
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
@@ -46,9 +48,11 @@ HTML;
         $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
-            'field1' => [': maximum 15 characters']
+            'field1' => ['Too long']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
+        $this->assertEquals([['type' => 'maxlength', 'maxlength' => 15, 'message' => 'Too long']],
+            $form->getDescription()['fields'][0]['rules']);
     }
     
     /**
