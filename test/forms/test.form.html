@@ -3,22 +3,27 @@
 	<div form-errors class="alert"></div>
 	
 	<div>
-		<label>Le Nom</label>
+		<label>Champ texte</label>
 		<input type="text" name="name" required maxlength="60" trim required-message="N'oubliez pas le nom" maxlength-message="Trop long">
 	</div>
 	
 	<div>
-		<label>Gender</label>
+		<label>Champ liste</label>
 		<select name="gender" required>
 			<option value="" selected>- Aucune sélection -</option>
-			<option value="M">Homme</option>
-			<option value="F">Femme</option>
+			<option value="1">Option 1</option>
+			<option value="2">Option 1</option>
 		</select>
 	</div>
 	
 	<div>
-		<label>Saisir O ou N</label>
+		<label>Champ texte - Saisir O ou N</label>
 		<input type="text" name="choix" inarray="O,N" inarray-message="Valeur pas correcte" />
+	</div>
+	
+	<div>
+		<label>Texte multiligne</label>
+		<textarea name="field-textarea">...</textarea>
 	</div>
 	
 	<button type="submit" name="ok">OK</button>

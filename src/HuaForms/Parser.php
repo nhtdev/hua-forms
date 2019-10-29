@@ -409,7 +409,7 @@ class Parser
         $name = $node->getAttribute('name');
         
         // Check type
-        if (!in_array($type, ['text', 'select'])) {
+        if (!in_array($type, ['text', 'select', 'textarea'])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
         }
@@ -594,6 +594,12 @@ class Parser
                 $name = $node->getAttribute('name');
                 $phpCode = 'echo htmlentities($this->getValue('.$this->quotePhpVar($name).'));';
                 $node->setAttribute('value', self::PHP_CODE.'="'.$phpCode.'"');
+            }
+            if ($node->nodeName === 'textarea' && $node->hasAttribute('name')) {
+                $name = $node->getAttribute('name');
+                $phpCode = 'echo htmlentities($this->getValue('.$this->quotePhpVar($name).'));';
+                $nodeText = $node->ownerDocument->createTextNode(self::PHP_CODE.'="'.$phpCode.'"');
+                $node->appendChild($nodeText);
             }
         });
     }

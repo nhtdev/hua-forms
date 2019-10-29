@@ -55,6 +55,12 @@ if ($form->isSubmitted() && $form->validate()) {
 
 ## Types des champs
 
+* <input type="text" />
+* <textarea>
+* <select>
+* <input type="email" /> TODO
+
+
 ## Attributs
 
 ### Règles de validation
@@ -64,6 +70,7 @@ Nom de l'attribut | Type | Description
 required | tag | Champ obligatoire
 maxlength | int | Taille maximale d'un champ texte
 inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
+email TODO | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
 
 Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur
 en remplacement du message standard.
