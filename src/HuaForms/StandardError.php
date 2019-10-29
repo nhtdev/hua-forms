@@ -17,6 +17,7 @@ class StandardError
         'required'      => '{label}: field is required',
         'maxlength'     => '{label}: maximum {maxlength} characters',
         'inarray'       => '{label}: value is not in the authorized values list ({values})',
+        'email'         => '{label}: invalid email'
     ];
     
     /**

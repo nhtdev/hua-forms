@@ -91,4 +91,22 @@ class Validator
         }
     }
     
+    /**
+     * Email : the string value must be a valid email
+     * @param array $rule Not used
+     * @param mixed $value Field value
+     * @return bool True if value is valid, false otherwise
+     */
+    public function validateEmail(array $rule, $value) : bool
+    {
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException('Rule email : value must be a string');
+        }
+        if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
 }

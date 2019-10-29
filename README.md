@@ -55,11 +55,25 @@ if ($form->isSubmitted() && $form->validate()) {
 
 ## Types des champs
 
-* <input type="text" />
-* <textarea>
-* <select>
-* <input type="email" /> TODO
-
+```
+<input type="text" />
+<textarea>
+<select>
+<input type="email" />
+<input type="url" /> TODO
+<input type="tel" /> TODO
+<input type="number" /> TODO
+<input type="range" /> TODO
+<input type="color" /> TODO
+<input type="date" /> TODO
+<input type="search" /> TODO
+<input type="checkbox" /> TODO
+<input type="radio" /> TODO
+<button />
+<button type="submit">
+<select presentation="radio">
+<select presentation="checkbox" multiple>
+```
 
 ## Attributs
 
@@ -69,8 +83,12 @@ Nom de l'attribut | Type | Description
 --- | --- | ---
 required | tag | Champ obligatoire
 maxlength | int | Taille maximale d'un champ texte
+minlength TODO | int | Taille maximale d'un champ texte
+maxoptions TODO | int | Nombre maximal d'options pour un champ select multiple
+minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
 inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
-email TODO | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
+email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
+regex TODO | string | Le champ texte doit valider une expression régulière
 
 Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur
 en remplacement du message standard.
@@ -80,6 +98,9 @@ en remplacement du message standard.
 Nom de l'attribut | Type | Description
 --- | --- | ---
 trim | tag | Supprimer les espaces en début et fin d'un champ texte
+uppercase | tag | Texte mis en majuscules TODO
+lowercase | tag | Texte mis en majuscules TODO
+capitalize | tag | Première lettre de chaque mot mise en majuscules TODO
 
 ## Options de configuration
 
