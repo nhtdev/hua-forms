@@ -25,7 +25,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'b'], $form->exportValues());
@@ -52,7 +51,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value is not in the authorized values list (a, b)']
@@ -80,7 +78,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'Option B'], $form->exportValues());
@@ -106,7 +103,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value is not in the authorized values list (Option A, Option B)']
@@ -134,7 +130,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => ['a', 'b']], $form->exportValues());
@@ -160,7 +155,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value is not in the authorized values list (a, b)']
@@ -185,7 +179,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'O'], $form->exportValues());
@@ -208,7 +201,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => ['Valeur incorrecte']

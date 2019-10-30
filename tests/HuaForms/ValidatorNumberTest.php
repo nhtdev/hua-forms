@@ -22,7 +22,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '314'], $form->exportValues());
@@ -47,7 +46,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value is not a valid number']
@@ -72,7 +70,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '14'], $form->exportValues());
@@ -97,7 +94,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value must be greater than or equal to 10']
@@ -123,7 +119,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value must be less than or equal to 20']
@@ -149,7 +144,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => -1], $form->exportValues());
@@ -174,7 +168,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value must be greater than or equal to 0']
@@ -200,7 +193,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 3.14], $form->exportValues());
@@ -225,7 +217,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value is not allowed']
@@ -251,7 +242,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 2985], $form->exportValues());
@@ -276,7 +266,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value is not allowed']
@@ -302,7 +291,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), true);
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => -3.14], $form->exportValues());
@@ -327,7 +315,6 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
         $this->assertEquals($form->validate(), false);
         $this->assertEquals([
             'field1' => [': value is not allowed']
