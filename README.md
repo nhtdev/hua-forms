@@ -91,8 +91,10 @@ inarray | string | Liste des valeurs acceptées, séparées par des virgules. D�
 email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
 url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments <input type="url"/>
 regex TODO | string | Le champ texte doit valider une expression régulière
-
-Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur
+number | tag | Le champ doit contenir un nombre. Défini automatiquement pour les éléments <input type="number"/>
+number/min | number | Le champ doit contenir un nombre de valeur supérieure ou égale au nombre spécifié
+number/max | number | Le champ doit contenir un nombre de valeur inférieure ou égale au nombre spécifié
+number/step | number | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur
 en remplacement du message standard.
 
 ### Formateurs de contenu
@@ -103,6 +105,7 @@ trim | tag | Supprimer les espaces en début et fin d'un champ texte
 uppercase | tag | Texte mis en majuscules TODO
 lowercase | tag | Texte mis en majuscules TODO
 capitalize | tag | Première lettre de chaque mot mise en majuscules TODO
+number | tag | La valeur sera convertie en type numérique (int ou float)
 
 ## Options de configuration
 

@@ -43,4 +43,27 @@ class Formatter
         return trim($value);
     }
     
+    /**
+     * Number : cast value to int or float if value is a valid number
+     * @param array $format Formatter options
+     * @param mixed $value Initial value
+     * @throws \InvalidArgumentException
+     * @return mixed Modified value
+     */
+    public function formatNumber(array $format, $value)
+    {
+        if (is_array($value)) {
+            throw new \InvalidArgumentException('Format number : value cannot be an array');
+        }
+        if (is_numeric($value)) {
+            if (strpos($value, '.') === false) {
+                return (int) $value;
+            } else {
+                return (float) $value;
+            }
+        } else {
+            return $value;
+        }
+    }
+    
 }

@@ -14,9 +14,9 @@ class Validator
      * @param array $rule Rule type and options
      * @param mixed $value Field value
      * @throws \InvalidArgumentException
-     * @return bool True if value is valid, false otherwise
+     * @return mixed True if value is valid, false or string otherwise
      */
-    public function validate(array $rule, $value) : bool
+    public function validate(array $rule, $value)
     {
         if (empty($rule['type'])) {
             throw new \InvalidArgumentException('Rule type is empty');
@@ -93,7 +93,7 @@ class Validator
     
     /**
      * Email : the string value must be a valid email
-     * @param array $rule Not used
+     * @param array $rule Rule options (min, max, step)
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
@@ -121,6 +121,55 @@ class Validator
             throw new \InvalidArgumentException('Rule url : value must be a string');
         }
         if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Number : the string value must be a valid number
+     * @param array $rule Not used
+     * @param mixed $value Field value
+     * @return mixed True if value is valid, false or string otherwise
+     */
+    public function validateNumber(array $rule, $value)
+    {
+        if (is_array($value)) {
+            throw new \InvalidArgumentException('Rule number : value cannot be an array');
+        }
+        if (is_numeric($value)) {
+            if (isset($rule['min'])) {
+                if ($value < $rule['min']) {
+                    return 'min'; // Erreur
+                }
+            }
+            if (isset($rule['max'])) {
+                if ($value > $rule['max']) {
+                    return 'max'; // Erreur
+                }
+            }
+            if (isset($rule['step'])) {
+                $step = $rule['step'];
+            } else {
+                $step = 1;
+            }
+            if ($step !== 'any' && $step > 0) {
+                if (isset($rule['min'])) {
+                    $min = $rule['min'];
+                } else {
+                    $min = 0;
+                }
+                $valtmp = $value - $min;
+                if (is_float($valtmp) || is_float($step)) {
+                    $rest = fmod($valtmp, $step);
+                } else {
+                    $rest = $valtmp % $step;
+                }
+                if ($rest > 0.0000000001) { // Pour les erreurs d'arrondi PHP
+                    return 'step'; // Erreur
+                }
+            }
             return true;
         } else {
             return false;

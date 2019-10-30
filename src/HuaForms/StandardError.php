@@ -18,7 +18,11 @@ class StandardError
         'maxlength'     => '{label}: maximum {maxlength} characters',
         'inarray'       => '{label}: value is not in the authorized values list ({values})',
         'email'         => '{label}: invalid email',
-        'url'           => '{label}: invalid url'
+        'url'           => '{label}: invalid url',
+        'number'        => '{label}: value is not a valid number',
+        'number-min'    => '{label}: value must be greater than or equal to {min}',
+        'number-max'    => '{label}: value must be less than or equal to {max}',
+        'number-step'   => '{label}: value is not allowed',
     ];
     
     /**

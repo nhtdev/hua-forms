@@ -409,7 +409,7 @@ class Parser
         $name = $node->getAttribute('name');
         
         // Check type
-        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url'])) {
+        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number'])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
         }
@@ -464,6 +464,12 @@ class Parser
             ];
             $node->removeAttribute('trim');
         }
+        if ($node->hasAttribute('number') || $type === 'number') {
+            $formatters[] = [
+                'type' => 'number'
+            ];
+            // Do not remove attribute yet, it will be used in buildJsonRules
+        }
         return $formatters;
     }
     
@@ -497,16 +503,58 @@ class Parser
             $node->removeAttribute('inarray');
         }
         
-        if ($node->hasAttribute('email') ||$type === 'email') {
+        if ($node->hasAttribute('email') || $type === 'email') {
             $rule = ['type' => 'email'];
             $rules[] = $rule;
-            // Keep required attribute in html
+            if ($node->hasAttribute('email')) {
+                $node->removeAttribute('email');
+            }
         }
         
-        if ($node->hasAttribute('url') ||$type === 'url') {
+        if ($node->hasAttribute('url') || $type === 'url') {
             $rule = ['type' => 'url'];
             $rules[] = $rule;
-            // Keep required attribute in html
+            if ($node->hasAttribute('url')) {
+                $node->removeAttribute('url');
+            }
+        }
+        
+        if ($node->hasAttribute('number') || $type === 'number') {
+            $rule = ['type' => 'number'];
+            if ($node->hasAttribute('min')) {
+                $rule['min'] = $node->getAttribute('min');
+            }
+            if ($node->hasAttribute('max')) {
+                $rule['max'] = $node->getAttribute('max');
+            }
+            if ($node->hasAttribute('step')) {
+                $rule['step'] = $node->getAttribute('step');
+            }
+            $rules[] = $rule;
+            if ($node->hasAttribute('number')) {
+                $node->removeAttribute('number');
+                if ($node->hasAttribute('min')) {
+                    $node->removeAttribute('min');
+                    if ($node->hasAttribute('message-min')) {
+                        $rule['message-min'] = $node->getAttribute('message-min');
+                        $node->removeAttribute('message-min');
+                    }
+                }
+                if ($node->hasAttribute('max')) {
+                    $node->removeAttribute('max');
+                    if ($node->hasAttribute('message-max')) {
+                        $rule['message-max'] = $node->getAttribute('message-max');
+                        $node->removeAttribute('message-max');
+                    }
+                }
+                if ($node->hasAttribute('step')) {
+                    $node->removeAttribute('step');
+                    if ($node->hasAttribute('message-step')) {
+                        $rule['message-step'] = $node->getAttribute('message-step');
+                        $node->removeAttribute('message-step');
+                    }
+                }
+            }
         }
         
         if ($node->nodeName === 'select') {

@@ -216,9 +216,15 @@ class Handler
             if (isset($field['rules'])) {
                 foreach ($field['rules'] as $rule) {
                     if ($rule['type'] === 'required' || !empty($value) || $value === '0') { // Ignore rule if field is empty
-                        if (!$validator->validate($rule, $value)) {
+                        $result = $validator->validate($rule, $value);
+                        if ($result === true) {
+                            // OK
+                        } else if ($result === false) {
                             $this->validationResult = false;
                             $this->validationMsg[$name][] = $this->validationErrorMessage($field, $rule);
+                        } else {
+                            $this->validationResult = false;
+                            $this->validationMsg[$name][] = $this->validationErrorMessage($field, $rule, $result);
                         }
                     }
                 }
@@ -232,28 +238,40 @@ class Handler
      * Generate the error message for a given field and validation rule
      * @param array $field Field description
      * @param array $rule Rule description
+     * @param string $validationResult Validation result (for validators returning various error messages)
      * @return string Error message
      */
-    protected function validationErrorMessage(array $field, array $rule) : string
+    protected function validationErrorMessage(array $field, array $rule, string $validationResult=null) : string
     {
-        if (isset($rule['message'])) {
-            return $rule['message'];
-        } else {
-            $stdError = new StandardError();
-            $msg = $stdError->get($rule['type']);
-            $replace = $rule;
-            $replace['label'] = $field['label'];
-            foreach ($replace as $key => $value) {
-                $replaceTag = '{'.$key.'}';
-                if (strpos($msg, $replaceTag) !== false) {
-                    if (is_array($value)) {
-                        $value = implode(', ', $value);
-                    }
-                    $msg = str_replace($replaceTag, $value, $msg);
-                }
+        if ($validationResult === null) {
+            if (isset($rule['message'])) {
+                return $rule['message'];
             }
-            return $msg;
+        } else {
+            if (isset($rule['message-'.$validationResult])) {
+                return $rule['message-'.$validationResult];
+            }
         }
+        $stdError = new StandardError();
+        if ($validationResult === null) {
+            $stdMessageType = $rule['type'];
+        } else {
+            $stdMessageType = $rule['type'].'-'.$validationResult;
+        }
+            
+        $msg = $stdError->get($stdMessageType);
+        $replace = $rule;
+        $replace['label'] = $field['label'];
+        foreach ($replace as $key => $value) {
+            $replaceTag = '{'.$key.'}';
+            if (strpos($msg, $replaceTag) !== false) {
+                if (is_array($value)) {
+                    $value = implode(', ', $value);
+                }
+                $msg = str_replace($replaceTag, $value, $msg);
+            }
+        }
+        return $msg;
     }
     
     /**
