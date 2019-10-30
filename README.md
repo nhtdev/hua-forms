@@ -60,7 +60,7 @@ if ($form->isSubmitted() && $form->validate()) {
 <textarea>
 <select>
 <input type="email" />
-<input type="url" /> TODO
+<input type="url" />
 <input type="tel" /> TODO
 <input type="number" /> TODO
 <input type="range" /> TODO
@@ -69,6 +69,7 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="search" /> TODO
 <input type="checkbox" /> TODO
 <input type="radio" /> TODO
+<input type="password" /> TODO
 <button />
 <button type="submit">
 <select presentation="radio">
@@ -88,6 +89,7 @@ maxoptions TODO | int | Nombre maximal d'options pour un champ select multiple
 minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
 inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
 email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
+url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments <input type="url"/>
 regex TODO | string | Le champ texte doit valider une expression régulière
 
 Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur

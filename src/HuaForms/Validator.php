@@ -109,4 +109,22 @@ class Validator
         }
     }
     
+    /**
+     * Url : the string value must be a valid url
+     * @param array $rule Not used
+     * @param mixed $value Field value
+     * @return bool True if value is valid, false otherwise
+     */
+    public function validateUrl(array $rule, $value) : bool
+    {
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException('Rule url : value must be a string');
+        }
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
 }

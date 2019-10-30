@@ -409,7 +409,7 @@ class Parser
         $name = $node->getAttribute('name');
         
         // Check type
-        if (!in_array($type, ['text', 'select', 'textarea', 'email'])) {
+        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url'])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
         }
@@ -499,6 +499,12 @@ class Parser
         
         if ($node->hasAttribute('email') ||$type === 'email') {
             $rule = ['type' => 'email'];
+            $rules[] = $rule;
+            // Keep required attribute in html
+        }
+        
+        if ($node->hasAttribute('url') ||$type === 'url') {
+            $rule = ['type' => 'url'];
             $rules[] = $rule;
             // Keep required attribute in html
         }
