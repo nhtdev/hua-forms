@@ -22,7 +22,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'https://www.domain.fr/test.php'], $form->exportValues());
         $this->assertEquals([['type' => 'url']], 
@@ -45,7 +45,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': invalid url']
         ], $form->handler()->getErrorMessages());
@@ -69,7 +69,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'https://www.domain.fr/test.php'], $form->exportValues());
         $this->assertEquals([['type' => 'url']],
@@ -92,7 +92,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': invalid url']
         ], $form->handler()->getErrorMessages());

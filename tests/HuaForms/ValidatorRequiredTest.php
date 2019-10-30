@@ -26,8 +26,8 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->isSubmitted());
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'Value1', 'field2' => 'b'], $form->exportValues());
         $this->assertEquals([['type' => 'required']],
@@ -68,8 +68,8 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
-        $this->assertEquals($form->validate(), false);
+        $this->assertTrue($form->isSubmitted());
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': field is required'],
             'field2' => ['Field 2 mandatory']

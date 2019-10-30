@@ -22,7 +22,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '123456789012345'], $form->exportValues());
         $this->assertEquals([['type' => 'maxlength', 'maxlength' => 15]],
@@ -44,7 +44,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => ['Too long']
         ], $form->handler()->getErrorMessages());

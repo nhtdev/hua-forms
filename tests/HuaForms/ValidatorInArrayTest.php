@@ -25,7 +25,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'b'], $form->exportValues());
         $this->assertEquals([['type' => 'inarray', 'values' => ['a', 'b']]], 
@@ -51,7 +51,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value is not in the authorized values list (a, b)']
         ], $form->handler()->getErrorMessages());
@@ -78,7 +78,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'Option B'], $form->exportValues());
         $this->assertEquals([['type' => 'inarray', 'values' => ['Option A', 'Option B']]], 
@@ -103,7 +103,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value is not in the authorized values list (Option A, Option B)']
         ], $form->handler()->getErrorMessages());
@@ -130,7 +130,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => ['a', 'b']], $form->exportValues());
         $this->assertEquals([['type' => 'inarray', 'values' => ['a', 'b']]],
@@ -155,7 +155,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value is not in the authorized values list (a, b)']
         ], $form->handler()->getErrorMessages());
@@ -179,7 +179,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'O'], $form->exportValues());
         $this->assertEquals([['type' => 'inarray', 'values' => ['O', 'N'], 'message' => 'Valeur incorrecte']],
@@ -201,7 +201,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => ['Valeur incorrecte']
         ], $form->handler()->getErrorMessages());

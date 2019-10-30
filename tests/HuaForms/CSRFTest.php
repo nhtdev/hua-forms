@@ -22,8 +22,8 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->isSubmitted());
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'Value1'], $form->exportValues());
         
@@ -44,8 +44,8 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
-        $this->assertEquals($form->validate(), false);
+        $this->assertTrue($form->isSubmitted());
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             '' => ['Invalid CSRF token'],
         ], $form->handler()->getErrorMessages());

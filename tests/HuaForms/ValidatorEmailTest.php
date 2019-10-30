@@ -22,7 +22,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'test@gmail.com'], $form->exportValues());
         $this->assertEquals([['type' => 'email']], 
@@ -45,7 +45,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': invalid email']
         ], $form->handler()->getErrorMessages());
@@ -69,7 +69,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'test@gmail.com'], $form->exportValues());
         $this->assertEquals([['type' => 'email']],
@@ -92,7 +92,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': invalid email']
         ], $form->handler()->getErrorMessages());

@@ -22,8 +22,8 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->isSubmitted(), true);
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->isSubmitted());
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => "Line1\nLine2\n<x>"], $form->exportValues());
         

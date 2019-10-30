@@ -22,7 +22,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '314'], $form->exportValues());
         $this->assertIsInt($form->exportValues()['field1']);
@@ -46,7 +46,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value is not a valid number']
         ], $form->handler()->getErrorMessages());
@@ -70,7 +70,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '14'], $form->exportValues());
         $this->assertIsInt($form->exportValues()['field1']);
@@ -94,7 +94,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value must be greater than or equal to 10']
         ], $form->handler()->getErrorMessages());
@@ -119,7 +119,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value must be less than or equal to 20']
         ], $form->handler()->getErrorMessages());
@@ -144,7 +144,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => -1], $form->exportValues());
         $this->assertIsInt($form->exportValues()['field1']);
@@ -168,7 +168,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value must be greater than or equal to 0']
         ], $form->handler()->getErrorMessages());
@@ -193,7 +193,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 3.14], $form->exportValues());
         $this->assertIsFloat($form->exportValues()['field1']);
@@ -217,7 +217,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value is not allowed']
         ], $form->handler()->getErrorMessages());
@@ -242,7 +242,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 2985], $form->exportValues());
         $this->assertIsInt($form->exportValues()['field1']);
@@ -266,7 +266,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value is not allowed']
         ], $form->handler()->getErrorMessages());
@@ -291,7 +291,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), true);
+        $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => -3.14], $form->exportValues());
         $this->assertIsFloat($form->exportValues()['field1']);
@@ -315,7 +315,7 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertEquals($form->validate(), false);
+        $this->assertFalse($form->validate());
         $this->assertEquals([
             'field1' => [': value is not allowed']
         ], $form->handler()->getErrorMessages());
