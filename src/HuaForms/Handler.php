@@ -243,23 +243,29 @@ class Handler
      */
     protected function validationErrorMessage(array $field, array $rule, string $validationResult=null) : string
     {
+        $msg = null;
+        
         if ($validationResult === null) {
             if (isset($rule['message'])) {
-                return $rule['message'];
+                $msg = $rule['message'];
             }
         } else {
-            if (isset($rule['message-'.$validationResult])) {
-                return $rule['message-'.$validationResult];
+            if (isset($rule[$validationResult.'-message'])) {
+                $msg = $rule[$validationResult.'-message'];
             }
         }
-        $stdError = new StandardError();
-        if ($validationResult === null) {
-            $stdMessageType = $rule['type'];
-        } else {
-            $stdMessageType = $rule['type'].'-'.$validationResult;
+        
+        if ($msg === null) {
+            $stdError = new StandardError();
+            if ($validationResult === null) {
+                $stdMessageType = $rule['type'];
+            } else {
+                $stdMessageType = $rule['type'].'-'.$validationResult;
+            }
+                
+            $msg = $stdError->get($stdMessageType);
         }
-            
-        $msg = $stdError->get($stdMessageType);
+        
         $replace = $rule;
         $replace['label'] = $field['label'];
         foreach ($replace as $key => $value) {

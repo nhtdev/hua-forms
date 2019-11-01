@@ -530,31 +530,32 @@ class Parser
             if ($node->hasAttribute('step')) {
                 $rule['step'] = $node->getAttribute('step');
             }
-            $rules[] = $rule;
             if ($node->hasAttribute('number')) {
                 $node->removeAttribute('number');
-                if ($node->hasAttribute('min')) {
-                    $node->removeAttribute('min');
-                    if ($node->hasAttribute('message-min')) {
-                        $rule['message-min'] = $node->getAttribute('message-min');
-                        $node->removeAttribute('message-min');
-                    }
-                }
-                if ($node->hasAttribute('max')) {
-                    $node->removeAttribute('max');
-                    if ($node->hasAttribute('message-max')) {
-                        $rule['message-max'] = $node->getAttribute('message-max');
-                        $node->removeAttribute('message-max');
-                    }
-                }
-                if ($node->hasAttribute('step')) {
-                    $node->removeAttribute('step');
-                    if ($node->hasAttribute('message-step')) {
-                        $rule['message-step'] = $node->getAttribute('message-step');
-                        $node->removeAttribute('message-step');
-                    }
+            }
+            if ($node->hasAttribute('min')) {
+                $node->removeAttribute('min');
+                if ($node->hasAttribute('min-message')) {
+                    $rule['min-message'] = $node->getAttribute('min-message');
+                    $node->removeAttribute('min-message');
                 }
             }
+            if ($node->hasAttribute('max')) {
+                $node->removeAttribute('max');
+                if ($node->hasAttribute('max-message')) {
+                    $rule['max-message'] = $node->getAttribute('max-message');
+                    $node->removeAttribute('max-message');
+                }
+            }
+            if ($node->hasAttribute('step')) {
+                $node->removeAttribute('step');
+                if ($node->hasAttribute('step-message')) {
+                    $rule['step-message'] = $node->getAttribute('step-message');
+                    $node->removeAttribute('step-message');
+                }
+            }
+            
+            $rules[] = $rule;
         }
         
         if ($node->nodeName === 'select') {

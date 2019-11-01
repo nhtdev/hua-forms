@@ -56,6 +56,30 @@ HTML;
     }
     
     /**
+     * Champ number Erreur custom
+     */
+    public function testNumberErrorCustom() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="number" name="field1" number-message="Nombre invalide" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => 'test'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'field1' => ['Nombre invalide']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals([['type' => 'number', 'message' => 'Nombre invalide']],
+            $form->getDescription()['fields'][0]['rules']);
+    }
+    
+    /**
      * Champ number + min OK
      */
     public function testNumberMinOk() : void
@@ -105,6 +129,31 @@ HTML;
     }
     
     /**
+     * Champ number + min Error
+     */
+    public function testNumberMinErrorCustom() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="number" name="field1" min="10" max="20" min-message="Doit être supérieur ou égal à {min}" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '4'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'field1' => ['Doit être supérieur ou égal à 10']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals([['type' => 'number', 'min' => 10, 'max' => 20, 'min-message' => 'Doit être supérieur ou égal à {min}']],
+            $form->getDescription()['fields'][0]['rules']);
+        
+    }
+    
+    /**
      * Champ number + max Error
      */
     public function testNumberMaxError() : void
@@ -125,6 +174,31 @@ HTML;
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
         $this->assertEquals([['type' => 'number', 'min' => 10, 'max' => 20]],
+            $form->getDescription()['fields'][0]['rules']);
+        
+    }
+    
+    /**
+     * Champ number + max Error
+     */
+    public function testNumberMaxErrorCustom() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="number" name="field1" min="10" max="20" max-message="Doit être inférieur ou égal à {max}" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '24'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'field1' => ['Doit être inférieur ou égal à 20']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals([['type' => 'number', 'min' => 10, 'max' => 20, 'max-message' => 'Doit être inférieur ou égal à {max}']],
             $form->getDescription()['fields'][0]['rules']);
         
     }
@@ -321,6 +395,30 @@ HTML;
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
         $this->assertEquals([['type' => 'number', 'step' => 0.01]],
+            $form->getDescription()['fields'][0]['rules']);
+        
+    }
+    
+    /**
+     * Champ number step="0.01" Error
+     */
+    public function testNumberSmallStepErrorCustom() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="number" name="field1" step="0.01" step-message="Maximum 2 chiffres après la virgule" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '3.141'];
+        
+        $form = $this->buildTestForm($html);
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'field1' => ['Maximum 2 chiffres après la virgule']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals([['type' => 'number', 'step' => 0.01, 'step-message' => 'Maximum 2 chiffres après la virgule']],
             $form->getDescription()['fields'][0]['rules']);
         
     }
