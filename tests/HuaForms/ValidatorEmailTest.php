@@ -52,6 +52,17 @@ HTML;
         $this->assertEmpty($form->exportValues());
         $this->assertEquals([['type' => 'email']], 
             $form->getDescription()['fields'][0]['rules']);
+        
+        // Test de rendu du formulaire
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+<div>: invalid email</div>    <input type="text" name="field1" id="field1" value="testemailhs"/>
+    <button type="submit" name="ok" id="ok">OK</button>
+</form>
+HTML;
+        $this->assertSame($expected, $form->render());
     }
     
     /**

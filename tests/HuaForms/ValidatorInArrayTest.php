@@ -165,7 +165,7 @@ HTML;
     }
     
     /**
-     * Champ select : inarray sur un champ texte
+     * inarray sur un champ texte
      */
     public function testInArrayTextField() : void
     {
@@ -184,6 +184,17 @@ HTML;
         $this->assertEquals(['field1' => 'O'], $form->exportValues());
         $this->assertEquals([['type' => 'inarray', 'values' => ['O', 'N'], 'message' => 'Valeur incorrecte']],
             $form->getDescription()['fields'][0]['rules']);
+        
+        // Test de rendu du formulaire
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <input name="field1" type="text" id="field1" value="O"/>
+    <button type="submit" name="ok" id="ok">OK</button>
+</form>
+HTML;
+        $this->assertSame($expected, $form->render());
     }
     
     /**

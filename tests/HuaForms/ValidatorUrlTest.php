@@ -28,6 +28,16 @@ HTML;
         $this->assertEquals([['type' => 'url']], 
             $form->getDescription()['fields'][0]['rules']);
         
+        // Test de rendu du formulaire
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <input type="text" name="field1" id="field1" value="https://www.domain.fr/test.php"/>
+    <button type="submit" name="ok" id="ok">OK</button>
+</form>
+HTML;
+        $this->assertSame($expected, $form->render());
     }
     
     /**

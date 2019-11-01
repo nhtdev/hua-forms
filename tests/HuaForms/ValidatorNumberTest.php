@@ -423,4 +423,39 @@ HTML;
         
     }
     
+    /**
+     * Champ texte avec attribut number
+     */
+    public function testTextNumberError() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="text" name="field1" number min="5" max="10" step="2" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '6'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'field1' => [': value is not allowed']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals([['type' => 'number', 'min' => 5, 'max' => 10, 'step' => 2]],
+            $form->getDescription()['fields'][0]['rules']);
+        
+        // Test de rendu du formulaire
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+<div>: value is not allowed</div>    <input type="text" name="field1" id="field1" value="6"/>
+    <button type="submit" name="ok" id="ok">OK</button>
+</form>
+HTML;
+        $this->assertSame($expected, $form->render());
+    }
+    
 }
