@@ -281,6 +281,23 @@ class Handler
     }
     
     /**
+     * Return the form default values
+     * @return array
+     */
+    public function getDefaultValues() : array
+    {
+        $result = [];
+        foreach ($this->conf['fields'] as $field) {
+            $name = $field['name'];
+            $value = $field['value'];
+            if ($value !== null) {
+                $result[$name] = $field['value'];
+            }
+        }
+        return $result;
+    }
+    
+    /**
      * Return the validation errors - array('field_name' => ['Error msg 1', 'Error msg 2', ...], ...)
      * The "isValid" method must be called before "getErrorMessages"
      * @return array

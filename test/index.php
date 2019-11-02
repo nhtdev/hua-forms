@@ -7,7 +7,7 @@ require __DIR__ . '/../vendor/autoload.php';
 \HuaForms\Factory::setOptions(['formPath' => 'forms/', 'cache' => false]);
 $form = \HuaForms\Factory::form('test');
 
-$form->setDefaults(['name' => 'Huguet', 'gender' => 'M']);
+//$form->setDefaults(['name' => 'Your name', 'gender' => 'M']);
 
 $ok = false;
 if ($form->isSubmitted() && $form->validate()) {

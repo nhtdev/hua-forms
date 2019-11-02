@@ -104,6 +104,7 @@ class Facade
         
         $this->handler = new Handler($jsonFile);
         $this->renderer = new Renderer($tplFile);
+        $this->renderer->setValues($this->handler->getDefaultValues());
     }
     
     /**

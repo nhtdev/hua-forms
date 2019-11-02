@@ -67,8 +67,8 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="color" /> TODO
 <input type="date" /> TODO
 <input type="search" /> TODO
-<input type="checkbox" /> TODO
-<input type="radio" /> TODO
+<input type="checkbox" /> TODO + gérer valeur par défaut
+<input type="radio" /> TODO + gérer valeur par défaut
 <input type="password" /> TODO
 <button />
 <button type="submit">

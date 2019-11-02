@@ -50,14 +50,14 @@ class Renderer
             throw new \RuntimeException('File not found: '.$file);
         }
     }
-
+    
     /**
      * Set the form values
      * @param array $values Form values - array ('name' => 'value')
      */
     public function setValues(array $values) : void
     {
-        $this->values = $values;
+        $this->values = array_merge($this->values, $values);
     }
     
     /**

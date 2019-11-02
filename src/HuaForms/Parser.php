@@ -428,14 +428,55 @@ class Parser
         // Rules
         $rules = $this->buildJsonRules($type, $node);
         
+        // Default value
+        $value = null;
+        if ($node->nodeName === 'textarea') {
+            $value = $node->textContent;
+            $node->textContent = '';
+            
+        } else if ($node->nodeName === 'select') {
+            
+            $selectedValues = [];
+            $this->walkElements($node, function (\DOMElement $element) use (&$selectedValues) {
+                if ($element->nodeName === 'option') {
+                    if ($element->hasAttribute('selected')) {
+                        if ($element->hasAttribute('value')) {
+                            $value = $element->getAttribute('value');
+                        } else {
+                            $value = trim($element->textContent);
+                        }
+                        if (!empty($value)) {
+                            $selectedValues[] = $value;
+                        }
+                        $element->removeAttribute('selected');
+                    }
+                }
+            });
+            if (isset($selectedValues[0])) {
+                if ($node->hasAttribute('multiple')) {
+                    $value = $selectedValues;
+                } else {
+                    $value = $selectedValues[0];
+                }
+            }
+            
+        } else {
+            if ($node->hasAttribute('value')) {
+                $value = $node->getAttribute('value');
+                $node->removeAttribute('value');
+            }
+        }
+        
         // Save
-        $data['fields'][] = [
+        $result = [
             'label' => $label,
             'name' => $name,
             'type' => $type,
+            'value' => $value,
             'formatters' => $formatters,
             'rules' => $rules
         ];
+        $data['fields'][] = $result;
         
     }
     
@@ -788,6 +829,7 @@ class Parser
     protected function convertToHtml5(string $html) : string
     {
         $html = str_replace('required=""', 'required', $html);
+        $html = str_replace('multiple="multiple"', 'multiple', $html);
         
         return $html;
     }
