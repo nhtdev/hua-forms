@@ -65,6 +65,27 @@ class Validator
     }
     
     /**
+     * MinLength : the string value must have at most n characters
+     * @param array $rule ['minlength' => n]
+     * @param mixed $value Field value
+     * @return bool True if value is valid, false otherwise
+     */
+    public function validateMinlength(array $rule, $value) : bool
+    {
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException('Rule minlength : value must be a string');
+        }
+        if (!isset($rule['minlength'])) {
+            throw new \InvalidArgumentException('Rule minlength : missing param "minlength"');
+        }
+        if (mb_strlen($value) < $rule['minlength']) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
      * inarray : the value(s) are limited to a given list of values
      * @param array $rule ['values' => [array of allowed values] ]
      * @param mixed $value Field value

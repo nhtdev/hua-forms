@@ -537,6 +537,13 @@ class Parser
             // Keep maxlength attribute in html
         }
         
+        if ($node->hasAttribute('minlength')) {
+            $value = (int) $node->getAttribute('minlength');
+            $rule = ['type' => 'minlength', 'minlength' => $value];
+            $rules[] = $rule;
+            // Keep minlength attribute in html
+        }
+        
         if ($node->hasAttribute('inarray')) {
             $values = explode(',', $node->getAttribute('inarray'));
             $rule = ['type' => 'inarray', 'values' => $values];

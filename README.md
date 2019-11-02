@@ -63,15 +63,24 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="url" />
 <input type="tel" /> TODO
 <input type="number" />
-<input type="range" /> TODO
+<input type="range" />
 <input type="color" /> TODO
 <input type="date" /> TODO
+<input type="time" /> TODO
+<input type="datetime" /> TODO
+<input type="datetime-local" /> TODO
+<input type="month" /> TODO
+<input type="week" /> TODO
+<input type="image" /> TODO
 <input type="search" /> TODO
+<input type="file" /> TODO
+<input type="hidden" /> TODO
 <input type="checkbox" /> TODO + gérer valeur par défaut
 <input type="radio" /> TODO + gérer valeur par défaut
 <input type="password" /> TODO
-<button />
-<button type="submit">
+<button /> ou <input type="button" />
+<button type="submit"> ou <input type="submit" />
+<button type="reset"> ou <input type="reset" />
 <select presentation="radio">
 <select presentation="checkbox" multiple>
 ```
@@ -84,7 +93,7 @@ Nom de l'attribut | Type | Description
 --- | --- | ---
 required | tag | Champ obligatoire
 maxlength | int | Taille maximale d'un champ texte
-minlength TODO | int | Taille maximale d'un champ texte
+minlength | int | Taille maximale d'un champ texte
 maxoptions TODO | int | Nombre maximal d'options pour un champ select multiple
 minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
 inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
