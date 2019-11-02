@@ -66,4 +66,21 @@ class Formatter
         }
     }
     
+    /**
+     * Checkbox : cast "on" to true, empty to false, keep array or string
+     * @param array $format Formatter options
+     * @param mixed $value Initial value
+     * @return mixed Modified value
+     */
+    public function formatCheckbox(array $format, $value)
+    {
+        if ($value === 'on') {
+            return true;
+        } else if (empty($value)) {
+            return false;
+        } else {
+            return $value;
+        }
+    }
+    
 }

@@ -178,6 +178,12 @@ class Renderer
      */
     public function attrChecked(string $name, $value) : string
     {
+        if ($value === true) {
+            $value = 'on';
+        }
+        if ($value === false) {
+            $value = '';
+        }
         return $this->attr('checked', $name, $value);
     }
     

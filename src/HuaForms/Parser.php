@@ -410,7 +410,7 @@ class Parser
         
         // Check type
         if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range', 
-            'tel', 'search', 'hidden', 'password'])) {
+            'tel', 'search', 'hidden', 'password', 'checkbox'])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
         }
@@ -460,6 +460,17 @@ class Parser
                     $value = $selectedValues[0];
                 }
             }
+            
+        } else if ($node->getAttribute('type') === 'checkbox' || $node->getAttribute('type') === 'radio') {
+            if ($node->hasAttribute('checked')) {
+                if ($node->hasAttribute('value')) {
+                    $value = $node->getAttribute('value');
+                } else {
+                    $value = true;
+                }
+                $node->removeAttribute('checked');
+            }
+            // Ne pas effacer l'attribut "value"
             
         } else {
             if ($node->hasAttribute('value')) {
@@ -511,6 +522,11 @@ class Parser
                 'type' => 'number'
             ];
             // Do not remove attribute yet, it will be used in buildJsonRules
+        }
+        if ($type === 'checkbox') {
+            $formatters[] = [
+                'type' => 'checkbox'
+            ];
         }
         return $formatters;
     }
@@ -698,6 +714,7 @@ class Parser
     {
         $this->injectValuesIntoDom($dom);
         $this->injectSelectedIntoDom($dom);
+        $this->injectCheckedIntoDom($dom);
         $this->injectCsrfIntoDom($dom);
         $this->injectCodeAroundFormErrors($dom);
         
@@ -717,7 +734,8 @@ class Parser
     protected function injectValuesIntoDom(\DOMDocument $dom) : void
     {
         $this->walkElements($dom, function (\DOMElement $node) {
-            if ($node->nodeName === 'input' && $node->hasAttribute('name')) {
+            if ($node->nodeName === 'input' && $node->hasAttribute('name')
+                && $node->getAttribute('type') !== 'checkbox' && $node->getAttribute('type') !== 'radio') {
                 $name = $node->getAttribute('name');
                 $phpCode = 'echo htmlentities($this->getValue('.$this->quotePhpVar($name).'));';
                 $node->setAttribute('value', self::PHP_CODE.'="'.$phpCode.'"');
@@ -745,6 +763,29 @@ class Parser
                 if ($select !== null && $select->hasAttribute('name')) {
                     $name = $select->getAttribute('name');
                     $phpCode = 'echo $this->attrSelected('.$this->quotePhpVar($name).', '.$this->quotePhpVar($value).');';
+                    $node->setAttribute(self::PHP_CODE, $phpCode);
+                }
+            }
+        });
+    }
+    
+    /**
+     * Search DOM document for all <input type="checkbox"> and <input type="radio"> fields, 
+     * and add to each of them PHP code for adding them "checked" attribute
+     * @param \DOMDocument $dom
+     */
+    protected function injectCheckedIntoDom(\DOMDocument $dom) : void
+    {
+        $this->walkElements($dom, function (\DOMElement $node) {
+            if ($this->isInputNode($node)) {
+                $type = $node->getAttribute('type');
+                if ($type === 'checkbox' || $type === 'radio') {
+                    $name = $node->getAttribute('name');
+                    $value = 'on';
+                    if ($node->hasAttribute('value')) {
+                        $value = $node->getAttribute('value');
+                    }
+                    $phpCode = 'echo $this->attrChecked('.$this->quotePhpVar($name).', '.$this->quotePhpVar($value).');';
                     $node->setAttribute(self::PHP_CODE, $phpCode);
                 }
             }

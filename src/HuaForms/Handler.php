@@ -164,15 +164,15 @@ class Handler
                 $name = $field['name'];
                 if (isset($rawData[$name])) {
                     $value = $rawData[$name];
-                    if (isset($field['formatters'])) {
-                        foreach ($field['formatters'] as $oneFormat) {
-                            $value = $formatter->format($oneFormat, $value);
-                        }
-                    }
-                    $this->formattedData[$name] = $value;
                 } else {
-                    $this->formattedData[$name] = null;
+                    $value = null;
                 }
+                if (isset($field['formatters'])) {
+                    foreach ($field['formatters'] as $oneFormat) {
+                        $value = $formatter->format($oneFormat, $value);
+                    }
+                }
+                $this->formattedData[$name] = $value;
             }
         }
         return $this->formattedData;
