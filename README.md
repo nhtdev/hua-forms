@@ -59,9 +59,10 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="text" />
 <textarea>
 <select>
+<select multiple> TODO
 <input type="email" />
 <input type="url" />
-<input type="tel" /> TODO
+<input type="tel" />
 <input type="number" />
 <input type="range" />
 <input type="color" /> TODO

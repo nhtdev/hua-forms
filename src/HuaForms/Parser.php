@@ -409,7 +409,8 @@ class Parser
         $name = $node->getAttribute('name');
         
         // Check type
-        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range'])) {
+        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range', 
+            'tel', 'search', 'hidden', 'password'])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
         }
