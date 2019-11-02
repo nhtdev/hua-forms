@@ -73,12 +73,12 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="month" /> TODO
 <input type="week" /> TODO
 <input type="image" /> TODO
-<input type="search" /> TODO
+<input type="search" />
 <input type="file" /> TODO
-<input type="hidden" /> TODO
+<input type="hidden" />
 <input type="checkbox" /> TODO + gérer valeur par défaut
 <input type="radio" /> TODO + gérer valeur par défaut
-<input type="password" /> TODO
+<input type="password" />
 <button /> ou <input type="button" />
 <button type="submit"> ou <input type="submit" />
 <button type="reset"> ou <input type="reset" />
