@@ -458,4 +458,125 @@ HTML;
         $this->assertSame($expected, $form->render());
     }
     
+    /**
+     * Champ range OK
+     */
+    public function testRangeOk() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="range" name="field1" min="10" max="20" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '14'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertTrue($form->validate());
+        $this->assertEmpty($form->handler()->getErrorMessages());
+        $this->assertEquals(['field1' => '14'], $form->exportValues());
+        $this->assertIsInt($form->exportValues()['field1']);
+        $this->assertEquals([['type' => 'number', 'min' => 10, 'max' => 20]],
+            $form->getDescription()['fields'][0]['rules']);
+        
+    }
+    
+    /**
+     * Champ range Error
+     */
+    public function testRangeError() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="range" name="field1" min="10" max="20" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '4'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'field1' => [': value must be greater than or equal to 10']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals([['type' => 'number', 'min' => 10, 'max' => 20]],
+            $form->getDescription()['fields'][0]['rules']);
+        
+    }
+    
+    /**
+     * Champ range OK
+     */
+    public function testRangeDefaultOk() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="range" name="field1" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '60'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertTrue($form->validate());
+        $this->assertEmpty($form->handler()->getErrorMessages());
+        $this->assertEquals(['field1' => 60], $form->exportValues());
+        $this->assertIsInt($form->exportValues()['field1']);
+        $this->assertEquals([['type' => 'number', 'min' => 0, 'max' => 100]],
+            $form->getDescription()['fields'][0]['rules']);
+        
+    }
+    
+    /**
+     * Champ range Error avec options par défaut
+     */
+    public function testRangeDefaultError() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="range" name="field1" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '105'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'field1' => [': value must be less than or equal to 100']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals([['type' => 'number', 'min' => 0, 'max' => 100]],
+            $form->getDescription()['fields'][0]['rules']);
+        
+    }
+    
+    /**
+     * Champ range OK avec min seulement
+     */
+    public function testRangeMinOnlyOk() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="range" name="field1" min="0" step="0.01" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '65.28'];
+        
+        $form = $this->buildTestForm($html);
+        $this->assertTrue($form->validate());
+        $this->assertEmpty($form->handler()->getErrorMessages());
+        $this->assertEquals(['field1' => 65.28], $form->exportValues());
+        $this->assertIsFloat($form->exportValues()['field1']);
+        $this->assertEquals([['type' => 'number', 'min' => 0, 'max' => 100, 'step' => 0.01]],
+            $form->getDescription()['fields'][0]['rules']);
+        
+    }
+    
 }

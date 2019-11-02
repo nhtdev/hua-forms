@@ -160,13 +160,9 @@ class Validator
                 } else {
                     $min = 0;
                 }
-                $valtmp = $value - $min;
-                if (is_float($valtmp) || is_float($step)) {
-                    $rest = fmod($valtmp, $step);
-                } else {
-                    $rest = $valtmp % $step;
-                }
-                if ($rest > 0.0000000001) { // Pour les erreurs d'arrondi PHP
+                $valtmp = $value - $min; 
+                $rest = fmod((float) $valtmp, (float) $step);
+                if ($rest > 0.0000000001 && $rest < $step - 0.0000000001) { // Pour les erreurs d'arrondi PHP
                     return 'step'; // Erreur
                 }
             }

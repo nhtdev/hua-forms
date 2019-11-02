@@ -409,7 +409,7 @@ class Parser
         $name = $node->getAttribute('name');
         
         // Check type
-        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number'])) {
+        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range'])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
         }
@@ -464,7 +464,7 @@ class Parser
             ];
             $node->removeAttribute('trim');
         }
-        if ($node->hasAttribute('number') || $type === 'number') {
+        if ($node->hasAttribute('number') || $type === 'number' || $type === 'range') {
             $formatters[] = [
                 'type' => 'number'
             ];
@@ -519,36 +519,53 @@ class Parser
             }
         }
         
-        if ($node->hasAttribute('number') || $type === 'number') {
+        if ($node->hasAttribute('number') || $type === 'number' || $type === 'range') {
             $rule = ['type' => 'number'];
             if ($node->hasAttribute('min')) {
-                $rule['min'] = $node->getAttribute('min');
+                $rule['min'] = $node->getAttribute('min') + 0; // + 0 : cast to int or float
+            } else {
+                if ($type === 'range') {
+                    $rule['min'] = 0;
+                }
             }
             if ($node->hasAttribute('max')) {
-                $rule['max'] = $node->getAttribute('max');
+                $rule['max'] = $node->getAttribute('max') + 0; // + 0 : cast to int or float
+            } else {
+                if ($type === 'range') {
+                    $rule['max'] = 100;
+                }
             }
             if ($node->hasAttribute('step')) {
                 $rule['step'] = $node->getAttribute('step');
+                if (is_numeric($rule['step'])) {
+                    $rule['step'] = $rule['step'] + 0; // + 0 : cast to int or float
+                }
             }
             if ($node->hasAttribute('number')) {
                 $node->removeAttribute('number');
             }
             if ($node->hasAttribute('min')) {
-                $node->removeAttribute('min');
+                if ($type !== 'number' && $type !== 'range') {
+                    $node->removeAttribute('min');
+                }
                 if ($node->hasAttribute('min-message')) {
                     $rule['min-message'] = $node->getAttribute('min-message');
                     $node->removeAttribute('min-message');
                 }
             }
             if ($node->hasAttribute('max')) {
-                $node->removeAttribute('max');
+                if ($type !== 'number' && $type !== 'range') {
+                    $node->removeAttribute('max');
+                }
                 if ($node->hasAttribute('max-message')) {
                     $rule['max-message'] = $node->getAttribute('max-message');
                     $node->removeAttribute('max-message');
                 }
             }
             if ($node->hasAttribute('step')) {
-                $node->removeAttribute('step');
+                if ($type !== 'number' && $type !== 'range') {
+                    $node->removeAttribute('step');
+                }
                 if ($node->hasAttribute('step-message')) {
                     $rule['step-message'] = $node->getAttribute('step-message');
                     $node->removeAttribute('step-message');
