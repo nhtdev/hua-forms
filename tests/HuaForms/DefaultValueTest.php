@@ -53,6 +53,9 @@ HTML;
         
         $form = $this->buildTestForm($html);
         $this->assertSame($expected, $form->render());
+        $this->assertEquals(
+            ['field1' => 'Bonjour', 'field2' => 'Valeur par défaut', 'field3' => 'b', 'field4' => ['a', 'b']], 
+            $form->handler()->getDefaultValues());
         
         $_POST = [
             'csrf' => 'test', 
