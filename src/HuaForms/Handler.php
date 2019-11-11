@@ -273,6 +273,7 @@ class Handler
         $validator = new Validator();
         foreach ($this->conf['fields'] as $field) {
             $name = $field['name'];
+            $cleanName = str_replace('[]', '', $name);
             $value = $this->getInArray($data, $name);
             if (isset($field['rules'])) {
                 foreach ($field['rules'] as $rule) {
@@ -282,10 +283,10 @@ class Handler
                             // OK
                         } else if ($result === false) {
                             $this->validationResult = false;
-                            $this->validationMsg[$name][] = $this->validationErrorMessage($field, $rule);
+                            $this->validationMsg[$cleanName][] = $this->validationErrorMessage($field, $rule);
                         } else {
                             $this->validationResult = false;
-                            $this->validationMsg[$name][] = $this->validationErrorMessage($field, $rule, $result);
+                            $this->validationMsg[$cleanName][] = $this->validationErrorMessage($field, $rule, $result);
                         }
                     }
                 }

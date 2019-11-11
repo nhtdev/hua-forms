@@ -110,6 +110,7 @@ class Parser
     protected function modifyDom(\DOMDocument $dom) : void
     {
         $this->addTypeToInput($dom);
+        $this->fixSelectMultipleName($dom);
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
         $this->addForInLabelNodes($dom);
@@ -124,6 +125,22 @@ class Parser
         $this->walkElements($dom, function (\DOMElement $node) {
             if ($node->nodeName === 'input' && !$node->hasAttribute('type')) {
                 $node->setAttribute('type', 'text');
+            }
+        });
+    }
+    
+    /**
+     * The name of a <select multiple> must end with "[]"
+     * @param \DOMDocument $dom
+     */
+    protected function fixSelectMultipleName(\DOMDocument $dom) : void
+    {
+        $this->walkElements($dom, function (\DOMElement $node) {
+            if ($node->nodeName === 'select' && $node->hasAttribute('name') && $node->hasAttribute('multiple')) {
+                $name = $node->getAttribute('name');
+                if (substr($name, -2) !== '[]') {
+                    $node->setAttribute('name', $name.'[]');
+                }
             }
         });
     }

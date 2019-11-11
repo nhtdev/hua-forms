@@ -52,6 +52,7 @@ if ($form->isSubmitted() && $form->validate()) {
 * TODO Convertit un attribut "label" en un élément html <label>
 * Ajoute automatiquement un attribut "for" à l'élément <label>
 * TODO Ajoute automatiquement un <div> englobant l'élément et son label
+* Ajoute automatiquement "[]" au name des <select multiple>
 
 ## Types des champs
 
@@ -82,8 +83,8 @@ if ($form->isSubmitted() && $form->validate()) {
 <button /> ou <input type="button" />
 <button type="submit"> ou <input type="submit" />
 <button type="reset"> ou <input type="reset" />
-<select presentation="radio">
-<select presentation="checkbox" multiple>
+<select presentation="radio"> TODO
+<select presentation="checkbox" multiple> TODO
 ```
 
 ## Attributs

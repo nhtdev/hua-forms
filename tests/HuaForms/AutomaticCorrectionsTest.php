@@ -104,4 +104,38 @@ HTML;
         
     }
     
+    /**
+     * Le name d'un champ <select multiple> doit se terminer par "[]"
+     */
+    public function testFixSelectMultipleName() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <div>
+        <select name="field" id="field-id" multiple>
+            <option value="a">Option A</option>
+            <option value="b">Option b</option>
+        </select>
+    </div>
+</form>
+HTML;
+        
+        $form = $this->buildTestForm($html);
+        $form->setDefaults(['field' => ['a', 'b']]);
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <div>
+        <select name="field[]" id="field-id" multiple>
+            <option value="a" selected>Option A</option>
+            <option value="b" selected>Option b</option>
+        </select>
+    </div>
+</form>
+HTML;
+        $this->assertSame($expected, $form->render());
+        
+    }
+    
 }
