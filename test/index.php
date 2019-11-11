@@ -34,9 +34,9 @@ if ($form->isSubmitted() && $form->validate()) {
 	<?php if ($ok): ?>
 		<h2>Success</h2>
 		<pre><?php var_dump($data); ?></pre>
-	<?php else: ?>
-	<?= $form->render(); ?>
 	<?php endif; ?>
+	
+	<?= $form->render(); ?>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

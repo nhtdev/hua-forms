@@ -436,7 +436,7 @@ class Parser
         
         // Check type
         if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range', 
-            'tel', 'search', 'hidden', 'password', 'checkbox'])) {
+            'tel', 'search', 'hidden', 'password', 'checkbox', 'color'])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
         }
@@ -607,6 +607,14 @@ class Parser
             $rules[] = $rule;
             if ($node->hasAttribute('url')) {
                 $node->removeAttribute('url');
+            }
+        }
+        
+        if ($node->hasAttribute('color') || $type === 'color') {
+            $rule = ['type' => 'color'];
+            $rules[] = $rule;
+            if ($node->hasAttribute('color')) {
+                $node->removeAttribute('color');
             }
         }
         

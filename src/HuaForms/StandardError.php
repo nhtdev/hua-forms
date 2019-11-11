@@ -19,6 +19,7 @@ class StandardError
         'inarray'       => '{label}: value is not in the authorized values list ({values})',
         'email'         => '{label}: invalid email',
         'url'           => '{label}: invalid url',
+        'color'         => '{label}: invalid color',
         'number'        => '{label}: value is not a valid number',
         'number-min'    => '{label}: value must be greater than or equal to {min}',
         'number-max'    => '{label}: value must be less than or equal to {max}',
@@ -34,7 +35,7 @@ class StandardError
     public function get(string $ruleType) : string
     {
         if (!isset($this->msg[$ruleType])) {
-            throw new \InvalidArgumentException('Invalid rule type "'.$ruleType.'"');
+            throw new \InvalidArgumentException('StandardError : invalid rule type "'.$ruleType.'"');
         }
         return $this->msg[$ruleType];
     }

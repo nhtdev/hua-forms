@@ -66,7 +66,7 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="tel" />
 <input type="number" />
 <input type="range" />
-<input type="color" /> TODO
+<input type="color" />
 <input type="date" /> TODO
 <input type="time" /> TODO
 <input type="datetime" /> TODO
@@ -102,6 +102,7 @@ inarray | string | Liste des valeurs acceptées, séparées par des virgules. D�
 email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
 url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments <input type="url"/>
 regex TODO | string | Le champ texte doit valider une expression régulière
+color |tag | Le champ doit contenir une couleur au format #1234ab. Défini automatiquement pour les éléments <input type="color"/>
 number | tag | Le champ doit contenir un nombre. Défini automatiquement pour les éléments <input type="number"/> et <input type="range"/>
 number/min | number | Le champ doit contenir un nombre de valeur supérieure ou égale au nombre spécifié
 number/max | number | Le champ doit contenir un nombre de valeur inférieure ou égale au nombre spécifié

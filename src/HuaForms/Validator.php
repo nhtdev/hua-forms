@@ -149,6 +149,24 @@ class Validator
     }
     
     /**
+     * Color : the string value must be a valid color #12345ab
+     * @param array $rule Not used
+     * @param mixed $value Field value
+     * @return bool True if value is valid, false otherwise
+     */
+    public function validateColor(array $rule, $value) : bool
+    {
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException('Rule color : value must be a string');
+        }
+        if (preg_match('/^#[0-9a-f]{6}$/', $value)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * Number : the string value must be a valid number
      * @param array $rule Not used
      * @param mixed $value Field value
