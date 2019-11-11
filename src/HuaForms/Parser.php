@@ -110,6 +110,7 @@ class Parser
     protected function modifyDom(\DOMDocument $dom) : void
     {
         $this->addTypeToInput($dom);
+        $this->fixSelectMultipleName($dom);
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
         $this->addForInLabelNodes($dom);
@@ -129,16 +130,41 @@ class Parser
     }
     
     /**
+     * The name of a <select multiple> must end with "[]"
+     * @param \DOMDocument $dom
+     */
+    protected function fixSelectMultipleName(\DOMDocument $dom) : void
+    {
+        $this->walkElements($dom, function (\DOMElement $node) {
+            if ($node->nodeName === 'select' && $node->hasAttribute('name') && $node->hasAttribute('multiple')) {
+                $name = $node->getAttribute('name');
+                if (substr($name, -2) !== '[]') {
+                    $node->setAttribute('name', $name.'[]');
+                }
+            }
+        });
+    }
+    
+    /**
      * Add an "id" attribute to all form elements
      * @param \DOMDocument $dom
      */
     protected function addIdAttributes(\DOMDocument $dom) : void
     {
-        $this->walkElements($dom, function (\DOMElement $node) {
+        $givenIds = [];
+        $this->walkElements($dom, function (\DOMElement $node) use (&$givenIds) {
             if ($this->isInputNode($node) || $this->isButtonNode($node) || $this->isSubmitNode($node)) {
                 if ($node->hasAttribute('name') && !$node->hasAttribute('id')) {
                     $id = str_replace(['[', ']'], '', $node->getAttribute('name'));
-                    $node->setAttribute('id', $id);
+                    
+                    $suffix = 1;
+                    $suffixId = $id;
+                    while (isset($givenIds[$suffixId])) {
+                        $suffix++;
+                        $suffixId = $id.$suffix;
+                    }
+                    $givenIds[$suffixId] = true;
+                    $node->setAttribute('id', $suffixId);
                 }
             }
         });
@@ -691,6 +717,15 @@ class Parser
             return $prev;
         }
         
+        // Next sibling
+        $next = $input;
+        do {
+            $next = $next->nextSibling;
+        } while ($next !== null && $next->nodeName === '#text');
+        if ($next !== null && $next->nodeName === 'label') {
+            return $next;
+        }
+        
         // Not found
         return null;
     }
@@ -758,7 +793,11 @@ class Parser
     {
         $this->walkElements($dom, function (\DOMElement $node) {
             if ($node->nodeName === 'option') {
-                $value = $node->getAttribute('value');
+                if ($node->hasAttribute('value')) {
+                    $value = $node->getAttribute('value');
+                } else {
+                    $value = $node->nodeValue;
+                }
                 $select = $this->findClosest($node, 'select');
                 if ($select !== null && $select->hasAttribute('name')) {
                     $name = $select->getAttribute('name');

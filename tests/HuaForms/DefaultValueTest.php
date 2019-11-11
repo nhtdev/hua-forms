@@ -21,7 +21,7 @@ class DefaultValueTest extends \Tests\HuaForms\HuaFormsTestCase
         <option value="b" selected>Option B</option>
         <option value="c">Option C</option>
     </select>
-    <select name="field4" id="field4" multiple> 
+    <select name="field4[]" id="field4" multiple> 
         <option value="a" selected>Option A</option>
         <option value="b" selected>Option B</option>
         <option value="c">Option C</option>
@@ -30,6 +30,11 @@ class DefaultValueTest extends \Tests\HuaForms\HuaFormsTestCase
     <input type="checkbox" name="field6" id="field6" value="cochee" checked />
     <input type="checkbox" name="field7" id="field7" />
     <input type="checkbox" name="field8" id="field8" value="cochee" />
+
+    <input type="checkbox" name="field9[]" id="field91" value="1" checked />
+    <input type="checkbox" name="field9[]" id="field92" value="2" checked />
+    <input type="checkbox" name="field9[]" id="field93" value="3" />
+
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
@@ -46,7 +51,7 @@ HTML;
         <option value="b" selected>Option B</option>
         <option value="c">Option C</option>
     </select>
-    <select name="field4" id="field4" multiple> 
+    <select name="field4[]" id="field4" multiple> 
         <option value="a" selected>Option A</option>
         <option value="b" selected>Option B</option>
         <option value="c">Option C</option>
@@ -55,21 +60,29 @@ HTML;
     <input type="checkbox" name="field6" id="field6" value="cochee" checked/>
     <input type="checkbox" name="field7" id="field7"/>
     <input type="checkbox" name="field8" id="field8" value="cochee"/>
+
+    <input type="checkbox" name="field9[]" id="field91" value="1" checked/>
+    <input type="checkbox" name="field9[]" id="field92" value="2" checked/>
+    <input type="checkbox" name="field9[]" id="field93" value="3"/>
+
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
         $form = $this->buildTestForm($html);
-        $this->assertSame($expected, $form->render());
+        
         $this->assertEquals(
             [
-                'field1' => 'Bonjour', 
-                'field2' => 'Valeur par défaut', 
-                'field3' => 'b', 
+                'field1' => 'Bonjour',
+                'field2' => 'Valeur par défaut',
+                'field3' => 'b',
                 'field4' => ['a', 'b'],
                 'field5' => true,
-                'field6' => 'cochee'
-            ], 
+                'field6' => 'cochee',
+                'field9' => ['1', '2']
+            ],
             $form->handler()->getDefaultValues());
+        
+        $this->assertSame($expected, $form->render());
         
         $_POST = [
             'csrf' => 'test', 
@@ -81,7 +94,8 @@ HTML;
             // field5 = off 
             // field6 = off
             'field7' => 'on',
-            'field8' => 'cochee'
+            'field8' => 'cochee',
+            'field9' => ['2', '3']
         ];
         
         $this->assertTrue($form->isSubmitted());
@@ -95,7 +109,8 @@ HTML;
             'field5' => false,
             'field6' => false,
             'field7' => true,
-            'field8' => 'cochee'
+            'field8' => 'cochee',
+            'field9' => ['2', '3']
         ], $form->exportValues());
         
         // Test de rendu du formulaire après submit
@@ -110,7 +125,7 @@ HTML;
         <option value="b">Option B</option>
         <option value="c" selected>Option C</option>
     </select>
-    <select name="field4" id="field4" multiple> 
+    <select name="field4[]" id="field4" multiple> 
         <option value="a">Option A</option>
         <option value="b" selected>Option B</option>
         <option value="c" selected>Option C</option>
@@ -119,6 +134,11 @@ HTML;
     <input type="checkbox" name="field6" id="field6" value="cochee"/>
     <input type="checkbox" name="field7" id="field7" checked/>
     <input type="checkbox" name="field8" id="field8" value="cochee" checked/>
+
+    <input type="checkbox" name="field9[]" id="field91" value="1"/>
+    <input type="checkbox" name="field9[]" id="field92" value="2" checked/>
+    <input type="checkbox" name="field9[]" id="field93" value="3" checked/>
+
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;

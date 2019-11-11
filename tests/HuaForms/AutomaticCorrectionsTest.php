@@ -44,6 +44,10 @@ HTML;
         <label>Test</label>
         <input type="text" name="field" id="field-id" value=""/>
     </div>
+    <div>
+        <input type="text" name="field2" id="field-id2" value=""/>
+        <label>Test 2</label>
+    </div>
 </form>
 HTML;
         
@@ -55,6 +59,10 @@ HTML;
     <div>
         <label for="field-id">Test</label>
         <input type="text" name="field" id="field-id" value=""/>
+    </div>
+    <div>
+        <input type="text" name="field2" id="field-id2" value=""/>
+        <label for="field-id2">Test 2</label>
     </div>
 </form>
 HTML;
@@ -87,6 +95,40 @@ HTML;
     <div>
         <select name="field" id="field-id">
             <option value="a">Option A</option>
+            <option value="b" selected>Option b</option>
+        </select>
+    </div>
+</form>
+HTML;
+        $this->assertSame($expected, $form->render());
+        
+    }
+    
+    /**
+     * Le name d'un champ <select multiple> doit se terminer par "[]"
+     */
+    public function testFixSelectMultipleName() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <div>
+        <select name="field" id="field-id" multiple>
+            <option value="a">Option A</option>
+            <option value="b">Option b</option>
+        </select>
+    </div>
+</form>
+HTML;
+        
+        $form = $this->buildTestForm($html);
+        $form->setDefaults(['field' => ['a', 'b']]);
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <div>
+        <select name="field[]" id="field-id" multiple>
+            <option value="a" selected>Option A</option>
             <option value="b" selected>Option b</option>
         </select>
     </div>

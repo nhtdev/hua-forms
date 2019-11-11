@@ -60,7 +60,7 @@ HTML;
     {
         $html = <<<HTML
 <form method="post" action="">
-    <select name="field1" multiple maxlength="3">
+    <select name="field1[]" multiple maxlength="3">
         <option value="a">Option A</option>
         <option value="b">Option B</option>
     </select>

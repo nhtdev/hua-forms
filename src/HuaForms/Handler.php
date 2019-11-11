@@ -131,6 +131,74 @@ class Handler
     }
     
     /**
+     * Look for the given field name in array and return its value
+     * @param array $array
+     * @param string $name
+     * @return mixed
+     */
+    protected function getInArray(array $array, string $name)
+    {
+        $cleanName = str_replace('[]', '', $name);
+        if (substr($name, -2) === '[]') {
+            if (isset($array[$cleanName])) {
+                return (array) $array[$cleanName];
+            } else {
+                return [];
+            }
+        } else {
+            if (isset($array[$cleanName])) {
+                if (is_array($array[$cleanName])) {
+                    return array_pop($array[$cleanName]);
+                } else {
+                    return $array[$cleanName];
+                }
+            } else {
+                return null;
+            }
+        }
+    }
+    
+    /**
+     * Set the falue of the given field name in array
+     * @param array $array
+     * @param string $name
+     * @return mixed
+     */
+    protected function setInArray(array &$array, string $name, $value) : void
+    {
+        $cleanName = str_replace('[]', '', $name);
+        if (substr($name, -2) === '[]') {
+            if (isset($array[$cleanName])) {
+                if (is_array($array[$cleanName])) {
+                    if (is_array($value)) {
+                        $array[$cleanName] = array_unique(array_merge($array[$cleanName], $value));
+                    } else {
+                        $array[$cleanName][] = $value;
+                    }
+                } else {
+                    if (is_array($value)) {
+                        $array[$cleanName] = array_unique(array_merge([$array[$cleanName]], $value));
+                    } else {
+                        $array[$cleanName] = [$array[$cleanName], $value];
+                    }
+                }
+            } else {
+                if (is_array($value)) {
+                    $array[$cleanName] = $value;
+                } else {
+                    $array[$cleanName] = [$value];
+                }
+            }
+        } else {
+            if (is_array($value)) {
+                $array[$cleanName] = array_pop($value);
+            } else {
+                $array[$cleanName] = $value;
+            }
+        }
+    }
+    
+    /**
      * Return the form submitted data, without any formatting or validation,
      * but ignore the data which are not form fields
      * @return array
@@ -141,11 +209,8 @@ class Handler
         $rawData = $this->getRawData();
         foreach ($this->conf['fields'] as $field) {
             $name = $field['name'];
-            if (isset($rawData[$name])) {
-                $selectiveData[$name] = $rawData[$name];
-            } else {
-                $selectiveData[$name] = null;
-            }
+            $value = $this->getInArray($rawData, $name);
+            $this->setInArray($selectiveData, $name, $value);
         }
         return $selectiveData;
     }
@@ -162,17 +227,13 @@ class Handler
             $this->formattedData = [];
             foreach ($this->conf['fields'] as $field) {
                 $name = $field['name'];
-                if (isset($rawData[$name])) {
-                    $value = $rawData[$name];
-                } else {
-                    $value = null;
-                }
+                $value = $this->getInArray($rawData, $name);
                 if (isset($field['formatters'])) {
                     foreach ($field['formatters'] as $oneFormat) {
                         $value = $formatter->format($oneFormat, $value);
                     }
                 }
-                $this->formattedData[$name] = $value;
+                $this->setInArray($this->formattedData, $name, $value);
             }
         }
         return $this->formattedData;
@@ -212,7 +273,8 @@ class Handler
         $validator = new Validator();
         foreach ($this->conf['fields'] as $field) {
             $name = $field['name'];
-            $value = $data[$name];
+            $cleanName = str_replace('[]', '', $name);
+            $value = $this->getInArray($data, $name);
             if (isset($field['rules'])) {
                 foreach ($field['rules'] as $rule) {
                     if ($rule['type'] === 'required' || !empty($value) || $value === '0') { // Ignore rule if field is empty
@@ -221,10 +283,10 @@ class Handler
                             // OK
                         } else if ($result === false) {
                             $this->validationResult = false;
-                            $this->validationMsg[$name][] = $this->validationErrorMessage($field, $rule);
+                            $this->validationMsg[$cleanName][] = $this->validationErrorMessage($field, $rule);
                         } else {
                             $this->validationResult = false;
-                            $this->validationMsg[$name][] = $this->validationErrorMessage($field, $rule, $result);
+                            $this->validationMsg[$cleanName][] = $this->validationErrorMessage($field, $rule, $result);
                         }
                     }
                 }
@@ -291,7 +353,7 @@ class Handler
             $name = $field['name'];
             $value = $field['value'];
             if ($value !== null) {
-                $result[$name] = $field['value'];
+                $this->setInArray($result, $name, $value);
             }
         }
         return $result;
