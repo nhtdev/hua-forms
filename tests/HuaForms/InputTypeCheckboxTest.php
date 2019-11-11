@@ -117,9 +117,18 @@ HTML;
     {
         $html = <<<HTML
 <form method="post" action="">
-    <input type="checkbox" name="checkbox[]" value="val1"/>
-    <input type="checkbox" name="checkbox[]" value="val2"/>
-    <input type="checkbox" name="checkbox[]" value="val3"/>
+    <div>
+        <label>Val 1</label>
+        <input type="checkbox" name="checkbox[]" value="val1"/>
+    </div>
+    <div>
+        <label>Val 2</label>
+        <input type="checkbox" name="checkbox[]" value="val2"/>
+    </div>
+    <div>
+        <label>Val 3</label>
+        <input type="checkbox" name="checkbox[]" value="val3"/>
+    </div>
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
@@ -137,9 +146,18 @@ HTML;
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-    <input type="checkbox" name="checkbox[]" value="val1" checked/>
-    <input type="checkbox" name="checkbox[]" value="val2"/>
-    <input type="checkbox" name="checkbox[]" value="val3" checked/>
+    <div>
+        <label for="checkbox">Val 1</label>
+        <input type="checkbox" name="checkbox[]" value="val1" id="checkbox" checked/>
+    </div>
+    <div>
+        <label for="checkbox2">Val 2</label>
+        <input type="checkbox" name="checkbox[]" value="val2" id="checkbox2"/>
+    </div>
+    <div>
+        <label for="checkbox3">Val 3</label>
+        <input type="checkbox" name="checkbox[]" value="val3" id="checkbox3" checked/>
+    </div>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;

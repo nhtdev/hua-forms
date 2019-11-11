@@ -117,8 +117,9 @@ class Renderer
      */
     public function getValue(string $name) : string
     {
-        if (isset($this->values[$name])) {
-            return $this->values[$name];
+        $cleanName = str_replace('[]', '', $name);
+        if (isset($this->values[$cleanName])) {
+            return $this->values[$cleanName];
         } else {
             return '';
         }
@@ -132,11 +133,12 @@ class Renderer
      */
     protected function hasValue(string $name, $value) : bool
     {
-        if (isset($this->values[$name])) {
-            if (is_array($this->values[$name])) {
-                return in_array($value, $this->values[$name]);
+        $cleanName = str_replace('[]', '', $name);
+        if (isset($this->values[$cleanName])) {
+            if (is_array($this->values[$cleanName])) {
+                return in_array($value, $this->values[$cleanName]);
             } else {
-                return $value == $this->values[$name];
+                return $value == $this->values[$cleanName];
             }
         } else {
             return false;

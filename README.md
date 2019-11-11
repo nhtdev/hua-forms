@@ -59,7 +59,7 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="text" />
 <textarea>
 <select>
-<select multiple> TODO
+<select multiple>
 <input type="email" />
 <input type="url" />
 <input type="tel" />
@@ -76,7 +76,7 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="search" />
 <input type="file" /> TODO
 <input type="hidden" />
-<input type="checkbox" /> TODO + gérer valeur par défaut
+<input type="checkbox" />
 <input type="radio" /> TODO + gérer valeur par défaut
 <input type="password" />
 <button /> ou <input type="button" />

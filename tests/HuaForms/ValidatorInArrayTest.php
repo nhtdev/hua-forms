@@ -119,7 +119,7 @@ HTML;
     {
         $html = <<<HTML
 <form method="post" action="">
-    <select name="field1" multiple>
+    <select name="field1[]" multiple>
         <option value="a">Option A</option>
         <option value="b">Option B</option>
     </select>
