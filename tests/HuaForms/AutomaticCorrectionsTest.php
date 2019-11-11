@@ -44,6 +44,10 @@ HTML;
         <label>Test</label>
         <input type="text" name="field" id="field-id" value=""/>
     </div>
+    <div>
+        <input type="text" name="field2" id="field-id2" value=""/>
+        <label>Test 2</label>
+    </div>
 </form>
 HTML;
         
@@ -55,6 +59,10 @@ HTML;
     <div>
         <label for="field-id">Test</label>
         <input type="text" name="field" id="field-id" value=""/>
+    </div>
+    <div>
+        <input type="text" name="field2" id="field-id2" value=""/>
+        <label for="field-id2">Test 2</label>
     </div>
 </form>
 HTML;

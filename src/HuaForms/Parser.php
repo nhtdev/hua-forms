@@ -700,6 +700,15 @@ class Parser
             return $prev;
         }
         
+        // Next sibling
+        $next = $input;
+        do {
+            $next = $next->nextSibling;
+        } while ($next !== null && $next->nodeName === '#text');
+        if ($next !== null && $next->nodeName === 'label') {
+            return $next;
+        }
+        
         // Not found
         return null;
     }
