@@ -230,31 +230,11 @@ class Validator
             if ($month < 1 || $month > 12) {
                 return false;
             }
-            
-            if (isset($rule['min'])) {
-                if (preg_match('/^(\d\d\d\d)-(\d\d)$/', $rule['min'], $ruleMatches)) {
-                    $ruleYear = (int) $ruleMatches[1];
-                    $ruleMonth = (int) $ruleMatches[2];
-                    if ($year < $ruleYear) {
-                        return 'min';
-                    }
-                    if ($year === $ruleYear && $month < $ruleMonth) {
-                        return 'min';
-                    }
-                }
+            if (isset($rule['min']) && strcmp($value, $rule['min']) < 0) {
+                return 'min';
             }
-            
-            if (isset($rule['max'])) {
-                if (preg_match('/^(\d\d\d\d)-(\d\d)$/', $rule['max'], $ruleMatches)) {
-                    $ruleYear = (int) $ruleMatches[1];
-                    $ruleMonth = (int) $ruleMatches[2];
-                    if ($year > $ruleYear) {
-                        return 'max';
-                    }
-                    if ($year === $ruleYear && $month > $ruleMonth) {
-                        return 'max';
-                    }
-                }
+            if (isset($rule['max']) && strcmp($value, $rule['max']) > 0) {
+                return 'max';
             }
             return true;
             
@@ -283,31 +263,11 @@ class Validator
             if ($week < 1 || $week > $weekCount) {
                 return false;
             }
-            
-            if (isset($rule['min'])) {
-                if (preg_match('/^(\d\d\d\d)-W(\d\d)$/', $rule['min'], $ruleMatches)) {
-                    $ruleYear = (int) $ruleMatches[1];
-                    $ruleWeek = (int) $ruleMatches[2];
-                    if ($year < $ruleYear) {
-                        return 'min';
-                    }
-                    if ($year === $ruleYear && $week < $ruleWeek) {
-                        return 'min';
-                    }
-                }
+            if (isset($rule['min']) && strcmp($value, $rule['min']) < 0) {
+                return 'min';
             }
-            
-            if (isset($rule['max'])) {
-                if (preg_match('/^(\d\d\d\d)-W(\d\d)$/', $rule['max'], $ruleMatches)) {
-                    $ruleYear = (int) $ruleMatches[1];
-                    $ruleWeek = (int) $ruleMatches[2];
-                    if ($year > $ruleYear) {
-                        return 'max';
-                    }
-                    if ($year === $ruleYear && $week > $ruleWeek) {
-                        return 'max';
-                    }
-                }
+            if (isset($rule['max']) && strcmp($value, $rule['max']) > 0) {
+                return 'max';
             }
             return true;
             
@@ -336,39 +296,11 @@ class Validator
             if (!checkdate($month, $day, $year)) {
                 return false;
             }
-            
-            if (isset($rule['min'])) {
-                if (preg_match('/^(\d\d\d\d)-(\d\d)-(\d\d)$/', $rule['min'], $ruleMatches)) {
-                    $ruleYear = (int) $ruleMatches[1];
-                    $ruleMonth = (int) $ruleMatches[2];
-                    $ruleDay = (int) $ruleMatches[3];
-                    if ($year < $ruleYear) {
-                        return 'min';
-                    }
-                    if ($year === $ruleYear && $month < $ruleMonth) {
-                        return 'min';
-                    }
-                    if ($year === $ruleYear && $month === $ruleMonth && $day < $ruleDay) {
-                        return 'min';
-                    }
-                }
+            if (isset($rule['min']) && strcmp($value, $rule['min']) < 0) {
+                return 'min';
             }
-            
-            if (isset($rule['max'])) {
-                if (preg_match('/^(\d\d\d\d)-(\d\d)-(\d\d)$/', $rule['max'], $ruleMatches)) {
-                    $ruleYear = (int) $ruleMatches[1];
-                    $ruleMonth = (int) $ruleMatches[2];
-                    $ruleDay = (int) $ruleMatches[3];
-                    if ($year > $ruleYear) {
-                        return 'max';
-                    }
-                    if ($year === $ruleYear && $month > $ruleMonth) {
-                        return 'max';
-                    }
-                    if ($year === $ruleYear && $month === $ruleMonth && $day > $ruleDay) {
-                        return 'max';
-                    }
-                }
+            if (isset($rule['max']) && strcmp($value, $rule['max']) > 0) {
+                return 'max';
             }
             return true;
             
