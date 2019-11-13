@@ -67,12 +67,11 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="number" />
 <input type="range" />
 <input type="color" />
-<input type="date" /> TODO
-<input type="time" /> TODO
-<input type="datetime" /> TODO
-<input type="datetime-local" /> TODO
-<input type="month" /> TODO
-<input type="week" /> TODO
+<input type="date" />
+<input type="time" />
+<input type="datetime-local" />
+<input type="month" />
+<input type="week" />
 <input type="image" /> TODO
 <input type="search" />
 <input type="file" /> TODO
@@ -102,12 +101,33 @@ inarray | string | Liste des valeurs acceptées, séparées par des virgules. D�
 email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
 url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments <input type="url"/>
 regex TODO | string | Le champ texte doit valider une expression régulière
-color |tag | Le champ doit contenir une couleur au format #1234ab. Défini automatiquement pour les éléments <input type="color"/>
+color | tag | Le champ doit contenir une couleur au format #1234ab. Défini automatiquement pour les éléments <input type="color"/>
+month | tag | Le champ doit contenir un mois + année. Défini automatiquement pour les éléments <input type="month"/>
+month/min | string | Mois minimum au format "yyyy-mm"
+month/max | string | Mois maximum au format "yyyy-mm"
+month/step | string | Non géré
+week | tag | Le champ doit contenir un numéro de semaine + année. Défini automatiquement pour les éléments <input type="week"/>
+week/min | string | Numéro de semaine minimum au format "yyyy-Wnn"
+week/max | string | Numéro de semaine maximum au format "yyyy-Wnn"
+week/step | string | Non géré
+date | tag | Le champ doit contenir une date (yyyy-mm-dd). Défini automatiquement pour les éléments <input type="date"/>
+date/min | string | Date minimum au format "yyyy-mm-dd"
+date/max | string | Date maximum au format "yyyy-mm-dd"
+date/step | string | Non géré
+time | tag | Le champ doit contenir une heure (hh:mm). Défini automatiquement pour les éléments <input type="time"/>
+time/min | string | Heure minimum au format "hh:mm"
+time/max | string | Heure maximum au format "hh:mm"
+time/step | string | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. Pour les champs de type time, la valeur de l'attribut step est exprimée en secondes (avec un facteur de multiplication de 1000). Par défaut, la valeur de l'incrément est 60, ce qui correspond à 1 minute.
+datetime-local | tag | Le champ doit contenir une date + heure (yyyy-mm-ddThh:mm). Défini automatiquement pour les éléments <input type="datetime-local"/>
+datetime-local/min | string | Date et heure minimum au format "yyyy-mm-ddThh:mm"
+datetime-local/max | string | Date et heure maximum au format "yyyy-mm-ddThh:mm"
+datetime-local/step | string | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. Pour les champs datetime-local, la valeur de l'attribut step est exprimée en secondes avec un facteur d'amplification de 1000 (pour passer des millisecondes aux secondes). La valeur par défaut de step est 60 (soit 1 minute ou 60 000 millisecondes).
 number | tag | Le champ doit contenir un nombre. Défini automatiquement pour les éléments <input type="number"/> et <input type="range"/>
 number/min | number | Le champ doit contenir un nombre de valeur supérieure ou égale au nombre spécifié
 number/max | number | Le champ doit contenir un nombre de valeur inférieure ou égale au nombre spécifié
-number/step | number | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur
-en remplacement du message standard.
+number/step | number | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. 
+
+Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur en remplacement du message standard.
 
 ### Formateurs de contenu
 

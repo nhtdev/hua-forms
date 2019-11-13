@@ -436,7 +436,9 @@ class Parser
         
         // Check type
         if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range', 
-            'tel', 'search', 'hidden', 'password', 'checkbox', 'color'])) {
+            'tel', 'search', 'hidden', 'password', 'checkbox', 'color', 'month', 'week',
+            'date', 'time', 'datetime-local'
+        ])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
         }
@@ -673,6 +675,97 @@ class Parser
             
             $rules[] = $rule;
         }
+        
+        // Types date, time, datetime-local, month, week
+        // with min / max / step
+        $dtType = null;
+        $viaTag = null;
+        if ($node->hasAttribute('month')) {
+            $dtType = 'month';
+            $viaTag = true;
+        }
+        if ($type === 'month') {
+            $dtType = 'month';
+            $viaTag = false;
+        }
+        if ($node->hasAttribute('week')) {
+            $dtType = 'week';
+            $viaTag = true;
+        }
+        if ($type === 'week') {
+            $dtType = 'week';
+            $viaTag = false;
+        }
+        if ($node->hasAttribute('date')) {
+            $dtType = 'date';
+            $viaTag = true;
+        }
+        if ($type === 'date') {
+            $dtType = 'date';
+            $viaTag = false;
+        }
+        if ($node->hasAttribute('time')) {
+            $dtType = 'time';
+            $viaTag = true;
+        }
+        if ($type === 'time') {
+            $dtType = 'time';
+            $viaTag = false;
+        }
+        if ($node->hasAttribute('datetime-local')) {
+            $dtType = 'datetime-local';
+            $viaTag = true;
+        }
+        if ($type === 'datetime-local') {
+            $dtType = 'datetime-local';
+            $viaTag = false;
+        }
+        
+        if ($dtType !== null) {
+            $rule = ['type' => $dtType];
+            if ($node->hasAttribute('min')) {
+                $rule['min'] = $node->getAttribute('min');
+            }
+            if ($node->hasAttribute('max')) {
+                $rule['max'] = $node->getAttribute('max');
+            }
+            if ($node->hasAttribute('step')) {
+                $rule['step'] = $node->getAttribute('step');
+            }
+            if ($viaTag) {
+                $node->removeAttribute($dtType);
+            }
+            if ($node->hasAttribute('min')) {
+                if ($viaTag) {
+                    $node->removeAttribute('min');
+                }
+                if ($node->hasAttribute('min-message')) {
+                    $rule['min-message'] = $node->getAttribute('min-message');
+                    $node->removeAttribute('min-message');
+                }
+            }
+            if ($node->hasAttribute('max')) {
+                if ($viaTag) {
+                    $node->removeAttribute('max');
+                }
+                if ($node->hasAttribute('max-message')) {
+                    $rule['max-message'] = $node->getAttribute('max-message');
+                    $node->removeAttribute('max-message');
+                }
+            }
+            if ($node->hasAttribute('step')) {
+                if ($viaTag) {
+                    $node->removeAttribute('step');
+                }
+                if ($node->hasAttribute('step-message')) {
+                    $rule['step-message'] = $node->getAttribute('step-message');
+                    $node->removeAttribute('step-message');
+                }
+            }
+            
+            $rules[] = $rule;
+        }
+        
         
         if ($node->nodeName === 'select') {
             $optionsValues = [];
