@@ -317,4 +317,65 @@ class Validator
         
     }
     
+    /**
+     * Date : the string value must be a valid date "yyyy-mm-dd"
+     * @param array $rule Not used
+     * @param mixed $value Field value
+     * @return mixed True if value is valid, false or string otherwise
+     */
+    public function validateDate(array $rule, $value)
+    {
+        if (is_array($value)) {
+            throw new \InvalidArgumentException('Rule date : value cannot be an array');
+        }
+        
+        if (preg_match('/^(\d\d\d\d)-(\d\d)-(\d\d)$/', $value, $matches)) {
+            $year = (int) $matches[1];
+            $month = (int) $matches[2];
+            $day = (int) $matches[3];
+            if (!checkdate($month, $day, $year)) {
+                return false;
+            }
+            
+            if (isset($rule['min'])) {
+                if (preg_match('/^(\d\d\d\d)-(\d\d)-(\d\d)$/', $rule['min'], $ruleMatches)) {
+                    $ruleYear = (int) $ruleMatches[1];
+                    $ruleMonth = (int) $ruleMatches[2];
+                    $ruleDay = (int) $ruleMatches[3];
+                    if ($year < $ruleYear) {
+                        return 'min';
+                    }
+                    if ($year === $ruleYear && $month < $ruleMonth) {
+                        return 'min';
+                    }
+                    if ($year === $ruleYear && $month === $ruleMonth && $day < $ruleDay) {
+                        return 'min';
+                    }
+                }
+            }
+            
+            if (isset($rule['max'])) {
+                if (preg_match('/^(\d\d\d\d)-(\d\d)-(\d\d)$/', $rule['max'], $ruleMatches)) {
+                    $ruleYear = (int) $ruleMatches[1];
+                    $ruleMonth = (int) $ruleMatches[2];
+                    $ruleDay = (int) $ruleMatches[3];
+                    if ($year > $ruleYear) {
+                        return 'max';
+                    }
+                    if ($year === $ruleYear && $month > $ruleMonth) {
+                        return 'max';
+                    }
+                    if ($year === $ruleYear && $month === $ruleMonth && $day > $ruleDay) {
+                        return 'max';
+                    }
+                }
+            }
+            return true;
+            
+        } else {
+            return false;
+        }
+        
+    }
+    
 }
