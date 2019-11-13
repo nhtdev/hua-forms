@@ -264,4 +264,57 @@ class Validator
         
     }
     
+    /**
+     * Week : the string value must be a valid year + week "yyyy-Www"
+     * @param array $rule Not used
+     * @param mixed $value Field value
+     * @return mixed True if value is valid, false or string otherwise
+     */
+    public function validateWeek(array $rule, $value)
+    {
+        if (is_array($value)) {
+            throw new \InvalidArgumentException('Rule week : value cannot be an array');
+        }
+        
+        if (preg_match('/^(\d\d\d\d)-W(\d\d)$/', $value, $matches)) {
+            $year = (int) $matches[1];
+            $week = (int) $matches[2];
+            $weekCount = date('W', strtotime($year . '-12-28'));
+            if ($week < 1 || $week > $weekCount) {
+                return false;
+            }
+            
+            if (isset($rule['min'])) {
+                if (preg_match('/^(\d\d\d\d)-W(\d\d)$/', $rule['min'], $ruleMatches)) {
+                    $ruleYear = (int) $ruleMatches[1];
+                    $ruleWeek = (int) $ruleMatches[2];
+                    if ($year < $ruleYear) {
+                        return 'min';
+                    }
+                    if ($year === $ruleYear && $week < $ruleWeek) {
+                        return 'min';
+                    }
+                }
+            }
+            
+            if (isset($rule['max'])) {
+                if (preg_match('/^(\d\d\d\d)-W(\d\d)$/', $rule['max'], $ruleMatches)) {
+                    $ruleYear = (int) $ruleMatches[1];
+                    $ruleWeek = (int) $ruleMatches[2];
+                    if ($year > $ruleYear) {
+                        return 'max';
+                    }
+                    if ($year === $ruleYear && $week > $ruleWeek) {
+                        return 'max';
+                    }
+                }
+            }
+            return true;
+            
+        } else {
+            return false;
+        }
+        
+    }
+    
 }
