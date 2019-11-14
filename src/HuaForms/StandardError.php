@@ -37,6 +37,7 @@ class StandardError
         'time-min'            => '{label}: value must be greater than or equal to {min}',
         'time-max'            => '{label}: value must be less than or equal to {max}',
         'time-step'           => '{label}: value is not allowed',
+        'time-inverse'        => '{label}: value must not be between {max} and {min}',
         'datetime-local'      => '{label}: value is not a valid date',
         'datetime-local-min'  => '{label}: value must be greater than or equal to {min}',
         'datetime-local-max'  => '{label}: value must be less than or equal to {max}',

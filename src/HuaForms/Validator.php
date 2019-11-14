@@ -310,4 +310,91 @@ class Validator
         
     }
     
+    /**
+     * Time : the string value must be a valid date "yyyy-mm-dd"
+     * @param array $rule Not used
+     * @param mixed $value Field value
+     * @return mixed True if value is valid, false or string otherwise
+     */
+    public function validateTime(array $rule, $value)
+    {
+        if (is_array($value)) {
+            throw new \InvalidArgumentException('Rule time : value cannot be an array');
+        }
+        
+        if (isset($rule['step'])) {
+            $step = (int) $rule['step'];
+            if ($step < 1) {
+                $step = 60;
+            }
+        } else {
+            $step = 60;
+        }
+        
+        if ($step < 60) {
+            if (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $value, $matches)) {
+                $hour = (int) $matches[1];
+                $minute = (int) $matches[2];
+                $second = (int) $matches[3];
+            } else {
+                return false;
+            }
+        } else {
+            if (preg_match('/^(\d\d):(\d\d)$/', $value, $matches)) {
+                $hour = (int) $matches[1];
+                $minute = (int) $matches[2];
+                $second = 0;
+            } else {
+                return false;
+            }
+        }
+        
+        if ($hour < 0 || $hour > 23) {
+            return false;
+        }
+        if ($minute < 0 || $minute > 59) {
+            return false;
+        }
+        if ($second !== null && ($second < 0 || $second > 59)) {
+            return false;
+        }
+        
+        if (isset($rule['min']) && isset($rule['max']) && strcmp($rule['min'], $rule['max']) > 0) {
+            // Inverse (min > max)
+            if (strcmp($value, $rule['min']) < 0 && strcmp($value, $rule['max']) > 0) {
+                return 'inverse';
+            }
+        } else {
+            if (isset($rule['min']) && strcmp($value, $rule['min']) < 0) {
+                return 'min';
+            }
+            if (isset($rule['max']) && strcmp($value, $rule['max']) > 0) {
+                return 'max';
+            }
+        }
+        
+        if (isset($rule['step']) && $rule['step'] > 0) {
+            $totalSeconds = $second + 60*$minute + 60*60*$hour;
+            $start = 0;
+            if (isset($rule['min'])) {
+                if (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $value, $matches)) {
+                    $minHour = (int) $matches[1];
+                    $minMinute = (int) $matches[2];
+                    $minSecond = (int) $matches[3];
+                    $start = $minSecond + 60*$minMinute + 60*60*$minHour;
+                } else if (preg_match('/^(\d\d):(\d\d)$/', $value, $matches)) {
+                    $minHour = (int) $matches[1];
+                    $minMinute = (int) $matches[2];
+                    $start = 60*$minMinute + 60*60*$minHour;
+                }
+            }
+            if ( ($totalSeconds-$start) % $rule['step'] !== 0) {
+                return 'step';
+            }
+        }
+        
+        return true;
+        
+    }
+    
 }
