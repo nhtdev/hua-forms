@@ -582,8 +582,9 @@ class Parser
     protected function buildJsonRules(\DOMDocument $form) : array
     {
         $allRules = [];
+        $checkboxValues = []; // Distinct values for checkboxes and radio buttons
         
-        $this->walkElements($form, function (\DOMElement $node) use (&$allRules) {
+        $this->walkElements($form, function (\DOMElement $node) use (&$allRules, &$checkboxValues) {
             
             $rules = [];
             
@@ -596,6 +597,15 @@ class Parser
                         $type = $node->getAttribute('type');
                     } else {
                         $type = $node->nodeName; // textarea, select, ...
+                    }
+                    
+                    if ($type === 'checkbox' || $type === 'radio') {
+                        if ($node->hasAttribute('value')) {
+                            $value = $node->getAttribute('value');
+                        } else {
+                            $value = 'on';
+                        }
+                        $checkboxValues[$name][] = $value;
                     }
                     
                     if ($node->hasAttribute('required')) {
@@ -833,6 +843,12 @@ class Parser
                 }
             }
         });
+        
+        // Rules inarray for checkboxes and radio
+        foreach ($checkboxValues as $fieldName => $allowedValues) {
+            $rule = ['field' => $fieldName, 'type' => 'inarray', 'values' => $allowedValues];
+            $allRules[] = $rule;
+        }
         
         return $allRules;
     }

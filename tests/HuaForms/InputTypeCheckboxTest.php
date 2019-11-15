@@ -78,7 +78,7 @@ HTML;
     
     /**
      * Test envoyer une valeur invalide sur une case à cocher
-     *
+     */
     public function testCheckInvalidValue() : void
     {
         $html = <<<HTML
@@ -91,24 +91,15 @@ HTML;
         
         $form = $this->buildTestForm($html);
         
-        $this->assertTrue($form->isSubmitted());
-        $this->assertTrue($form->validate());
-        $this->assertEmpty($form->handler()->getErrorMessages());
-        $this->assertEquals(['checkbox' => false], $form->exportValues());
-        $this->assertIsString($form->exportValues()['checkbox']);
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'checkbox' => ['checkbox: value is not in the authorized values list (coche)']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'checkbox', 'type' => 'inarray', 'values' => ['coche']],
+            $form->getDescription()['rules'][0]);
         
-        // Test de rendu du formulaire
-        
-        $expected = <<<HTML
-<form method="post" action="">
-<input type="hidden" name="csrf" value="test"/>
-    <input type="checkbox" name="checkbox" id="checkbox" value="coche"/>
-    <button type="submit" name="ok" id="ok">OK</button>
-</form>
-HTML;
-        $this->assertSame($expected, $form->render());
-        
-    }*/
+    }
     
     /**
      * Test cocher plusieurs cases
@@ -157,6 +148,64 @@ HTML;
     <div>
         <label for="checkbox3">Val 3</label>
         <input type="checkbox" name="checkbox[]" value="val3" id="checkbox3" checked/>
+    </div>
+    <button type="submit" name="ok" id="ok">OK</button>
+</form>
+HTML;
+        $this->assertSame($expected, $form->render());
+        
+    }
+    
+    /**
+     * Test cocher plusieurs cases => Valeur invalide
+     */
+    public function testCheckMultipleInvalidValue() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <div>
+        <label>Val 1</label>
+        <input type="checkbox" name="checkbox[]" value="val1"/>
+    </div>
+    <div>
+        <label>Val 2</label>
+        <input type="checkbox" name="checkbox[]" value="val2"/>
+    </div>
+    <div>
+        <label>Val 3</label>
+        <input type="checkbox" name="checkbox[]" value="val3"/>
+    </div>
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'checkbox' => ['val1', 'val4']];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'checkbox' => ['Val 1: value is not in the authorized values list (val1, val2, val3)']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'checkbox[]', 'type' => 'inarray', 'values' => ['val1', 'val2', 'val3']],
+            $form->getDescription()['rules'][0]);
+        
+        // Test de rendu du formulaire
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+<div>Val 1: value is not in the authorized values list (val1, val2, val3)</div>    <div>
+        <label for="checkbox">Val 1</label>
+        <input type="checkbox" name="checkbox[]" value="val1" id="checkbox" checked/>
+    </div>
+    <div>
+        <label for="checkbox2">Val 2</label>
+        <input type="checkbox" name="checkbox[]" value="val2" id="checkbox2"/>
+    </div>
+    <div>
+        <label for="checkbox3">Val 3</label>
+        <input type="checkbox" name="checkbox[]" value="val3" id="checkbox3"/>
     </div>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
