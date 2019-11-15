@@ -35,7 +35,7 @@ class Formatter
      * @throws \InvalidArgumentException
      * @return mixed Modified value
      */
-    public function formatTrim(array $format, $value)
+    protected function formatTrim(array $format, $value)
     {
         if (!is_string($value)) {
             throw new \InvalidArgumentException('Format trim : value must be a string');
@@ -50,16 +50,16 @@ class Formatter
      * @throws \InvalidArgumentException
      * @return mixed Modified value
      */
-    public function formatNumber(array $format, $value)
+    protected function formatNumber(array $format, $value)
     {
         if (is_array($value)) {
             throw new \InvalidArgumentException('Format number : value cannot be an array');
         }
-        if (is_numeric($value)) {
-            if (strpos($value, '.') === false) {
-                return (int) $value;
-            } else {
+        if (preg_match('/^\-?\d+(\.?)\d*$/', $value, $matches)) {
+            if ($matches[1] === '.') {
                 return (float) $value;
+            } else {
+                return (int) $value;
             }
         } else {
             return $value;
@@ -72,7 +72,7 @@ class Formatter
      * @param mixed $value Initial value
      * @return mixed Modified value
      */
-    public function formatCheckbox(array $format, $value)
+    protected function formatCheckbox(array $format, $value)
     {
         if ($value === 'on') {
             return true;

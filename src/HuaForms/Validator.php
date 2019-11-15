@@ -34,7 +34,7 @@ class Validator
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
-    public function validateRequired(array $rule, $value) : bool
+    protected function validateRequired(array $rule, $value) : bool
     {
         if (empty($value) && $value !== '0') {
             return false;
@@ -49,7 +49,7 @@ class Validator
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
-    public function validateMaxlength(array $rule, $value) : bool
+    protected function validateMaxlength(array $rule, $value) : bool
     {
         if (!is_string($value)) {
             throw new \InvalidArgumentException('Rule maxlength : value must be a string');
@@ -70,7 +70,7 @@ class Validator
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
-    public function validateMinlength(array $rule, $value) : bool
+    protected function validateMinlength(array $rule, $value) : bool
     {
         if (!is_string($value)) {
             throw new \InvalidArgumentException('Rule minlength : value must be a string');
@@ -91,7 +91,7 @@ class Validator
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
-    public function validateInarray(array $rule, $value) : bool
+    protected function validateInarray(array $rule, $value) : bool
     {
         if (!isset($rule['values'])) {
             throw new \InvalidArgumentException('Rule maxlength : missing param "values"');
@@ -118,7 +118,7 @@ class Validator
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
-    public function validateEmail(array $rule, $value) : bool
+    protected function validateEmail(array $rule, $value) : bool
     {
         if (!is_string($value)) {
             throw new \InvalidArgumentException('Rule email : value must be a string');
@@ -136,7 +136,7 @@ class Validator
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
-    public function validateUrl(array $rule, $value) : bool
+    protected function validateUrl(array $rule, $value) : bool
     {
         if (!is_string($value)) {
             throw new \InvalidArgumentException('Rule url : value must be a string');
@@ -154,7 +154,7 @@ class Validator
      * @param mixed $value Field value
      * @return bool True if value is valid, false otherwise
      */
-    public function validateColor(array $rule, $value) : bool
+    protected function validateColor(array $rule, $value) : bool
     {
         if (!is_string($value)) {
             throw new \InvalidArgumentException('Rule color : value must be a string');
@@ -172,7 +172,7 @@ class Validator
      * @param mixed $value Field value
      * @return mixed True if value is valid, false or string otherwise
      */
-    public function validateNumber(array $rule, $value)
+    protected function validateNumber(array $rule, $value)
     {
         if (is_array($value)) {
             throw new \InvalidArgumentException('Rule number : value cannot be an array');
@@ -218,7 +218,7 @@ class Validator
      * @param mixed $value Field value
      * @return mixed True if value is valid, false or string otherwise
      */
-    public function validateMonth(array $rule, $value)
+    protected function validateMonth(array $rule, $value)
     {
         if (is_array($value)) {
             throw new \InvalidArgumentException('Rule month : value cannot be an array');
@@ -250,7 +250,7 @@ class Validator
      * @param mixed $value Field value
      * @return mixed True if value is valid, false or string otherwise
      */
-    public function validateWeek(array $rule, $value)
+    protected function validateWeek(array $rule, $value)
     {
         if (is_array($value)) {
             throw new \InvalidArgumentException('Rule week : value cannot be an array');
@@ -283,7 +283,7 @@ class Validator
      * @param mixed $value Field value
      * @return mixed True if value is valid, false or string otherwise
      */
-    public function validateDate(array $rule, $value)
+    protected function validateDate(array $rule, $value)
     {
         if (is_array($value)) {
             throw new \InvalidArgumentException('Rule date : value cannot be an array');
@@ -316,7 +316,7 @@ class Validator
      * @param mixed $value Field value
      * @return mixed True if value is valid, false or string otherwise
      */
-    public function validateTime(array $rule, $value)
+    protected function validateTime(array $rule, $value)
     {
         if (is_array($value)) {
             throw new \InvalidArgumentException('Rule time : value cannot be an array');
@@ -403,7 +403,7 @@ class Validator
      * @param mixed $value Field value
      * @return mixed True if value is valid, false or string otherwise
      */
-    public function validateDatetimelocal(array $rule, $value)
+    protected function validateDatetimelocal(array $rule, $value)
     {
         if (is_array($value)) {
             throw new \InvalidArgumentException('Rule datetime-local : value cannot be an array');
