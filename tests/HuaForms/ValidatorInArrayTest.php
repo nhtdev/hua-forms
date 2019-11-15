@@ -198,9 +198,9 @@ HTML;
     }
     
     /**
-     * Champ select : inarray error champ texte
+     * Champ select : inarray error champ texte + custom message
      */
-    public function testInArrayTextFieldError() : void
+    public function testInArrayTextFieldErrorCustom() : void
     {
         $html = <<<HTML
 <form method="post" action="">

@@ -88,13 +88,13 @@ HTML;
     }
     
     /**
-     * Champ texte avec règle color Erreur
+     * Champ texte avec règle color Erreur + custom message
      */
-    public function testColorError() : void
+    public function testColorErrorCustom() : void
     {
         $html = <<<HTML
 <form method="post" action="">
-    <input type="color" name="field1" />
+    <input type="color" name="field1" color-message="Couleur incorrecte" />
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
@@ -104,10 +104,10 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => ['field1: invalid color']
+            'field1' => ['Couleur incorrecte']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals(['field' => 'field1', 'type' => 'color'],
+        $this->assertEquals(['field' => 'field1', 'type' => 'color', 'message' => 'Couleur incorrecte'],
             $form->getDescription()['rules'][0]);
     }
     

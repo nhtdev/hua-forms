@@ -89,13 +89,13 @@ HTML;
     }
     
     /**
-     * Champ texte avec règle email Erreur
+     * Champ texte avec règle email Erreur + custom error
      */
-    public function testEmailError() : void
+    public function testEmailErrorCustom() : void
     {
         $html = <<<HTML
 <form method="post" action="">
-    <input type="email" name="field1" />
+    <input type="email" name="field1" email-message="Email incorrect" />
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
@@ -105,10 +105,10 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => ['field1: invalid email']
+            'field1' => ['Email incorrect']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals(['field' => 'field1', 'type' => 'email'],
+        $this->assertEquals(['field' => 'field1', 'type' => 'email', 'message' => 'Email incorrect'],
             $form->getDescription()['rules'][0]);
     }
     

@@ -88,13 +88,13 @@ HTML;
     }
     
     /**
-     * Champ texte avec règle url Erreur
+     * Champ texte avec règle url Erreur + custom error
      */
-    public function testUrlError() : void
+    public function testUrlErrorCustom() : void
     {
         $html = <<<HTML
 <form method="post" action="">
-    <input type="url" name="field1" />
+    <input type="url" name="field1" url-message="Adresse url incorrecte" />
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
@@ -104,10 +104,10 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => ['field1: invalid url']
+            'field1' => ['Adresse url incorrecte']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals(['field' => 'field1', 'type' => 'url'],
+        $this->assertEquals(['field' => 'field1', 'type' => 'url', 'message' => 'Adresse url incorrecte'],
             $form->getDescription()['rules'][0]);
     }
     
