@@ -83,6 +83,31 @@ HTML;
     {
         $html = <<<HTML
 <form method="post" action="">
+    <input type="checkbox" name="checkbox" id="checkbox"/>
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'checkbox' => "test"];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'checkbox' => ['checkbox: value is not in the authorized values list (on)']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'checkbox', 'type' => 'inarray', 'values' => ['on']],
+            $form->getDescription()['rules'][0]);
+        
+    }
+    
+    /**
+     * Test envoyer une valeur invalide sur une case à cocher
+     */
+    public function testCheckInvalidValueCustom() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
     <input type="checkbox" name="checkbox" id="checkbox" value="coche"/>
     <button type="submit" name="ok">OK</button>
 </form>
