@@ -58,7 +58,7 @@ HTML;
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
-        $this->assertSame($expected, $form->render());
+        $this->assertEquals($expected, $form->render());
         
     }
     
@@ -116,7 +116,7 @@ HTML;
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
-        $this->assertSame($expected, $form->render());
+        $this->assertEquals($expected, $form->render());
         
     }
     

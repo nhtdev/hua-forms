@@ -46,7 +46,7 @@ HTML;
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
-        $this->assertSame($expected, $form->render());
+        $this->assertEquals($expected, $form->render());
         
         
     }
@@ -89,7 +89,7 @@ Field 2 mandatory</div>    <label for="field1">Field 1</label>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
-        $this->assertSame($expected, $form->render());
+        $this->assertEquals($expected, $form->render());
     }
     
 }

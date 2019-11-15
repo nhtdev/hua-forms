@@ -29,7 +29,7 @@ HTML;
     <input name="field" type="text" id="field" value="fieldvalue"/>
 </form>
 HTML;
-        $this->assertSame($expected, $form->render());
+        $this->assertEquals($expected, $form->render());
         
     }
     
@@ -66,7 +66,7 @@ HTML;
     </div>
 </form>
 HTML;
-        $this->assertSame($expected, $form->render());
+        $this->assertEquals($expected, $form->render());
         
     }
     
@@ -100,7 +100,7 @@ HTML;
     </div>
 </form>
 HTML;
-        $this->assertSame($expected, $form->render());
+        $this->assertEquals($expected, $form->render());
         
     }
     
@@ -134,7 +134,7 @@ HTML;
     </div>
 </form>
 HTML;
-        $this->assertSame($expected, $form->render());
+        $this->assertEquals($expected, $form->render());
         
     }
     

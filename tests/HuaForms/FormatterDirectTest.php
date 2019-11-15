@@ -35,7 +35,7 @@ class FormatterDirectTest extends \Tests\HuaForms\HuaFormsTestCase
     {
         $formatter = new \HuaForms\Formatter();
         $result = $formatter->format(['type' => 'trim'], $value);
-        $this->assertSame($expected, $result);
+        $this->assertEquals($expected, $result);
     }
     public function trimProvider() : array
     {
