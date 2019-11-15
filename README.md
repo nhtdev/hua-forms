@@ -62,6 +62,7 @@ TODO Validation du HTML et du contenu des attributs
 TODO Affichage conditionnel
 TODO options dynamiques
 TODO préfixe id
+TODO mettre des patterns pour les champs non gérés
 
 ## Types des champs
 
