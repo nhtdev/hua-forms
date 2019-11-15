@@ -77,7 +77,7 @@ if ($form->isSubmitted() && $form->validate()) {
 <input type="file" /> TODO
 <input type="hidden" />
 <input type="checkbox" />
-<input type="radio" /> TODO + gérer valeur par défaut
+<input type="radio" />
 <input type="password" />
 <button /> ou <input type="button" />
 <button type="submit"> ou <input type="submit" />

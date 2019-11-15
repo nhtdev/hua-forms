@@ -436,7 +436,7 @@ class Parser
         
         // Check type
         if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range', 
-            'tel', 'search', 'hidden', 'password', 'checkbox', 'color', 'month', 'week',
+            'tel', 'search', 'hidden', 'password', 'checkbox', 'radio', 'color', 'month', 'week',
             'date', 'time', 'datetime-local'
         ])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);

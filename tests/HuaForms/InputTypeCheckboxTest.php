@@ -77,9 +77,9 @@ HTML;
     }
     
     /**
-     * Test cocher une case avec valeur custom
-     */
-    public function testCheckValue() : void
+     * Test envoyer une valeur invalide sur une case à cocher
+     *
+    public function testCheckInvalidValue() : void
     {
         $html = <<<HTML
 <form method="post" action="">
@@ -87,14 +87,14 @@ HTML;
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
-        $_POST = ['csrf' => 'test', 'ok' => true, 'checkbox' => "coche"];
+        $_POST = ['csrf' => 'test', 'ok' => true, 'checkbox' => "test"];
         
         $form = $this->buildTestForm($html);
         
         $this->assertTrue($form->isSubmitted());
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
-        $this->assertEquals(['checkbox' => 'coche'], $form->exportValues());
+        $this->assertEquals(['checkbox' => false], $form->exportValues());
         $this->assertIsString($form->exportValues()['checkbox']);
         
         // Test de rendu du formulaire
@@ -102,13 +102,13 @@ HTML;
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-    <input type="checkbox" name="checkbox" id="checkbox" value="coche" checked/>
+    <input type="checkbox" name="checkbox" id="checkbox" value="coche"/>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
         $this->assertSame($expected, $form->render());
         
-    }
+    }*/
     
     /**
      * Test cocher plusieurs cases
