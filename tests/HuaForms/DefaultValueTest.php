@@ -35,6 +35,10 @@ class DefaultValueTest extends \Tests\HuaForms\HuaFormsTestCase
     <input type="checkbox" name="field9[]" id="field92" value="2" checked />
     <input type="checkbox" name="field9[]" id="field93" value="3" />
 
+    <input type="radio" name="field10" id="field101" value="1" />
+    <input type="radio" name="field10" id="field102" value="2" checked />
+    <input type="radio" name="field10" id="field103" value="3" />
+
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
@@ -65,6 +69,10 @@ HTML;
     <input type="checkbox" name="field9[]" id="field92" value="2" checked/>
     <input type="checkbox" name="field9[]" id="field93" value="3"/>
 
+    <input type="radio" name="field10" id="field101" value="1"/>
+    <input type="radio" name="field10" id="field102" value="2" checked/>
+    <input type="radio" name="field10" id="field103" value="3"/>
+
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
@@ -72,45 +80,48 @@ HTML;
         
         $this->assertEquals(
             [
-                'field1' => 'Bonjour',
-                'field2' => 'Valeur par défaut',
-                'field3' => 'b',
-                'field4' => ['a', 'b'],
-                'field5' => true,
-                'field6' => 'cochee',
-                'field9' => ['1', '2']
+                'field1'  => 'Bonjour',
+                'field2'  => 'Valeur par défaut',
+                'field3'  => 'b',
+                'field4'  => ['a', 'b'],
+                'field5'  => true,
+                'field6'  => 'cochee',
+                'field9'  => ['1', '2'],
+                'field10' => '2'
             ],
             $form->handler()->getDefaultValues());
         
         $this->assertSame($expected, $form->render());
         
         $_POST = [
-            'csrf' => 'test', 
-            'ok' => true, 
-            'field1' => 'Bonsoir', 
-            'field2' => 'Valeur modifiée', 
-            'field3' => 'c',
-            'field4' => ['b', 'c'],
+            'csrf'    => 'test', 
+            'ok'      => true, 
+            'field1'  => 'Bonsoir', 
+            'field2'  => 'Valeur modifiée', 
+            'field3'  => 'c',
+            'field4'  => ['b', 'c'],
             // field5 = off 
             // field6 = off
-            'field7' => 'on',
-            'field8' => 'cochee',
-            'field9' => ['2', '3']
+            'field7'  => 'on',
+            'field8'  => 'cochee',
+            'field9'  => ['2', '3'],
+            'field10' => '3'
         ];
         
         $this->assertTrue($form->isSubmitted());
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals([
-            'field1' => 'Bonsoir', 
-            'field2' => 'Valeur modifiée', 
-            'field3' => 'c', 
-            'field4' => ['b', 'c'],
-            'field5' => false,
-            'field6' => false,
-            'field7' => true,
-            'field8' => 'cochee',
-            'field9' => ['2', '3']
+            'field1'  => 'Bonsoir', 
+            'field2'  => 'Valeur modifiée', 
+            'field3'  => 'c', 
+            'field4'  => ['b', 'c'],
+            'field5'  => false,
+            'field6'  => false,
+            'field7'  => true,
+            'field8'  => 'cochee',
+            'field9'  => ['2', '3'],
+            'field10' => '3'
         ], $form->exportValues());
         
         // Test de rendu du formulaire après submit
@@ -138,6 +149,10 @@ HTML;
     <input type="checkbox" name="field9[]" id="field91" value="1"/>
     <input type="checkbox" name="field9[]" id="field92" value="2" checked/>
     <input type="checkbox" name="field9[]" id="field93" value="3" checked/>
+
+    <input type="radio" name="field10" id="field101" value="1"/>
+    <input type="radio" name="field10" id="field102" value="2"/>
+    <input type="radio" name="field10" id="field103" value="3" checked/>
 
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
