@@ -199,6 +199,26 @@ class Handler
     }
     
     /**
+     * Return the user friendly label of the given field, or the field name if label is not defined
+     * @param string $fieldName
+     * @return string
+     */
+    protected function getFieldLabel(string $fieldName) : string
+    {
+        $friendlyName = str_replace('[]', '', $fieldName);
+        foreach ($this->conf['fields'] as $field) {
+            if ($field['name'] === $fieldName) {
+                if (empty($field['label'])) {
+                    return $friendlyName;
+                } else {
+                    return $field['label'];
+                }
+            }
+        }
+        return $friendlyName;
+    }
+    
+    /**
      * Return the form submitted data, without any formatting or validation,
      * but ignore the data which are not form fields
      * @return array
@@ -222,17 +242,12 @@ class Handler
     public function getFormattedData() : array
     {
         $formatter = new Formatter();
-        $rawData = $this->getRawData();
         if ($this->formattedData === null) {
-            $this->formattedData = [];
-            foreach ($this->conf['fields'] as $field) {
-                $name = $field['name'];
-                $value = $this->getInArray($rawData, $name);
-                if (isset($field['formatters'])) {
-                    foreach ($field['formatters'] as $oneFormat) {
-                        $value = $formatter->format($oneFormat, $value);
-                    }
-                }
+            $this->formattedData = $this->getSelectiveData();
+            foreach ($this->conf['formatters'] as $oneFormat) {
+                $name = $oneFormat['field'];
+                $value = $this->getInArray($this->formattedData, $name);
+                $value = $formatter->format($oneFormat, $value);
                 $this->setInArray($this->formattedData, $name, $value);
             }
         }
@@ -271,24 +286,22 @@ class Handler
         
         $data = $this->getFormattedData();
         $validator = new Validator();
-        foreach ($this->conf['fields'] as $field) {
-            $name = $field['name'];
+        foreach ($this->conf['rules'] as $rule) {
+            $name = $rule['field'];
             $cleanName = str_replace('[]', '', $name);
             $value = $this->getInArray($data, $name);
-            if (isset($field['rules'])) {
-                foreach ($field['rules'] as $rule) {
-                    if ($rule['type'] === 'required' || !empty($value) || $value === '0') { // Ignore rule if field is empty
-                        $result = $validator->validate($rule, $value);
-                        if ($result === true) {
-                            // OK
-                        } else if ($result === false) {
-                            $this->validationResult = false;
-                            $this->validationMsg[$cleanName][] = $this->validationErrorMessage($field, $rule);
-                        } else {
-                            $this->validationResult = false;
-                            $this->validationMsg[$cleanName][] = $this->validationErrorMessage($field, $rule, $result);
-                        }
-                    }
+            if ($rule['type'] === 'required' || !empty($value) || $value === '0') { // Ignore rule if field is empty
+                $result = $validator->validate($rule, $value);
+                if ($result === true) {
+                    // OK
+                } else if ($result === false) {
+                    $fieldLabel = $this->getFieldLabel($name);
+                    $this->validationResult = false;
+                    $this->validationMsg[$cleanName][] = $this->validationErrorMessage($fieldLabel, $rule);
+                } else {
+                    $fieldLabel = $this->getFieldLabel($name);
+                    $this->validationResult = false;
+                    $this->validationMsg[$cleanName][] = $this->validationErrorMessage($fieldLabel, $rule, $result);
                 }
             }
         }
@@ -298,12 +311,12 @@ class Handler
     
     /**
      * Generate the error message for a given field and validation rule
-     * @param array $field Field description
+     * @param string $fieldLabel Field label
      * @param array $rule Rule description
      * @param string $validationResult Validation result (for validators returning various error messages)
      * @return string Error message
      */
-    protected function validationErrorMessage(array $field, array $rule, string $validationResult=null) : string
+    protected function validationErrorMessage(string $fieldLabel, array $rule, string $validationResult=null) : string
     {
         $msg = null;
         
@@ -329,7 +342,7 @@ class Handler
         }
         
         $replace = $rule;
-        $replace['label'] = $field['label'];
+        $replace['label'] = $fieldLabel;
         foreach ($replace as $key => $value) {
             $replaceTag = '{'.$key.'}';
             if (strpos($msg, $replaceTag) !== false) {

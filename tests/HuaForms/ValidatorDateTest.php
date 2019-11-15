@@ -25,8 +25,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-05-04'], $form->exportValues());
-        $this->assertEquals([['type' => 'date']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date'], 
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -47,11 +47,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not a valid date']
+            'field1' => ['field1: value is not a valid date']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'date']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date'], 
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -72,8 +72,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2020-02-29'], $form->exportValues());
-        $this->assertEquals([['type' => 'date']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -94,18 +94,18 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be less than or equal to 2019-06-30']
+            'field1' => ['field1: value must be less than or equal to 2019-06-30']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'date', 'min' => '2019-01-01', 'max' => '2019-06-30']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date', 'min' => '2019-01-01', 'max' => '2019-06-30'],
+            $form->getDescription()['rules'][0]);
         
         // Test de rendu du formulaire
         
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-<div>: value must be less than or equal to 2019-06-30</div>    <input type="text" name="field1" id="field1" value="2019-07-01"/>
+<div>field1: value must be less than or equal to 2019-06-30</div>    <input type="text" name="field1" id="field1" value="2019-07-01"/>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
@@ -132,8 +132,8 @@ HTML;
             'field1' => ['Jour invalide']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'date', 'message' => 'Jour invalide']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date', 'message' => 'Jour invalide'],
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -154,8 +154,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-02-15'], $form->exportValues());
-        $this->assertEquals([['type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-28']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-28'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -176,11 +176,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be greater than or equal to 2019-02-01']
+            'field1' => ['field1: value must be greater than or equal to 2019-02-01']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-28']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-28'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -204,8 +204,8 @@ HTML;
             'field1' => ['Après 2019-02-01']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-28', 'min-message' => 'Après {min}']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-28', 'min-message' => 'Après {min}'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -226,11 +226,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be less than or equal to 2019-02-28']
+            'field1' => ['field1: value must be less than or equal to 2019-02-28']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-28']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-28'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -254,8 +254,8 @@ HTML;
             'field1' => ['Avant 2019-02-27']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-27', 'max-message' => 'Avant {max}']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'date', 'min' => '2019-02-01', 'max' => '2019-02-27', 'max-message' => 'Avant {max}'],
+            $form->getDescription()['rules'][0]);
         
     }
     

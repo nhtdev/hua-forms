@@ -25,8 +25,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-W40'], $form->exportValues());
-        $this->assertEquals([['type' => 'week']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week'], 
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -47,11 +47,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not a valid week number']
+            'field1' => ['field1: value is not a valid week number']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'week']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week'], 
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -72,8 +72,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2015-W53'], $form->exportValues());
-        $this->assertEquals([['type' => 'week']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -94,18 +94,18 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be less than or equal to 2019-W30']
+            'field1' => ['field1: value must be less than or equal to 2019-W30']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30'],
+            $form->getDescription()['rules'][0]);
         
         // Test de rendu du formulaire
         
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-<div>: value must be less than or equal to 2019-W30</div>    <input type="text" name="field1" id="field1" value="2019-W31"/>
+<div>field1: value must be less than or equal to 2019-W30</div>    <input type="text" name="field1" id="field1" value="2019-W31"/>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
@@ -132,8 +132,8 @@ HTML;
             'field1' => ['Semaine invalide']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'week', 'message' => 'Semaine invalide']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week', 'message' => 'Semaine invalide'],
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -154,8 +154,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-W20'], $form->exportValues());
-        $this->assertEquals([['type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -176,11 +176,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be greater than or equal to 2019-W20']
+            'field1' => ['field1: value must be greater than or equal to 2019-W20']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -204,8 +204,8 @@ HTML;
             'field1' => ['Après 2019-W20']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30', 'min-message' => 'Après {min}']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30', 'min-message' => 'Après {min}'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -226,11 +226,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be less than or equal to 2019-W30']
+            'field1' => ['field1: value must be less than or equal to 2019-W30']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -246,7 +246,6 @@ HTML;
 </form>
 HTML;
         $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '2019-W31'];
-        
         $form = $this->buildTestForm($html);
         
         $this->assertFalse($form->validate());
@@ -254,8 +253,8 @@ HTML;
             'field1' => ['Avant 2019-W30']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30', 'max-message' => 'Avant {max}']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'week', 'min' => '2019-W20', 'max' => '2019-W30', 'max-message' => 'Avant {max}'],
+            $form->getDescription()['rules'][0]);
         
     }
     

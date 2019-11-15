@@ -25,8 +25,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '18:15'], $form->exportValues());
-        $this->assertEquals([['type' => 'time']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time'], 
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -47,11 +47,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not a valid time']
+            'field1' => ['field1: value is not a valid time']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time'], 
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -71,18 +71,18 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be less than or equal to 20:00']
+            'field1' => ['field1: value must be less than or equal to 20:00']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '10:00', 'max' => '20:00']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '10:00', 'max' => '20:00'],
+            $form->getDescription()['rules'][0]);
         
         // Test de rendu du formulaire
         
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-<div>: value must be less than or equal to 20:00</div>    <input type="text" name="field1" id="field1" value="20:05"/>
+<div>field1: value must be less than or equal to 20:00</div>    <input type="text" name="field1" id="field1" value="20:05"/>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
@@ -109,8 +109,8 @@ HTML;
             'field1' => ['Heure invalide']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'message' => 'Heure invalide']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'message' => 'Heure invalide'],
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -131,8 +131,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '11:59'], $form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '10:00', 'max' => '20:00']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '10:00', 'max' => '20:00'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -153,11 +153,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be greater than or equal to 10:00']
+            'field1' => ['field1: value must be greater than or equal to 10:00']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '10:00', 'max' => '20:00']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '10:00', 'max' => '20:00'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -181,8 +181,8 @@ HTML;
             'field1' => ['Après 10:00']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '10:00', 'max' => '20:00', 'min-message' => 'Après {min}']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '10:00', 'max' => '20:00', 'min-message' => 'Après {min}'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -204,8 +204,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '06:30'], $form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '20:00', 'max' => '10:00']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '20:00', 'max' => '10:00'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -227,8 +227,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '21:30'], $form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '20:00', 'max' => '10:00']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '20:00', 'max' => '10:00'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -249,11 +249,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must not be between 10:00 and 20:00']
+            'field1' => ['field1: value must not be between 10:00 and 20:00']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '20:00', 'max' => '10:00']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '20:00', 'max' => '10:00'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -274,11 +274,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be less than or equal to 20:00']
+            'field1' => ['field1: value must be less than or equal to 20:00']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '10:00', 'max' => '20:00']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '10:00', 'max' => '20:00'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -302,8 +302,8 @@ HTML;
             'field1' => ['Avant 20:00']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'min' => '10:00', 'max' => '20:00', 'max-message' => 'Avant {max}']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'min' => '10:00', 'max' => '20:00', 'max-message' => 'Avant {max}'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -325,8 +325,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '12:12:30'], $form->exportValues());
-        $this->assertEquals([['type' => 'time', 'step' => 10]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'step' => 10],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -347,11 +347,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not a valid time']
+            'field1' => ['field1: value is not a valid time']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'step' => 60]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'step' => 60],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -373,8 +373,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '12:12:30'], $form->exportValues());
-        $this->assertEquals([['type' => 'time', 'step' => 10]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'step' => 10],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -395,11 +395,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not allowed']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'step' => 10]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'step' => 10],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -421,8 +421,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '12:12'], $form->exportValues());
-        $this->assertEquals([['type' => 'time', 'step' => 120]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'step' => 120],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -443,11 +443,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not allowed']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'step' => 120]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'step' => 120],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -469,8 +469,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '12:00'], $form->exportValues());
-        $this->assertEquals([['type' => 'time', 'step' => 3600]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'step' => 3600],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -491,11 +491,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not allowed']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'time', 'step' => 3600]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'time', 'step' => 3600],
+            $form->getDescription()['rules'][0]);
         
     }
     

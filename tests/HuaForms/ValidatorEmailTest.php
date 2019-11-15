@@ -25,8 +25,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'test@gmail.com'], $form->exportValues());
-        $this->assertEquals([['type' => 'email']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'email'], 
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -47,18 +47,18 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': invalid email']
+            'field1' => ['field1: invalid email']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'email']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'email'], 
+            $form->getDescription()['rules'][0]);
         
         // Test de rendu du formulaire
         
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-<div>: invalid email</div>    <input type="text" name="field1" id="field1" value="testemailhs"/>
+<div>field1: invalid email</div>    <input type="text" name="field1" id="field1" value="testemailhs"/>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
@@ -83,8 +83,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'test@gmail.com'], $form->exportValues());
-        $this->assertEquals([['type' => 'email']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'email'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -105,11 +105,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': invalid email']
+            'field1' => ['field1: invalid email']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'email']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'email'],
+            $form->getDescription()['rules'][0]);
     }
     
 }

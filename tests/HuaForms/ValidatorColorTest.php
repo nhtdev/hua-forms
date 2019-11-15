@@ -25,8 +25,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '#0169ef'], $form->exportValues());
-        $this->assertEquals([['type' => 'color']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'color'], 
+            $form->getDescription()['rules'][0]);
         
         // Test de rendu du formulaire
         
@@ -57,11 +57,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': invalid color']
+            'field1' => ['field1: invalid color']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'color']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'color'], 
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -82,8 +82,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '#0123ef'], $form->exportValues());
-        $this->assertEquals([['type' => 'color']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'color'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -104,11 +104,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': invalid color']
+            'field1' => ['field1: invalid color']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'color']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'color'],
+            $form->getDescription()['rules'][0]);
     }
     
 }

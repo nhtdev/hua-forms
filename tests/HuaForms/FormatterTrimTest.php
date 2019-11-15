@@ -27,8 +27,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => ' Value1 ', 'field2' => 'Value2'], $form->exportValues());
-        $this->assertEquals([['type' => 'trim']],
-            $form->getDescription()['fields'][1]['formatters']);
+        $this->assertEquals(['field' => 'field2', 'type' => 'trim'],
+            $form->getDescription()['formatters'][0]);
         
     }
     
@@ -51,18 +51,18 @@ HTML;
         $this->assertTrue($form->isSubmitted());
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': field is required']
+            'field1' => ['field1: field is required']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'trim']],
-            $form->getDescription()['fields'][0]['formatters']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'trim'],
+            $form->getDescription()['formatters'][0]);
         
         // Test de rendu du formulaire
         
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-   <div class="errors">: field is required</div>    <input type="text" name="field1" required id="field1" value="     "/>
+   <div class="errors">field1: field is required</div>    <input type="text" name="field1" required id="field1" value="     "/>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;

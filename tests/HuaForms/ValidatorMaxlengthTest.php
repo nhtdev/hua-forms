@@ -25,8 +25,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '123456789012345'], $form->exportValues());
-        $this->assertEquals([['type' => 'maxlength', 'maxlength' => 15]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'maxlength', 'maxlength' => 15],
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -49,8 +49,8 @@ HTML;
             'field1' => ['Too long']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'maxlength', 'maxlength' => 15, 'message' => 'Too long']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'maxlength', 'maxlength' => 15, 'message' => 'Too long'],
+            $form->getDescription()['rules'][0]);
     }
     
     /**
