@@ -36,6 +36,30 @@ HTML;
     {
         $html = <<<HTML
 <form method="post" action="">
+    <input type="text" name="field1" minlength="5" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '1234'];
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'field1' => ['field1: minimum 5 characters']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'field1', 'type' => 'minlength', 'minlength' => 5],
+            $form->getDescription()['rules'][0]);
+    }
+    
+    /**
+     * Champ avec taille minimale : Erreur
+     */
+    public function testMinlengthErrorCustom() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
     <input type="text" name="field1" minlength="5" minlength-message="Too short"/>
     <button type="submit" name="ok">OK</button>
 </form>
