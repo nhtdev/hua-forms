@@ -6,7 +6,6 @@ require_once dirname(__FILE__).'/HuaFormsTestCase.php';
 
 class FormatterTrimTest extends \Tests\HuaForms\HuaFormsTestCase
 {
-    
     /**
      * Test de la fonction trim sur un champ texte
      */
