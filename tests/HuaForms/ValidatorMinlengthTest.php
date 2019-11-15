@@ -25,8 +25,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '12345'], $form->exportValues());
-        $this->assertEquals([['type' => 'minlength', 'minlength' => 5]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'minlength', 'minlength' => 5],
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -49,8 +49,8 @@ HTML;
             'field1' => ['Too short']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'minlength', 'minlength' => 5, 'message' => 'Too short']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'minlength', 'minlength' => 5, 'message' => 'Too short'],
+            $form->getDescription()['rules'][0]);
     }
     
     /**

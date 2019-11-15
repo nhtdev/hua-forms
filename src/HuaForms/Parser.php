@@ -258,6 +258,13 @@ class Parser
                 return true;
             }
         });
+            
+        // Formatters
+        $data['formatters'] = $this->buildJsonFormatters($dom);
+        
+        // Rules
+        $data['rules'] = $this->buildJsonRules($dom);
+        
         return $data;
     }
     
@@ -451,12 +458,6 @@ class Parser
             $label = $labelNode->nodeValue;
         }
         
-        // Formatters
-        $formatters = $this->buildJsonFormatters($type, $node);
-        
-        // Rules
-        $rules = $this->buildJsonRules($type, $node);
-        
         // Default value
         $value = null;
         if ($node->nodeName === 'textarea') {
@@ -512,9 +513,7 @@ class Parser
             'label' => $label,
             'name' => $name,
             'type' => $type,
-            'value' => $value,
-            'formatters' => $formatters,
-            'rules' => $rules
+            'value' => $value
         ];
         $data['fields'][] = $result;
         
@@ -531,273 +530,311 @@ class Parser
     }
     
     /**
-     * Generate and return the formatters for an element of the DOM
-     * @param string $type Field type : "text", "select", "textarea", "date", ...
-     * @param \DOMElement $node
+     * Generate and return the formatters for the form
+     * @param \DOMDocument $form
      * @return array
      */
-    protected function buildJsonFormatters(string $type, \DOMElement $node) : array
+    protected function buildJsonFormatters(\DOMDocument $form) : array
     {
         $formatters = [];
-        if ($node->hasAttribute('trim')) {
-            $formatters[] = [
-                'type' => 'trim'
-            ];
-            $node->removeAttribute('trim');
-        }
-        if ($node->hasAttribute('number') || $type === 'number' || $type === 'range') {
-            $formatters[] = [
-                'type' => 'number'
-            ];
-            // Do not remove attribute yet, it will be used in buildJsonRules
-        }
-        if ($type === 'checkbox') {
-            $formatters[] = [
-                'type' => 'checkbox'
-            ];
-        }
+        
+        $this->walkElements($form, function (\DOMElement $node) use (&$formatters) {
+            
+            if ($node->hasAttribute('name')) {
+                $name = $node->getAttribute('name');
+                
+                if ($node->nodeName === 'input') {
+                    $type = $node->getAttribute('type');
+                } else {
+                    $type = $node->nodeName; // textarea, select, ...
+                }
+                
+                if ($node->hasAttribute('trim')) {
+                    $formatters[] = [
+                        'field' => $name,
+                        'type' => 'trim'
+                    ];
+                    $node->removeAttribute('trim');
+                }
+                if ($node->hasAttribute('number') || $type === 'number' || $type === 'range') {
+                    $formatters[] = [
+                        'field' => $name,
+                        'type' => 'number'
+                    ];
+                    // Do not remove attribute yet, it will be used in buildJsonRules
+                }
+                if ($type === 'checkbox') {
+                    $formatters[] = [
+                        'field' => $name,
+                        'type' => 'checkbox'
+                    ];
+                }
+            }
+        });
         return $formatters;
     }
     
     /**
-     * Generate and return the validation rules for an element of the DOM
-     * @param string $type Field type : "text", "select", "textarea", "date", ...
-     * @param \DOMElement $node
+     * Generate and return the validation rules for the form
+     * @param \DOMDocument $form
      * @return array
      */
-    protected function buildJsonRules(string $type, \DOMElement $node) : array
+    protected function buildJsonRules(\DOMDocument $form) : array
     {
-        $rules = [];
+        $allRules = [];
         
-        if ($node->hasAttribute('required')) {
-            $rule = ['type' => 'required'];
-            $rules[] = $rule;
-            // Keep required attribute in html
-        }
-        
-        if ($node->hasAttribute('maxlength')) {
-            $value = (int) $node->getAttribute('maxlength');
-            $rule = ['type' => 'maxlength', 'maxlength' => $value];
-            $rules[] = $rule;
-            // Keep maxlength attribute in html
-        }
-        
-        if ($node->hasAttribute('minlength')) {
-            $value = (int) $node->getAttribute('minlength');
-            $rule = ['type' => 'minlength', 'minlength' => $value];
-            $rules[] = $rule;
-            // Keep minlength attribute in html
-        }
-        
-        if ($node->hasAttribute('inarray')) {
-            $values = explode(',', $node->getAttribute('inarray'));
-            $rule = ['type' => 'inarray', 'values' => $values];
-            $rules[] = $rule;
-            $node->removeAttribute('inarray');
-        }
-        
-        if ($node->hasAttribute('email') || $type === 'email') {
-            $rule = ['type' => 'email'];
-            $rules[] = $rule;
-            if ($node->hasAttribute('email')) {
-                $node->removeAttribute('email');
-            }
-        }
-        
-        if ($node->hasAttribute('url') || $type === 'url') {
-            $rule = ['type' => 'url'];
-            $rules[] = $rule;
-            if ($node->hasAttribute('url')) {
-                $node->removeAttribute('url');
-            }
-        }
-        
-        if ($node->hasAttribute('color') || $type === 'color') {
-            $rule = ['type' => 'color'];
-            $rules[] = $rule;
-            if ($node->hasAttribute('color')) {
-                $node->removeAttribute('color');
-            }
-        }
-        
-        if ($node->hasAttribute('number') || $type === 'number' || $type === 'range') {
-            $rule = ['type' => 'number'];
-            if ($node->hasAttribute('min')) {
-                $rule['min'] = $node->getAttribute('min') + 0; // + 0 : cast to int or float
-            } else {
-                if ($type === 'range') {
-                    $rule['min'] = 0;
-                }
-            }
-            if ($node->hasAttribute('max')) {
-                $rule['max'] = $node->getAttribute('max') + 0; // + 0 : cast to int or float
-            } else {
-                if ($type === 'range') {
-                    $rule['max'] = 100;
-                }
-            }
-            if ($node->hasAttribute('step')) {
-                $rule['step'] = $node->getAttribute('step');
-                if (is_numeric($rule['step'])) {
-                    $rule['step'] = $rule['step'] + 0; // + 0 : cast to int or float
-                }
-            }
-            if ($node->hasAttribute('number')) {
-                $node->removeAttribute('number');
-            }
-            if ($node->hasAttribute('min')) {
-                if ($type !== 'number' && $type !== 'range') {
-                    $node->removeAttribute('min');
-                }
-                if ($node->hasAttribute('min-message')) {
-                    $rule['min-message'] = $node->getAttribute('min-message');
-                    $node->removeAttribute('min-message');
-                }
-            }
-            if ($node->hasAttribute('max')) {
-                if ($type !== 'number' && $type !== 'range') {
-                    $node->removeAttribute('max');
-                }
-                if ($node->hasAttribute('max-message')) {
-                    $rule['max-message'] = $node->getAttribute('max-message');
-                    $node->removeAttribute('max-message');
-                }
-            }
-            if ($node->hasAttribute('step')) {
-                if ($type !== 'number' && $type !== 'range') {
-                    $node->removeAttribute('step');
-                }
-                if ($node->hasAttribute('step-message')) {
-                    $rule['step-message'] = $node->getAttribute('step-message');
-                    $node->removeAttribute('step-message');
-                }
-            }
+        $this->walkElements($form, function (\DOMElement $node) use (&$allRules) {
             
-            $rules[] = $rule;
-        }
-        
-        // Types date, time, datetime-local, month, week
-        // with min / max / step
-        $dtType = null;
-        $viaTag = null;
-        if ($node->hasAttribute('month')) {
-            $dtType = 'month';
-            $viaTag = true;
-        }
-        if ($type === 'month') {
-            $dtType = 'month';
-            $viaTag = false;
-        }
-        if ($node->hasAttribute('week')) {
-            $dtType = 'week';
-            $viaTag = true;
-        }
-        if ($type === 'week') {
-            $dtType = 'week';
-            $viaTag = false;
-        }
-        if ($node->hasAttribute('date')) {
-            $dtType = 'date';
-            $viaTag = true;
-        }
-        if ($type === 'date') {
-            $dtType = 'date';
-            $viaTag = false;
-        }
-        if ($node->hasAttribute('time')) {
-            $dtType = 'time';
-            $viaTag = true;
-        }
-        if ($type === 'time') {
-            $dtType = 'time';
-            $viaTag = false;
-        }
-        if ($node->hasAttribute('datetime-local')) {
-            $dtType = 'datetime-local';
-            $viaTag = true;
-        }
-        if ($type === 'datetime-local') {
-            $dtType = 'datetime-local';
-            $viaTag = false;
-        }
-        
-        if ($dtType !== null) {
-            $rule = ['type' => $dtType];
-            if ($node->hasAttribute('min')) {
-                $rule['min'] = $node->getAttribute('min');
-            }
-            if ($node->hasAttribute('max')) {
-                $rule['max'] = $node->getAttribute('max');
-            }
-            if ($node->hasAttribute('step')) {
-                $rule['step'] = $node->getAttribute('step');
-            }
-            if ($viaTag) {
-                $node->removeAttribute($dtType);
-            }
-            if ($node->hasAttribute('min')) {
-                if ($viaTag) {
-                    $node->removeAttribute('min');
-                }
-                if ($node->hasAttribute('min-message')) {
-                    $rule['min-message'] = $node->getAttribute('min-message');
-                    $node->removeAttribute('min-message');
-                }
-            }
-            if ($node->hasAttribute('max')) {
-                if ($viaTag) {
-                    $node->removeAttribute('max');
-                }
-                if ($node->hasAttribute('max-message')) {
-                    $rule['max-message'] = $node->getAttribute('max-message');
-                    $node->removeAttribute('max-message');
-                }
-            }
-            if ($node->hasAttribute('step')) {
-                if ($viaTag) {
-                    $node->removeAttribute('step');
-                }
-                if ($node->hasAttribute('step-message')) {
-                    $rule['step-message'] = $node->getAttribute('step-message');
-                    $node->removeAttribute('step-message');
-                }
-            }
+            $rules = [];
             
-            $rules[] = $rule;
-        }
-        
-        
-        if ($node->nodeName === 'select') {
-            $optionsValues = [];
-            $this->walkElements($node, function (\DOMElement $element) use (&$optionsValues) {
-                if ($element->nodeName === 'option') {
-                    if ($element->hasAttribute('value')) {
-                        $value = $element->getAttribute('value');
+            if ($this->isInputNode($node)) {
+                
+                if ($node->hasAttribute('name')) {
+                    $name = $node->getAttribute('name');
+                    
+                    if ($node->nodeName === 'input') {
+                        $type = $node->getAttribute('type');
                     } else {
-                        $value = trim($element->textContent);
+                        $type = $node->nodeName; // textarea, select, ...
                     }
-                    if (!empty($value)) {
-                        $optionsValues[] = $value;
+                    
+                    if ($node->hasAttribute('required')) {
+                        $rule = ['field' => $name, 'type' => 'required'];
+                        $rules[] = $rule;
+                        // Keep required attribute in html
+                    }
+                    
+                    if ($node->hasAttribute('maxlength')) {
+                        $value = (int) $node->getAttribute('maxlength');
+                        $rule = ['field' => $name, 'type' => 'maxlength', 'maxlength' => $value];
+                        $rules[] = $rule;
+                        // Keep maxlength attribute in html
+                    }
+                    
+                    if ($node->hasAttribute('minlength')) {
+                        $value = (int) $node->getAttribute('minlength');
+                        $rule = ['field' => $name, 'type' => 'minlength', 'minlength' => $value];
+                        $rules[] = $rule;
+                        // Keep minlength attribute in html
+                    }
+                    
+                    if ($node->hasAttribute('inarray')) {
+                        $values = explode(',', $node->getAttribute('inarray'));
+                        $rule = ['field' => $name, 'type' => 'inarray', 'values' => $values];
+                        $rules[] = $rule;
+                        $node->removeAttribute('inarray');
+                    }
+                    
+                    if ($node->hasAttribute('email') || $type === 'email') {
+                        $rule = ['field' => $name, 'type' => 'email'];
+                        $rules[] = $rule;
+                        if ($node->hasAttribute('email')) {
+                            $node->removeAttribute('email');
+                        }
+                    }
+                    
+                    if ($node->hasAttribute('url') || $type === 'url') {
+                        $rule = ['field' => $name, 'type' => 'url'];
+                        $rules[] = $rule;
+                        if ($node->hasAttribute('url')) {
+                            $node->removeAttribute('url');
+                        }
+                    }
+                    
+                    if ($node->hasAttribute('color') || $type === 'color') {
+                        $rule = ['field' => $name, 'type' => 'color'];
+                        $rules[] = $rule;
+                        if ($node->hasAttribute('color')) {
+                            $node->removeAttribute('color');
+                        }
+                    }
+                    
+                    if ($node->hasAttribute('number') || $type === 'number' || $type === 'range') {
+                        $rule = ['field' => $name, 'type' => 'number'];
+                        if ($node->hasAttribute('min')) {
+                            $rule['min'] = $node->getAttribute('min') + 0; // + 0 : cast to int or float
+                        } else {
+                            if ($type === 'range') {
+                                $rule['min'] = 0;
+                            }
+                        }
+                        if ($node->hasAttribute('max')) {
+                            $rule['max'] = $node->getAttribute('max') + 0; // + 0 : cast to int or float
+                        } else {
+                            if ($type === 'range') {
+                                $rule['max'] = 100;
+                            }
+                        }
+                        if ($node->hasAttribute('step')) {
+                            $rule['step'] = $node->getAttribute('step');
+                            if (is_numeric($rule['step'])) {
+                                $rule['step'] = $rule['step'] + 0; // + 0 : cast to int or float
+                            }
+                        }
+                        if ($node->hasAttribute('number')) {
+                            $node->removeAttribute('number');
+                        }
+                        if ($node->hasAttribute('min')) {
+                            if ($type !== 'number' && $type !== 'range') {
+                                $node->removeAttribute('min');
+                            }
+                            if ($node->hasAttribute('min-message')) {
+                                $rule['min-message'] = $node->getAttribute('min-message');
+                                $node->removeAttribute('min-message');
+                            }
+                        }
+                        if ($node->hasAttribute('max')) {
+                            if ($type !== 'number' && $type !== 'range') {
+                                $node->removeAttribute('max');
+                            }
+                            if ($node->hasAttribute('max-message')) {
+                                $rule['max-message'] = $node->getAttribute('max-message');
+                                $node->removeAttribute('max-message');
+                            }
+                        }
+                        if ($node->hasAttribute('step')) {
+                            if ($type !== 'number' && $type !== 'range') {
+                                $node->removeAttribute('step');
+                            }
+                            if ($node->hasAttribute('step-message')) {
+                                $rule['step-message'] = $node->getAttribute('step-message');
+                                $node->removeAttribute('step-message');
+                            }
+                        }
+                        
+                        $rules[] = $rule;
+                    }
+                    
+                    // Types date, time, datetime-local, month, week
+                    // with min / max / step
+                    $dtType = null;
+                    $viaTag = null;
+                    if ($node->hasAttribute('month')) {
+                        $dtType = 'month';
+                        $viaTag = true;
+                    }
+                    if ($type === 'month') {
+                        $dtType = 'month';
+                        $viaTag = false;
+                    }
+                    if ($node->hasAttribute('week')) {
+                        $dtType = 'week';
+                        $viaTag = true;
+                    }
+                    if ($type === 'week') {
+                        $dtType = 'week';
+                        $viaTag = false;
+                    }
+                    if ($node->hasAttribute('date')) {
+                        $dtType = 'date';
+                        $viaTag = true;
+                    }
+                    if ($type === 'date') {
+                        $dtType = 'date';
+                        $viaTag = false;
+                    }
+                    if ($node->hasAttribute('time')) {
+                        $dtType = 'time';
+                        $viaTag = true;
+                    }
+                    if ($type === 'time') {
+                        $dtType = 'time';
+                        $viaTag = false;
+                    }
+                    if ($node->hasAttribute('datetime-local')) {
+                        $dtType = 'datetime-local';
+                        $viaTag = true;
+                    }
+                    if ($type === 'datetime-local') {
+                        $dtType = 'datetime-local';
+                        $viaTag = false;
+                    }
+                    
+                    if ($dtType !== null) {
+                        $rule = ['field' => $name, 'type' => $dtType];
+                        if ($node->hasAttribute('min')) {
+                            $rule['min'] = $node->getAttribute('min');
+                        }
+                        if ($node->hasAttribute('max')) {
+                            $rule['max'] = $node->getAttribute('max');
+                        }
+                        if ($node->hasAttribute('step')) {
+                            $rule['step'] = $node->getAttribute('step');
+                        }
+                        if ($viaTag) {
+                            $node->removeAttribute($dtType);
+                        }
+                        if ($node->hasAttribute('min')) {
+                            if ($viaTag) {
+                                $node->removeAttribute('min');
+                            }
+                            if ($node->hasAttribute('min-message')) {
+                                $rule['min-message'] = $node->getAttribute('min-message');
+                                $node->removeAttribute('min-message');
+                            }
+                        }
+                        if ($node->hasAttribute('max')) {
+                            if ($viaTag) {
+                                $node->removeAttribute('max');
+                            }
+                            if ($node->hasAttribute('max-message')) {
+                                $rule['max-message'] = $node->getAttribute('max-message');
+                                $node->removeAttribute('max-message');
+                            }
+                        }
+                        if ($node->hasAttribute('step')) {
+                            if ($viaTag) {
+                                $node->removeAttribute('step');
+                            }
+                            if ($node->hasAttribute('step-message')) {
+                                $rule['step-message'] = $node->getAttribute('step-message');
+                                $node->removeAttribute('step-message');
+                            }
+                        }
+                        
+                        $rules[] = $rule;
+                    }
+                    
+                    
+                    if ($node->nodeName === 'select') {
+                        $optionsValues = [];
+                        $this->walkElements($node, function (\DOMElement $element) use (&$optionsValues) {
+                            if ($element->nodeName === 'option') {
+                                if ($element->hasAttribute('value')) {
+                                    $value = $element->getAttribute('value');
+                                } else {
+                                    $value = trim($element->textContent);
+                                }
+                                if (!empty($value)) {
+                                    $optionsValues[] = $value;
+                                }
+                            }
+                        });
+                        $rule = [
+                            'field' => $name,
+                            'type' => 'inarray',
+                            'values' => $optionsValues
+                        ];
+                        $rules[] = $rule;
+                    }
+                    
+                    // Override rule-message for each rule
+                    foreach ($rules as &$rule) {
+                        $ruleType = strtolower($rule['type']);
+                        if ($node->hasAttribute($ruleType.'-message')) {
+                            $rule['message'] = $node->getAttribute($ruleType.'-message');
+                            $node->removeAttribute($ruleType.'-message');
+                        }
+                    }
+                    
+                    if (!empty($rules)) {
+                        $allRules = array_merge($allRules, $rules);
                     }
                 }
-            });
-            $rule = [
-                'type' => 'inarray',
-                'values' => $optionsValues
-            ];
-            $rules[] = $rule;
-        }
-        
-        // Override rule-message for each rule
-        foreach ($rules as &$rule) {
-            $ruleType = strtolower($rule['type']);
-            if ($node->hasAttribute($ruleType.'-message')) {
-                $rule['message'] = $node->getAttribute($ruleType.'-message');
-                $node->removeAttribute($ruleType.'-message');
             }
-        }
+        });
         
-        return $rules;
+        return $allRules;
     }
     
     /**

@@ -25,8 +25,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-11-14T18:15'], $form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local'], 
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -47,11 +47,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not a valid date']
+            'field1' => ['field1: value is not a valid date']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local']], 
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local'], 
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -71,18 +71,18 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be less than or equal to 2019-02-28T20:00']
+            'field1' => ['field1: value must be less than or equal to 2019-02-28T20:00']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'min' => '2019-01-01T10:00', 'max' => '2019-02-28T20:00']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'min' => '2019-01-01T10:00', 'max' => '2019-02-28T20:00'],
+            $form->getDescription()['rules'][0]);
         
         // Test de rendu du formulaire
         
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-<div>: value must be less than or equal to 2019-02-28T20:00</div>    <input type="text" name="field1" id="field1" value="2019-11-14T20:05"/>
+<div>field1: value must be less than or equal to 2019-02-28T20:00</div>    <input type="text" name="field1" id="field1" value="2019-11-14T20:05"/>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
 HTML;
@@ -109,8 +109,8 @@ HTML;
             'field1' => ['Date invalide']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'message' => 'Date invalide']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'message' => 'Date invalide'],
+            $form->getDescription()['rules'][0]);
     }
     
     /**
@@ -131,8 +131,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-01-14T20:05'], $form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'min' => '2019-01-01T20:05', 'max' => '2019-02-28T20:05']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'min' => '2019-01-01T20:05', 'max' => '2019-02-28T20:05'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -153,11 +153,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be greater than or equal to 2019-01-02T20:05']
+            'field1' => ['field1: value must be greater than or equal to 2019-01-02T20:05']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'min' => '2019-01-02T20:05', 'max' => '2019-02-28T20:05']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'min' => '2019-01-02T20:05', 'max' => '2019-02-28T20:05'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -181,8 +181,8 @@ HTML;
             'field1' => ['Après 2019-01-02T20:05']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'min' => '2019-01-02T20:05', 'max' => '2019-02-28T20:05', 'min-message' => 'Après {min}']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'min' => '2019-01-02T20:05', 'max' => '2019-02-28T20:05', 'min-message' => 'Après {min}'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -203,11 +203,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value must be less than or equal to 2019-02-28T20:05']
+            'field1' => ['field1: value must be less than or equal to 2019-02-28T20:05']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'min' => '2019-01-02T20:05', 'max' => '2019-02-28T20:05']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'min' => '2019-01-02T20:05', 'max' => '2019-02-28T20:05'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -231,8 +231,8 @@ HTML;
             'field1' => ['Avant 2019-02-28T20:05']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'min' => '2019-01-02T20:05', 'max' => '2019-02-28T20:05', 'max-message' => 'Avant {max}']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'min' => '2019-01-02T20:05', 'max' => '2019-02-28T20:05', 'max-message' => 'Avant {max}'],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -254,8 +254,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-03-02T12:12:30'], $form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'step' => 10]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'step' => 10],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -276,11 +276,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not a valid date']
+            'field1' => ['field1: value is not a valid date']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'step' => 60]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'step' => 60],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -302,8 +302,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-03-02T12:12:30'], $form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'step' => 10]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'step' => 10],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -324,11 +324,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not allowed']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'step' => 10]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'step' => 10],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -350,8 +350,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-03-02T12:12'], $form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'step' => 120]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'step' => 120],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -372,11 +372,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not allowed']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'step' => 120]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'step' => 120],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -398,8 +398,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => '2019-03-02T12:00'], $form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'step' => 3600]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'step' => 3600],
+            $form->getDescription()['rules'][0]);
         
     }
     
@@ -420,11 +420,11 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': value is not allowed']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals([['type' => 'datetime-local', 'step' => 3600]],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'datetime-local', 'step' => 3600],
+            $form->getDescription()['rules'][0]);
         
     }
     

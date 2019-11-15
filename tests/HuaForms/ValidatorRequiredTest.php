@@ -30,8 +30,8 @@ HTML;
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
         $this->assertEquals(['field1' => 'Value1', 'field2' => 'b'], $form->exportValues());
-        $this->assertEquals([['type' => 'required']],
-            $form->getDescription()['fields'][0]['rules']);
+        $this->assertEquals(['field' => 'field1', 'type' => 'required'],
+            $form->getDescription()['rules'][0]);
         
         // Test de rendu du formulaire
         
@@ -59,7 +59,8 @@ HTML;
         $html = <<<HTML
 <form method="post" action="">
     <div form-errors class="errors"></div>
-    <input type="text" name="field1" required/>
+    <label for="field1">Field 1</label>
+    <input type="text" name="field1" id="field1" required/>
     <input type="text" name="field2" required required-message="Field 2 mandatory"/>
     <button type="submit" name="ok">OK</button>
 </form>
@@ -71,7 +72,7 @@ HTML;
         $this->assertTrue($form->isSubmitted());
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => [': field is required'],
+            'field1' => ['Field 1: field is required'],
             'field2' => ['Field 2 mandatory']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
@@ -81,8 +82,9 @@ HTML;
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-   <div class="errors">: field is required<br />
-Field 2 mandatory</div>    <input type="text" name="field1" required id="field1" value=""/>
+   <div class="errors">Field 1: field is required<br />
+Field 2 mandatory</div>    <label for="field1">Field 1</label>
+    <input type="text" name="field1" id="field1" required value=""/>
     <input type="text" name="field2" required id="field2" value=""/>
     <button type="submit" name="ok" id="ok">OK</button>
 </form>
