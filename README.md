@@ -3,7 +3,9 @@
 ## Présentation
 
 Librairie pour la gestion de formulaires en PHP.
-Le formulaire est écrit en HTML et analysé pour être validé et traité en PHP.
+
+Permet de valider automatiquement coté serveur les données selon les conditions de validation décrites dans le HTML.
+Gestion automatique des bonnes pratiques sur le formulaire (accessibilité, html valide, sécurité...)
 
 *test.form.html*
 
@@ -49,10 +51,17 @@ if ($form->isSubmitted() && $form->validate()) {
 * Ajoute et vérifie automatique un jeton de protection CSRF
 * Ajoute automatiquement un attribut "id" correspondant au "name"
 * Ajoute au type "text" aux champs input sans type
-* TODO Convertit un attribut "label" en un élément html <label>
-* Ajoute automatiquement un attribut "for" à l'élément <label>
-* TODO Ajoute automatiquement un <div> englobant l'élément et son label
+* Ajoute automatiquement un attribut "for" à l'élément <label> TODO à améliorer
 * Ajoute automatiquement "[]" au name des <select multiple>
+
+* TODO Convertit un attribut "label" en un élément html <label>
+* TODO Ajoute automatiquement un <div> englobant l'élément et son label
+TODO Gestion behaviours
+TODO Bootstrap auto via behaviour, ajout div englobant
+TODO Validation du HTML et du contenu des attributs
+TODO Affichage conditionnel
+TODO options dynamiques
+TODO préfixe id
 
 ## Types des champs
 
@@ -61,27 +70,28 @@ if ($form->isSubmitted() && $form->validate()) {
 <textarea>
 <select>
 <select multiple>
-<input type="email" />
-<input type="url" />
-<input type="tel" />
-<input type="number" />
-<input type="range" />
+<input type="checkbox" />
+<input type="button" /> ou <button />
 <input type="color" />
 <input type="date" />
-<input type="time" />
 <input type="datetime-local" />
-<input type="month" />
-<input type="week" />
-<input type="image" /> TODO
-<input type="search" />
+<input type="email" />
 <input type="file" /> TODO
 <input type="hidden" />
-<input type="checkbox" />
-<input type="radio" />
+<input type="image" /> TODO
+<input type="month" />
+<input type="number" />
 <input type="password" />
-<button /> ou <input type="button" />
-<button type="submit"> ou <input type="submit" />
-<button type="reset"> ou <input type="reset" />
+<input type="radio" />
+<input type="range" />
+<input type="reset" /> ou <button type="reset">
+<input type="search" />
+<input type="submit" /> ou <button type="submit">
+<input type="tel" />
+<input type="time" />
+<input type="url" />
+<input type="week" />
+
 <select presentation="radio"> TODO
 <select presentation="checkbox" multiple> TODO
 ```
@@ -100,7 +110,6 @@ minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
 inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
 email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
 url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments <input type="url"/>
-regex TODO | string | Le champ texte doit valider une expression régulière
 color | tag | Le champ doit contenir une couleur au format #1234ab. Défini automatiquement pour les éléments <input type="color"/>
 month | tag | Le champ doit contenir un mois + année. Défini automatiquement pour les éléments <input type="month"/>
 month/min | string | Mois minimum au format "yyyy-mm"
