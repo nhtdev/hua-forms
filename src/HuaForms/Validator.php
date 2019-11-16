@@ -177,7 +177,7 @@ class Validator
         if (is_array($value)) {
             throw new \InvalidArgumentException('Rule number : value cannot be an array');
         }
-        if (is_numeric($value)) {
+        if (preg_match('/^\-?\d+\.?\d*$/', $value)) {
             if (isset($rule['min'])) {
                 if ($value < $rule['min']) {
                     return 'min'; // Erreur
@@ -194,13 +194,14 @@ class Validator
                 $step = 1;
             }
             if ($step !== 'any' && $step > 0) {
+                
                 if (isset($rule['min'])) {
                     $min = $rule['min'];
                 } else {
                     $min = 0;
                 }
                 $valtmp = $value - $min; 
-                $rest = fmod((float) $valtmp, (float) $step);
+                $rest = abs(fmod((float) $valtmp, (float) $step));
                 if ($rest > 0.0000000001 && $rest < $step - 0.0000000001) { // Pour les erreurs d'arrondi PHP
                     return 'step'; // Erreur
                 }
@@ -377,18 +378,18 @@ class Validator
             $totalSeconds = $second + 60*$minute + 60*60*$hour;
             $start = 0;
             if (isset($rule['min'])) {
-                if (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $value, $matches)) {
+                if (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $rule['min'], $matches)) {
                     $minHour = (int) $matches[1];
                     $minMinute = (int) $matches[2];
                     $minSecond = (int) $matches[3];
                     $start = $minSecond + 60*$minMinute + 60*60*$minHour;
-                } else if (preg_match('/^(\d\d):(\d\d)$/', $value, $matches)) {
+                } else if (preg_match('/^(\d\d):(\d\d)$/', $rule['min'], $matches)) {
                     $minHour = (int) $matches[1];
                     $minMinute = (int) $matches[2];
                     $start = 60*$minMinute + 60*60*$minHour;
                 }
             }
-            if ( ($totalSeconds-$start) % $rule['step'] !== 0) {
+            if ( abs($totalSeconds-$start) % $rule['step'] !== 0) {
                 return 'step';
             }
         }
@@ -466,18 +467,18 @@ class Validator
             $totalSeconds = $second + 60*$minute + 60*60*$hour;
             $start = 0;
             if (isset($rule['min'])) {
-                if (preg_match('/^\d\d\d\d-\d\d-\d\dT(\d\d):(\d\d):(\d\d)$/', $value, $matches)) {
+                if (preg_match('/^\d\d\d\d-\d\d-\d\dT(\d\d):(\d\d):(\d\d)$/', $rule['min'], $matches)) {
                     $minHour = (int) $matches[1];
                     $minMinute = (int) $matches[2];
                     $minSecond = (int) $matches[3];
                     $start = $minSecond + 60*$minMinute + 60*60*$minHour;
-                } else if (preg_match('/^\d\d\d\d-\d\d-\d\dT(\d\d):(\d\d)$/', $value, $matches)) {
+                } else if (preg_match('/^\d\d\d\d-\d\d-\d\dT(\d\d):(\d\d)$/', $rule['min'], $matches)) {
                     $minHour = (int) $matches[1];
                     $minMinute = (int) $matches[2];
                     $start = 60*$minMinute + 60*60*$minHour;
                 }
             }
-            if ( ($totalSeconds-$start) % $rule['step'] !== 0) {
+            if ( abs($totalSeconds-$start) % $rule['step'] !== 0) {
                 return 'step';
             }
         }
