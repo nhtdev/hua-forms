@@ -131,6 +131,15 @@ class Handler
     }
     
     /**
+     * Return the form submitted files, without any formatting or validation
+     * @return array
+     */
+    public function getRawFiles() : array
+    {
+        return $_FILES;
+    }
+    
+    /**
      * Look for the given field name in array and return its value
      * @param array $array
      * @param string $name
@@ -227,10 +236,26 @@ class Handler
     {
         $selectiveData = [];
         $rawData = $this->getRawData();
+        $rawFiles = $this->getRawFiles();
         foreach ($this->conf['fields'] as $field) {
             $name = $field['name'];
-            $value = $this->getInArray($rawData, $name);
-            $this->setInArray($selectiveData, $name, $value);
+            if ($field['type'] === 'file') {
+                if (isset($rawFiles[$name])) {
+                    $value = $rawFiles[$name];
+                    if (isset($value['name'])) {
+                        $newValue = new \HuaForms\File($value);
+                    } else {
+                        $newValue = [];
+                        foreach ($value as $oneFile) {
+                            $newValue[] = new \HuaForms\File($oneFile);
+                        }
+                    }
+                    $this->setInArray($selectiveData, $name, $newValue);
+                }
+            } else {
+                $value = $this->getInArray($rawData, $name);
+                $this->setInArray($selectiveData, $name, $value);
+            }
         }
         return $selectiveData;
     }

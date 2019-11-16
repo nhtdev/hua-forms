@@ -138,4 +138,27 @@ HTML;
         
     }
     
+    /**
+     * Définit automatiquement l'attribut "enctype" du formulaire s'il contien au moins un champ de type fichier
+     */
+    public function testEncTypeIfFileInput() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="file" />
+</form>
+HTML;
+        
+        $form = $this->buildTestForm($html);
+        
+        $expected = <<<HTML
+<form method="post" action="" enctype="multipart/form-data">
+<input type="hidden" name="csrf" value="test"/>
+    <input type="file" name="file" id="file"/>
+</form>
+HTML;
+        $this->assertEquals($expected, $form->render());
+        
+    }
+    
 }

@@ -77,7 +77,7 @@ TODO mettre des patterns pour les champs non gérés
 <input type="date" />
 <input type="datetime-local" />
 <input type="email" />
-<input type="file" /> TODO
+<input type="file" />
 <input type="hidden" />
 <input type="image" /> TODO
 <input type="month" />
