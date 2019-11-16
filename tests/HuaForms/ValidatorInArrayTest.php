@@ -53,7 +53,7 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => ['field1: value is not in the authorized values list (a, b)']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
         $this->assertEquals(['field' => 'field1', 'type' => 'inarray', 'values' => ['a', 'b']], 
@@ -105,7 +105,7 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => ['field1: value is not in the authorized values list (Option A, Option B)']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
         $this->assertEquals(['field' => 'field1', 'type' => 'inarray', 'values' => ['Option A', 'Option B']],
@@ -157,7 +157,7 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'field1' => ['field1: value is not in the authorized values list (a, b)']
+            'field1' => ['field1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
         $this->assertEquals(['field' => 'field1[]', 'type' => 'inarray', 'values' => ['a', 'b']],

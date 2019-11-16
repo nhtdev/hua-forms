@@ -442,9 +442,9 @@ class Parser
         $name = $node->getAttribute('name');
         
         // Check type
-        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range', 
-            'tel', 'search', 'hidden', 'password', 'checkbox', 'radio', 'color', 'month', 'week',
-            'date', 'time', 'datetime-local'
+        if (!in_array($type, ['checkbox', 'color', 'date', 'datetime-local', 'email', 'file', 
+            'hidden', 'image', 'month', 'number', 'password', 'radio', 'range', 'search', 
+            'select', 'tel', 'text', 'textarea', 'time', 'url', 'week', 
         ])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
@@ -846,6 +846,8 @@ class Parser
         
         // Rules inarray for checkboxes and radio
         foreach ($checkboxValues as $fieldName => $allowedValues) {
+            $allowedValues[] = '';
+            $allowedValues = array_unique($allowedValues);
             $rule = ['field' => $fieldName, 'type' => 'inarray', 'values' => $allowedValues];
             $allRules[] = $rule;
         }
