@@ -139,7 +139,7 @@ HTML;
     }
     
     /**
-     * Définit automatiquement l'attribut "enctype" du formulaire s'il contien au moins un champ de type fichier
+     * Définit automatiquement l'attribut "enctype" du formulaire s'il contient au moins un champ de type fichier
      */
     public function testEncTypeIfFileInput() : void
     {

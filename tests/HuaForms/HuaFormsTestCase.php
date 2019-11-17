@@ -25,12 +25,22 @@ class HuaFormsTestCase extends TestCase
         return $form;
     }
     
+    protected function setUp() : void
+    {
+        $_GET = [];
+        $_POST = [];
+        $_FILES = [];
+    }
+    
     public static function setUpBeforeClass() : void
     {
         foreach (glob('tests/tmpforms/*.form.html') as $file) {
             unlink($file);
         }
         foreach (glob('tests/tmpforms/built/*') as $file) {
+            unlink($file);
+        }
+        foreach (glob('/tmp/upload_*') as $file) {
             unlink($file);
         }
     }

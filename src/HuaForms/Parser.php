@@ -111,7 +111,7 @@ class Parser
     {
         $this->setEncTypeIfFileInput($dom);
         $this->addTypeToInput($dom);
-        $this->fixSelectMultipleName($dom);
+        $this->fixSelectAndFileMultipleName($dom);
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
         $this->addForInLabelNodes($dom);
@@ -153,13 +153,24 @@ class Parser
     }
     
     /**
-     * The name of a <select multiple> must end with "[]"
+     * The name of a <select multiple> or <input type="file" multiple> must end with "[]"
      * @param \DOMDocument $dom
      */
-    protected function fixSelectMultipleName(\DOMDocument $dom) : void
+    protected function fixSelectAndFileMultipleName(\DOMDocument $dom) : void
     {
         $this->walkElements($dom, function (\DOMElement $node) {
-            if ($node->nodeName === 'select' && $node->hasAttribute('name') && $node->hasAttribute('multiple')) {
+            if (
+                (
+                    $node->nodeName === 'select' 
+                    && $node->hasAttribute('name') 
+                    && $node->hasAttribute('multiple'))
+                || (
+                    $node->nodeName === 'input' 
+                    && $node->hasAttribute('type') 
+                    && $node->getAttribute('type') === 'file' 
+                    && $node->hasAttribute('name') 
+                    && $node->hasAttribute('multiple'))
+                ) {
                 $name = $node->getAttribute('name');
                 if (substr($name, -2) !== '[]') {
                     $node->setAttribute('name', $name.'[]');

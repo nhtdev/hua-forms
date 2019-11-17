@@ -52,7 +52,8 @@ if ($form->isSubmitted() && $form->validate()) {
 * Ajoute automatiquement un attribut "id" correspondant au "name"
 * Ajoute au type "text" aux champs input sans type
 * Ajoute automatiquement un attribut "for" à l'élément <label> TODO à améliorer
-* Ajoute automatiquement "[]" au name des <select multiple>
+* Ajoute automatiquement "[]" au name des <select multiple> et <input type="file" multiple>
+* Définit automatiquement l'attribut "enctype" du formulaire s'il contient au moins un champ de type fichier
 
 * TODO Convertit un attribut "label" en un élément html <label>
 * TODO Ajoute automatiquement un <div> englobant l'élément et son label

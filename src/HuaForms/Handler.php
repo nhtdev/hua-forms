@@ -240,17 +240,24 @@ class Handler
         foreach ($this->conf['fields'] as $field) {
             $name = $field['name'];
             if ($field['type'] === 'file') {
-                if (isset($rawFiles[$name])) {
-                    $value = $rawFiles[$name];
-                    if (isset($value['name'])) {
-                        $newValue = new \HuaForms\File($value);
-                    } else {
+                if (substr($name, -2) === '[]') {
+                    // Multiple files
+                    $newName = str_replace('[]', '', $name);
+                    if (isset($rawFiles[$newName])) {
+                        $value = $rawFiles[$newName];
                         $newValue = [];
                         foreach ($value as $oneFile) {
                             $newValue[] = new \HuaForms\File($oneFile);
                         }
+                        $this->setInArray($selectiveData, $name, $newValue);
                     }
-                    $this->setInArray($selectiveData, $name, $newValue);
+                } else {
+                    // Simple file
+                    if (isset($rawFiles[$name])) {
+                        $value = $rawFiles[$name];
+                        $newValue = new \HuaForms\File($value);
+                        $this->setInArray($selectiveData, $name, $newValue);
+                    }
                 }
             } else {
                 $value = $this->getInArray($rawData, $name);
