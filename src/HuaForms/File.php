@@ -15,9 +15,17 @@ class File
     
     /**
      * The mime type of the file, if the browser provided this information. An example would be "image/gif".
+     * Do not trust this information !!
      * @var string
      */
-    public $type;
+    public $typeClientSide;
+    
+    /**
+     * The mime type of the file, determined by the server. An example would be "image/gif".
+     * False if type not found
+     * @var string|bool
+     */
+    public $typeServerSide;
     
     /**
      * The size, in bytes, of the uploaded file.
@@ -54,7 +62,7 @@ class File
     {
         $this->checkUploadedFile = $checkUploadedFile;
         $this->name = $file['name'] ?? '';
-        $this->type = $file['type'] ?? '';
+        $this->typeClientSide = $file['type'] ?? '';
         $this->size = (int) ($file['size'] ?? 0);
         $this->tmp_name = $file['tmp_name'] ?? '';
         if (isset($file['error'])) {
@@ -70,6 +78,11 @@ class File
             if ($this->error === UPLOAD_ERR_OK && !file_exists($this->tmp_name)) {
                 $this->error = UPLOAD_ERR_NO_FILE;
             }
+        }
+        if ($this->isUploaded() && !$this->hasError()) {
+            $this->typeServerSide = mime_content_type($this->tmp_name);
+        } else {
+            $this->typeServerSide = false;
         }
     }
     

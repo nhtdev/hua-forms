@@ -86,7 +86,8 @@ HTML;
         $this->assertEmpty($form->handler()->getErrorMessages());
         $values = $form->exportValues();
         $this->assertEquals('Fichier.pdf', $values['file']->name);
-        $this->assertEquals('application/pdf', $values['file']->type);
+        $this->assertEquals('application/pdf', $values['file']->typeClientSide);
+        $this->assertEquals('text/plain', $values['file']->typeServerSide);
         $this->assertEquals(35, $values['file']->size);
         $this->assertEquals(UPLOAD_ERR_OK, $values['file']->error);
         $this->assertEquals(str_repeat('x', 35), file_get_contents($values['file']->tmp_name));
@@ -163,13 +164,15 @@ HTML;
         $this->assertCount(2, $values['files']);
         
         $this->assertEquals('Fichier.pdf', $values['files'][0]->name);
-        $this->assertEquals('application/pdf', $values['files'][0]->type);
+        $this->assertEquals('application/pdf', $values['files'][0]->typeClientSide);
+        $this->assertEquals('text/plain', $values['files'][0]->typeServerSide);
         $this->assertEquals(35, $values['files'][0]->size);
         $this->assertEquals(UPLOAD_ERR_OK, $values['files'][0]->error);
         $this->assertEquals(str_repeat('x', 35), file_get_contents($values['files'][0]->tmp_name));
         
         $this->assertEquals('Fichier.docx', $values['files'][1]->name);
-        $this->assertEquals('application/vnd.openxmlformats-officedocument.wordprocessingml.document', $values['files'][1]->type);
+        $this->assertEquals('application/vnd.openxmlformats-officedocument.wordprocessingml.document', $values['files'][1]->typeClientSide);
+        $this->assertEquals('text/plain', $values['files'][1]->typeServerSide);
         $this->assertEquals(40, $values['files'][1]->size);
         $this->assertEquals(UPLOAD_ERR_OK, $values['files'][1]->error);
         $this->assertEquals(str_repeat('x', 40), file_get_contents($values['files'][1]->tmp_name));

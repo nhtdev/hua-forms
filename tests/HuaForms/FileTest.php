@@ -37,6 +37,8 @@ class FileTest extends \Tests\HuaForms\HuaFormsTestCase
         
         $this->assertEquals('Test.pdf', $file->name);
         $this->assertEquals($tmpName, $file->tmp_name);
+        $this->assertEquals('application/pdf', $file->typeClientSide);
+        $this->assertEquals('text/plain', $file->typeServerSide);
         $this->assertFileExists($file->tmp_name);
         $this->assertEquals(str_repeat('x', 30), file_get_contents($file->tmp_name));
         $this->assertEquals(30, $file->size);
@@ -114,6 +116,8 @@ class FileTest extends \Tests\HuaForms\HuaFormsTestCase
         
         $this->assertEquals('Test.pdf', $file->name);
         $this->assertEquals($tmpName, $file->tmp_name);
+        $this->assertEquals('application/pdf', $file->typeClientSide);
+        $this->assertFalse($file->typeServerSide);
         $this->assertFileNotExists($file->tmp_name);
         $this->assertEquals(30, $file->size);
         $this->assertEquals(UPLOAD_ERR_NO_FILE, $file->error);
@@ -144,6 +148,8 @@ class FileTest extends \Tests\HuaForms\HuaFormsTestCase
         
         $this->assertEquals('Test.pdf', $file->name);
         $this->assertEquals($tmpName, $file->tmp_name);
+        $this->assertEquals('application/pdf', $file->typeClientSide);
+        $this->assertFalse($file->typeServerSide);
         $this->assertFileNotExists($file->tmp_name);
         $this->assertEquals(UPLOAD_ERR_CANT_WRITE, $file->error);
         $this->assertTrue($file->isUploaded());
@@ -205,6 +211,8 @@ class FileTest extends \Tests\HuaForms\HuaFormsTestCase
         
         $this->assertEquals('Test.pdf', $file->name);
         $this->assertEquals($tmpName, $file->tmp_name);
+        $this->assertEquals('application/pdf', $file->typeClientSide);
+        $this->assertFalse($file->typeServerSide);
         $this->assertFileExists($file->tmp_name);
         $this->assertEquals(str_repeat('x', 30), file_get_contents($file->tmp_name));
         $this->assertEquals(30, $file->size);
