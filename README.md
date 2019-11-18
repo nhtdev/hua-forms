@@ -116,6 +116,8 @@ maxlength | int | Taille maximale d'un champ texte
 minlength | int | Taille maximale d'un champ texte
 maxoptions TODO | int | Nombre maximal d'options pour un champ select multiple
 minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
+minsize TODO | string | Taille minimale d'un champ fichier. Exemple : 1024, 1024B, 100KB, 1MB, 1GB...
+maxsize TODO | string | Taille maximale d'un champ fichier. Exemple : 1024, 1024B, 100KB, 1MB, 1GB...
 inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
 email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
 url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments <input type="url"/>
