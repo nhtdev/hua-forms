@@ -45,26 +45,10 @@ class File
      */
     public function __construct(array $file)
     {
-        if (isset($file['name'])) {
-            $this->name = $file['name'];
-        } else {
-            throw new \InvalidArgumentException('Uploaded file has no "name" attribute');
-        }
-        if (isset($file['type'])) {
-            $this->type = $file['type'];
-        } else {
-            throw new \InvalidArgumentException('Uploaded file has no "type" attribute');
-        }
-        if (isset($file['size'])) {
-            $this->size = (int) $file['size'];
-        } else {
-            throw new \InvalidArgumentException('Uploaded file has no "size" attribute');
-        }
-        if (isset($file['tmp_name'])) {
-            $this->tmp_name = $file['tmp_name'];
-        } else {
-            throw new \InvalidArgumentException('Uploaded file has no "tmp_name" attribute');
-        }
+        $this->name = $file['name'] ?? '';
+        $this->type = $file['type'] ?? '';
+        $this->size = (int) ($file['size'] ?? 0);
+        $this->tmp_name = $file['tmp_name'] ?? '';
         if (isset($file['error'])) {
             $this->error = (int) $file['error'];
         } else {

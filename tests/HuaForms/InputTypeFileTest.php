@@ -51,21 +51,17 @@ class InputTypeFileTest extends \Tests\HuaForms\HuaFormsTestCase
         }
         if (substr($inputName, -2) === '[]') {
             $inputName = str_replace('[]', '', $inputName);
-            $_FILES[$inputName][] = [
-                'name' => $fileName,
-                'type' => $this->system_extension_mime_type($fileName),
-                'tmp_name' => $tmpName,
-                'size' => $length,
-                'error' => $error
-            ];
+            $_FILES[$inputName]['name'][] = $fileName;
+            $_FILES[$inputName]['type'][] = $this->system_extension_mime_type($fileName);
+            $_FILES[$inputName]['tmp_name'][] = $tmpName;
+            $_FILES[$inputName]['size'][] = $length;
+            $_FILES[$inputName]['error'][] = $error;
         } else {
-            $_FILES[$inputName] = [
-                'name' => $fileName,
-                'type' => $this->system_extension_mime_type($fileName),
-                'tmp_name' => $tmpName,
-                'size' => $length,
-                'error' => $error
-            ];
+            $_FILES[$inputName]['name'] = $fileName;
+            $_FILES[$inputName]['type'] = $this->system_extension_mime_type($fileName);
+            $_FILES[$inputName]['tmp_name'] = $tmpName;
+            $_FILES[$inputName]['size'] = $length;
+            $_FILES[$inputName]['error'] = $error;
         }
     }
     

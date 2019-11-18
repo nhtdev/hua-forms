@@ -243,11 +243,18 @@ class Handler
                 if (substr($name, -2) === '[]') {
                     // Multiple files
                     $newName = str_replace('[]', '', $name);
-                    if (isset($rawFiles[$newName])) {
-                        $value = $rawFiles[$newName];
+                    if (isset($rawFiles[$newName]['name'])) {
+                        $count = count($rawFiles[$newName]['name']);
                         $newValue = [];
-                        foreach ($value as $oneFile) {
-                            $newValue[] = new \HuaForms\File($oneFile);
+                        for ($i=0; $i<$count; $i++) {
+                            $value = [
+                                'name' => $rawFiles[$newName]['name'][$i],
+                                'type' => $rawFiles[$newName]['type'][$i],
+                                'tmp_name' => $rawFiles[$newName]['tmp_name'][$i],
+                                'size' => $rawFiles[$newName]['size'][$i],
+                                'error' => $rawFiles[$newName]['error'][$i]
+                            ];
+                            $newValue[] = new \HuaForms\File($value);
                         }
                         $this->setInArray($selectiveData, $name, $newValue);
                     }
