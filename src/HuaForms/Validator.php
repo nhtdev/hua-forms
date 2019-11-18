@@ -113,6 +113,90 @@ class Validator
     }
     
     /**
+     * upload-error : the file must not have upload error
+     * @param array $rule Not used
+     * @param \HuaForms\File|array $file File or array of file
+     * @return bool True if value is valid, false otherwise
+     */
+    protected function validateUploaderror(array $rule, $file) : bool
+    {
+        if (is_array($file)) {
+            foreach ($file as $key => $oneFile) {
+                if (!$oneFile instanceof \HuaForms\File) {
+                    throw new \InvalidArgumentException('Rule upload-error : given value (key '.$key.') is not a \HuaForms\File');
+                }
+            }
+            foreach ($file as $oneFile) {
+                $result = $this->validateUploaderror($rule, $oneFile);
+                if ($result !== true) {
+                    return $result;
+                }
+            }
+            return true;
+        }
+        if (!$file instanceof \HuaForms\File) {
+            throw new \InvalidArgumentException('Rule upload-error : given value is not a \HuaForms\File');
+        }
+        if (!$file->isUploaded() || $file->hasError()) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * accept : the file must match the specified format (extension or mime type)
+     * @param array $rule ['formats' => ['.pdf', 'image/*', 'text/plain', ...] ]
+     * @param \HuaForms\File|array $file File or array of file
+     * @return bool True if value is valid, false otherwise
+     */
+    protected function validateAccept(array $rule, $file) : bool
+    {
+        if (!isset($rule['formats'])) {
+            throw new \InvalidArgumentException('Rule accept : missing param "formats"');
+        }
+        if (!is_array($rule['formats'])) {
+            throw new \InvalidArgumentException('Rule accept : param "formats" is not an array');
+        }
+        if (is_array($file)) {
+            foreach ($file as $oneFile) {
+                $result = $this->validateAccept($rule, $oneFile);
+                if ($result !== true) {
+                    return $result;
+                }
+            }
+            return true;
+        }
+        if (!$file instanceof \HuaForms\File) {
+            throw new \InvalidArgumentException('Rule accept : given value is not a \HuaForms\File');
+        }
+        if (!$file->isUploaded() || $file->hasError()) {
+            return true; // validateUploaderror has already sent an error message
+        }
+        $extension = $file->getExtension();
+        foreach ($rule['formats'] as $oneFormat) {
+            if (substr($oneFormat, 0, 1) === '.') {
+                // Ex : .pdf
+                if (strcasecmp(substr($oneFormat, 1), $extension) === 0) {
+                    return true;
+                }
+            } else if ($oneFormat === 'audio/*' || $oneFormat === 'video/*' || $oneFormat == 'image/*') {
+                if ($file->typeServerSide !== false) {
+                    $regex = '/^'.str_replace(['*', '/'], ['.*', '\\/'], $oneFormat) . '$/';
+                    if (preg_match($regex, $file->typeServerSide)) {
+                        return true;
+                    }
+                }
+            } else {
+                // Mime type
+                if ($file->typeServerSide !== false && $oneFormat === $file->typeServerSide) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Email : the string value must be a valid email
      * @param array $rule Rule options (min, max, step)
      * @param mixed $value Field value

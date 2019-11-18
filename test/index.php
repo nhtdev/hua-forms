@@ -34,6 +34,14 @@ if ($form->isSubmitted() && $form->validate()) {
 	<?php if ($ok): ?>
 		<h2>Success</h2>
 		<pre><?php var_dump($data); ?></pre>
+		<?php if ($data['field-file']->isUploaded()): ?>
+			<h2>field-file</h2>
+			<pre><?php echo file_get_contents($data['field-file']->tmp_name); ?></pre>
+		<?php endif; ?>
+		<?php foreach ($data['field-file2'] as $file): ?>
+			<h2>field-file2</h2>
+			<pre><?php echo file_get_contents($file->tmp_name); ?></pre>
+		<?php endforeach; ?>
 	<?php endif; ?>
 	
 	<?= $form->render(); ?>

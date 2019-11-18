@@ -1,4 +1,7 @@
 <phpunit>
+<php>
+    <const name="UNIT_TESTING" value="TRUE"/>
+</php>
 <filter>
   <whitelist processUncoveredFilesFromWhitelist="true">
     <directory suffix=".php">../src/</directory>

@@ -44,6 +44,12 @@ if ($form->isSubmitted() && $form->validate()) {
 }
 ```
 
+## Utilisation
+
+TODO à expliquer avec des exemples
+
+Expliquer la gestion des fichiers
+
 ## Fonctionnalités
 
 ### Correction automatique
@@ -52,7 +58,8 @@ if ($form->isSubmitted() && $form->validate()) {
 * Ajoute automatiquement un attribut "id" correspondant au "name"
 * Ajoute au type "text" aux champs input sans type
 * Ajoute automatiquement un attribut "for" à l'élément <label> TODO à améliorer
-* Ajoute automatiquement "[]" au name des <select multiple>
+* Ajoute automatiquement "[]" au name des <select multiple> et <input type="file" multiple>
+* Définit automatiquement l'attribut "enctype" du formulaire s'il contient au moins un champ de type fichier
 
 * TODO Convertit un attribut "label" en un élément html <label>
 * TODO Ajoute automatiquement un <div> englobant l'élément et son label
@@ -77,7 +84,8 @@ TODO mettre des patterns pour les champs non gérés
 <input type="date" />
 <input type="datetime-local" />
 <input type="email" />
-<input type="file" /> TODO
+<input type="file" />
+<input type="file" multiple/>
 <input type="hidden" />
 <input type="image" /> TODO
 <input type="month" />
@@ -108,6 +116,8 @@ maxlength | int | Taille maximale d'un champ texte
 minlength | int | Taille maximale d'un champ texte
 maxoptions TODO | int | Nombre maximal d'options pour un champ select multiple
 minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
+minsize TODO | string | Taille minimale d'un champ fichier. Exemple : 1024, 1024B, 100KB, 1MB, 1GB...
+maxsize TODO | string | Taille maximale d'un champ fichier. Exemple : 1024, 1024B, 100KB, 1MB, 1GB...
 inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
 email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
 url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments <input type="url"/>
@@ -136,6 +146,8 @@ number | tag | Le champ doit contenir un nombre. Défini automatiquement pour le
 number/min | number | Le champ doit contenir un nombre de valeur supérieure ou égale au nombre spécifié
 number/max | number | Le champ doit contenir un nombre de valeur inférieure ou égale au nombre spécifié
 number/step | number | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. 
+accept | string | Pour les champs de type fichier, types de fichiers acceptés. Voir https://developer.mozilla.org/fr/docs/Web/HTML/Element/input/file#accept
+upload-error-message | string | Pour les champs de type fichier, message d'erreur à afficher si erreur lors de l'upload
 
 Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur en remplacement du message standard.
 

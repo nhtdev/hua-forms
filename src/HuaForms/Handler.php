@@ -131,6 +131,15 @@ class Handler
     }
     
     /**
+     * Return the form submitted files, without any formatting or validation
+     * @return array
+     */
+    public function getRawFiles() : array
+    {
+        return $_FILES;
+    }
+    
+    /**
      * Look for the given field name in array and return its value
      * @param array $array
      * @param string $name
@@ -227,10 +236,40 @@ class Handler
     {
         $selectiveData = [];
         $rawData = $this->getRawData();
+        $rawFiles = $this->getRawFiles();
         foreach ($this->conf['fields'] as $field) {
             $name = $field['name'];
-            $value = $this->getInArray($rawData, $name);
-            $this->setInArray($selectiveData, $name, $value);
+            if ($field['type'] === 'file') {
+                if (substr($name, -2) === '[]') {
+                    // Multiple files
+                    $newName = str_replace('[]', '', $name);
+                    if (isset($rawFiles[$newName]['name'])) {
+                        $count = count($rawFiles[$newName]['name']);
+                        $newValue = [];
+                        for ($i=0; $i<$count; $i++) {
+                            $value = [
+                                'name' => $rawFiles[$newName]['name'][$i],
+                                'type' => $rawFiles[$newName]['type'][$i],
+                                'tmp_name' => $rawFiles[$newName]['tmp_name'][$i],
+                                'size' => $rawFiles[$newName]['size'][$i],
+                                'error' => $rawFiles[$newName]['error'][$i]
+                            ];
+                            $newValue[] = new \HuaForms\File($value, !defined('UNIT_TESTING'));
+                        }
+                        $this->setInArray($selectiveData, $name, $newValue);
+                    }
+                } else {
+                    // Simple file
+                    if (isset($rawFiles[$name])) {
+                        $value = $rawFiles[$name];
+                        $newValue = new \HuaForms\File($value, !defined('UNIT_TESTING'));
+                        $this->setInArray($selectiveData, $name, $newValue);
+                    }
+                }
+            } else {
+                $value = $this->getInArray($rawData, $name);
+                $this->setInArray($selectiveData, $name, $value);
+            }
         }
         return $selectiveData;
     }
@@ -290,7 +329,7 @@ class Handler
             $name = $rule['field'];
             $cleanName = str_replace('[]', '', $name);
             $value = $this->getInArray($data, $name);
-            if ($rule['type'] === 'required' || !empty($value) || $value === '0') { // Ignore rule if field is empty
+            if ($rule['type'] === 'required' || !$this->valueIsEmpty($value)) { // Ignore rule if field is empty
                 $result = $validator->validate($rule, $value);
                 if ($result === true) {
                     // OK
@@ -307,6 +346,31 @@ class Handler
         }
         
         $this->validationRun = true;
+    }
+    
+    /**
+     * Return true if a form value is empty.
+     * Handle File object, array of file objects, array of scalar, scalar
+     * @param mixed $value
+     * @return bool
+     */
+    protected function valueIsEmpty($value) : bool
+    {
+        if ($value instanceof \HuaForms\File) {
+            return !$value->isUploaded();
+        } else if (is_array($value)) {
+            if (isset($value[0]) && $value[0] instanceof \HuaForms\File) {
+                foreach ($value as $oneFile) {
+                    if (!$oneFile->isUploaded()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return empty($value);
+        } else {
+            return empty($value) && $value !== '0';
+        }
     }
     
     /**

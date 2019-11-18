@@ -109,11 +109,34 @@ class Parser
      */
     protected function modifyDom(\DOMDocument $dom) : void
     {
+        $this->setEncTypeIfFileInput($dom);
         $this->addTypeToInput($dom);
-        $this->fixSelectMultipleName($dom);
+        $this->fixSelectAndFileMultipleName($dom);
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
         $this->addForInLabelNodes($dom);
+    }
+    
+    /**
+     * Set attribute enctype="multipart/form-data" if the form contains
+     * at least one file input
+     * @param \DOMDocument $dom
+     */
+    protected function setEncTypeIfFileInput(\DOMDocument $dom) : void
+    {
+        $form = null;
+        $found = false;
+        $this->walkElements($dom, function (\DOMElement $node) use (&$form, &$found) {
+            if ($this->isFormNode($node)) {
+                $form = $node;
+            } else if ($node->nodeName === 'input' && $node->hasAttribute('type') && $node->getAttribute('type') === 'file') {
+                $found = true;
+                return false;
+            }
+        });
+        if ($found && $form !== null) {
+            $form->setAttribute('enctype', 'multipart/form-data');
+        }
     }
     
     /**
@@ -130,13 +153,24 @@ class Parser
     }
     
     /**
-     * The name of a <select multiple> must end with "[]"
+     * The name of a <select multiple> or <input type="file" multiple> must end with "[]"
      * @param \DOMDocument $dom
      */
-    protected function fixSelectMultipleName(\DOMDocument $dom) : void
+    protected function fixSelectAndFileMultipleName(\DOMDocument $dom) : void
     {
         $this->walkElements($dom, function (\DOMElement $node) {
-            if ($node->nodeName === 'select' && $node->hasAttribute('name') && $node->hasAttribute('multiple')) {
+            if (
+                (
+                    $node->nodeName === 'select' 
+                    && $node->hasAttribute('name') 
+                    && $node->hasAttribute('multiple'))
+                || (
+                    $node->nodeName === 'input' 
+                    && $node->hasAttribute('type') 
+                    && $node->getAttribute('type') === 'file' 
+                    && $node->hasAttribute('name') 
+                    && $node->hasAttribute('multiple'))
+                ) {
                 $name = $node->getAttribute('name');
                 if (substr($name, -2) !== '[]') {
                     $node->setAttribute('name', $name.'[]');
@@ -442,9 +476,9 @@ class Parser
         $name = $node->getAttribute('name');
         
         // Check type
-        if (!in_array($type, ['text', 'select', 'textarea', 'email', 'url', 'number', 'range', 
-            'tel', 'search', 'hidden', 'password', 'checkbox', 'radio', 'color', 'month', 'week',
-            'date', 'time', 'datetime-local'
+        if (!in_array($type, ['checkbox', 'color', 'date', 'datetime-local', 'email', 'file', 
+            'hidden', 'image', 'month', 'number', 'password', 'radio', 'range', 'search', 
+            'select', 'tel', 'text', 'textarea', 'time', 'url', 'week', 
         ])) {
             $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
             $type = 'text';
@@ -612,6 +646,18 @@ class Parser
                         $rule = ['field' => $name, 'type' => 'required'];
                         $rules[] = $rule;
                         // Keep required attribute in html
+                    }
+                    
+                    if ($type === 'file') {
+                        $rule = ['field' => $name, 'type' => 'upload-error'];
+                        $rules[] = $rule;
+                    }
+                    
+                    if ($type === 'file' && $node->hasAttribute('accept')) {
+                        $formats = explode(',', $node->getAttribute('accept'));
+                        $rule = ['field' => $name, 'type' => 'accept', 'formats' => $formats];
+                        $rules[] = $rule;
+                        // Keep accept attribute in html
                     }
                     
                     if ($node->hasAttribute('maxlength')) {
@@ -846,6 +892,8 @@ class Parser
         
         // Rules inarray for checkboxes and radio
         foreach ($checkboxValues as $fieldName => $allowedValues) {
+            $allowedValues[] = '';
+            $allowedValues = array_unique($allowedValues);
             $rule = ['field' => $fieldName, 'type' => 'inarray', 'values' => $allowedValues];
             $allRules[] = $rule;
         }
@@ -924,7 +972,9 @@ class Parser
     {
         $this->walkElements($dom, function (\DOMElement $node) {
             if ($node->nodeName === 'input' && $node->hasAttribute('name')
-                && $node->getAttribute('type') !== 'checkbox' && $node->getAttribute('type') !== 'radio') {
+                && $node->getAttribute('type') !== 'checkbox'
+                && $node->getAttribute('type') !== 'radio'
+                && $node->getAttribute('type') !== 'file') {
                 $name = $node->getAttribute('name');
                 $phpCode = 'echo htmlentities($this->getValue('.$this->quotePhpVar($name).'));';
                 $node->setAttribute('value', self::PHP_CODE.'="'.$phpCode.'"');

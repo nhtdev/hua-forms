@@ -93,10 +93,10 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'checkbox' => ['checkbox: value is not in the authorized values list (on)']
+            'checkbox' => ['checkbox: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals(['field' => 'checkbox', 'type' => 'inarray', 'values' => ['on']],
+        $this->assertEquals(['field' => 'checkbox', 'type' => 'inarray', 'values' => ['on', '']],
             $form->getDescription()['rules'][0]);
         
     }
@@ -118,10 +118,10 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'checkbox' => ['checkbox: value is not in the authorized values list (coche)']
+            'checkbox' => ['checkbox: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals(['field' => 'checkbox', 'type' => 'inarray', 'values' => ['coche']],
+        $this->assertEquals(['field' => 'checkbox', 'type' => 'inarray', 'values' => ['coche', '']],
             $form->getDescription()['rules'][0]);
         
     }
@@ -209,10 +209,10 @@ HTML;
         
         $this->assertFalse($form->validate());
         $this->assertEquals([
-            'checkbox' => ['Val 1: value is not in the authorized values list (val1, val2, val3)']
+            'checkbox' => ['Val 1: value is not allowed']
         ], $form->handler()->getErrorMessages());
         $this->assertEmpty($form->exportValues());
-        $this->assertEquals(['field' => 'checkbox[]', 'type' => 'inarray', 'values' => ['val1', 'val2', 'val3']],
+        $this->assertEquals(['field' => 'checkbox[]', 'type' => 'inarray', 'values' => ['val1', 'val2', 'val3', '']],
             $form->getDescription()['rules'][0]);
         
         // Test de rendu du formulaire
@@ -220,7 +220,7 @@ HTML;
         $expected = <<<HTML
 <form method="post" action="">
 <input type="hidden" name="csrf" value="test"/>
-<div>Val 1: value is not in the authorized values list (val1, val2, val3)</div>    <div>
+<div>Val 1: value is not allowed</div>    <div>
         <label for="checkbox">Val 1</label>
         <input type="checkbox" name="checkbox[]" value="val1" id="checkbox" checked/>
     </div>

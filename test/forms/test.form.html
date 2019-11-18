@@ -9,7 +9,7 @@
 	
 	<div>
 		<label>Champ liste</label>
-		<select name="gender" required>
+		<select name="gender">
 			<option value="" selected>- Aucune sélection -</option>
 			<option value="1">Option 1</option>
 			<option value="2">Option 2</option>
@@ -18,12 +18,27 @@
 	
 	<div>
 		<label>Champ liste multiple</label>
-		<select name="field-select-multiple" required multiple>
+		<select name="field-select-multiple" multiple>
 			<option value="1">Option 1</option>
 			<option value="2">Option 2</option>
 			<option value="3">Option 3</option>
 			<option value="4">Option 4</option>
 		</select>
+	</div>
+	
+	<div>
+		<label>Fichier</label>
+		<input type="file" name="field-file" />
+	</div>
+	
+	<div>
+		<label>Fichiers multiples</label>
+		<input type="file" name="field-file2" multiple/>
+	</div>
+	
+	<div>
+		<label>Image ou PDF</label>
+		<input type="file" name="field-file3" accept="image/*,.pdf" capture="environment" />
 	</div>
 	
 	<div>
