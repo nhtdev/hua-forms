@@ -39,12 +39,20 @@ class File
     public $error;
     
     /**
+     * True in order to assert that the file is a real uploaded file, false otherwise
+     * @var bool
+     */
+    protected $checkUploadedFile;
+    
+    /**
      * File constructor
      * @param array $file Array representing one file, formatted like an entry of $_FILES
+     * @param bool $checkUploadedFile True (default) in order to assert that the file is a real uploaded file, false otherwise. Always use true, except for unit testing
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $file)
+    public function __construct(array $file, bool $checkUploadedFile=true)
     {
+        $this->checkUploadedFile = $checkUploadedFile;
         $this->name = $file['name'] ?? '';
         $this->type = $file['type'] ?? '';
         $this->size = (int) ($file['size'] ?? 0);
@@ -54,12 +62,12 @@ class File
         } else {
             throw new \InvalidArgumentException('Uploaded file has no "error" attribute');
         }
-        if (defined('UNIT_TESTING')) {
-            if ($this->error === UPLOAD_ERR_OK && !file_exists($this->tmp_name)) {
+        if ($this->checkUploadedFile) {
+            if ($this->error === UPLOAD_ERR_OK && !is_uploaded_file($this->tmp_name)) {
                 $this->error = UPLOAD_ERR_NO_FILE;
             }
         } else {
-            if ($this->error === UPLOAD_ERR_OK && !is_uploaded_file($this->tmp_name)) {
+            if ($this->error === UPLOAD_ERR_OK && !file_exists($this->tmp_name)) {
                 $this->error = UPLOAD_ERR_NO_FILE;
             }
         }
@@ -92,31 +100,30 @@ class File
      */
     public function saveTo(string $fileName, bool $deleteTmpFile=true) : bool
     {
+        if (!$this->isUploaded()) {
+            return false;
+        }
         if ($this->hasError()) {
             return false;
         }
         if (!file_exists($this->tmp_name)) {
             throw new \RuntimeException('File not found: '.$this->tmp_name.' (already moved?)');
         }
-        if (!is_writable($fileName)) {
-            throw new \RuntimeException('File not writable: '.$fileName);
-        }
-        if (defined('UNIT_TESTING')) {
-            // (c) Volkswagen
+        if ($this->checkUploadedFile) {
             if ($deleteTmpFile) {
-                return rename($this->tmp_name, $this->tmp_name);
-            } else {
-                return copy($this->tmp_name, $this->tmp_name);
-            }
-        } else {
-            if ($deleteTmpFile) {
-                return move_uploaded_file($this->tmp_name, $this->tmp_name);
+                return move_uploaded_file($this->tmp_name, $fileName);
             } else {
                 if (is_uploaded_file($this->tmp_name)) {
-                    return copy($this->tmp_name, $this->tmp_name);
+                    return copy($this->tmp_name, $fileName);
                 } else {
                     return false;
                 }
+            }
+        } else {
+            if ($deleteTmpFile) {
+                return rename($this->tmp_name, $fileName);
+            } else {
+                return copy($this->tmp_name, $fileName);
             }
         }
     }

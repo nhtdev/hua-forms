@@ -254,7 +254,7 @@ class Handler
                                 'size' => $rawFiles[$newName]['size'][$i],
                                 'error' => $rawFiles[$newName]['error'][$i]
                             ];
-                            $newValue[] = new \HuaForms\File($value);
+                            $newValue[] = new \HuaForms\File($value, !defined('UNIT_TESTING'));
                         }
                         $this->setInArray($selectiveData, $name, $newValue);
                     }
@@ -262,7 +262,7 @@ class Handler
                     // Simple file
                     if (isset($rawFiles[$name])) {
                         $value = $rawFiles[$name];
-                        $newValue = new \HuaForms\File($value);
+                        $newValue = new \HuaForms\File($value, !defined('UNIT_TESTING'));
                         $this->setInArray($selectiveData, $name, $newValue);
                     }
                 }
