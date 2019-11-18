@@ -214,4 +214,225 @@ HTML;
         
     }
     
+    /**
+     * Test erreur lors de l'upload
+     */
+    public function testUploadError() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="file" id="file" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true];
+        $this->addFile('file', 'Fichier.pdf', 35);
+        $_FILES['file']['error'] = UPLOAD_ERR_CANT_WRITE; // Simulation d'erreur
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'file' => ['file: error during file upload']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'file', 'type' => 'upload-error'],
+            $form->getDescription()['rules'][0]);
+        
+    }
+    
+    /**
+     * Test erreur lors de l'upload, message custom
+     */
+    public function testUploadErrorCustom() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="file" id="file" upload-error-message="Erreur envoi du fichier" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true];
+        $this->addFile('file', 'Fichier.pdf', 35);
+        $_FILES['file']['error'] = UPLOAD_ERR_CANT_WRITE; // Simulation d'erreur
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'file' => ['Erreur envoi du fichier']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'file', 'type' => 'upload-error', 'message' => 'Erreur envoi du fichier'],
+            $form->getDescription()['rules'][0]);
+        
+    }
+    
+    /**
+     * Test erreur lors de l'upload, fichiers multiples
+     */
+    public function testUploadErrorMultiple() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="files" id="files" multiple/>
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true];
+        $this->addFile('files[]', 'Fichier.pdf', 35);
+        $this->addFile('files[]', 'Fichier.docx', 40);
+        $_FILES['files']['error'][1] = UPLOAD_ERR_CANT_WRITE; // Simulation d'erreur
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'files' => ['files: error during file upload']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'files[]', 'type' => 'upload-error'],
+            $form->getDescription()['rules'][0]);
+        
+    }
+    
+    /**
+     * Test extension valide
+     */
+    public function testExtensionOk() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="file" id="file" accept=".pdf,.docx" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true];
+        $this->addFile('file', 'Fichier.pdf', 35);
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertTrue($form->isSubmitted());
+        $this->assertTrue($form->validate());
+        $this->assertEmpty($form->handler()->getErrorMessages());
+        $values = $form->exportValues();
+        $this->assertEquals('Fichier.pdf', $values['file']->name);
+        $this->assertEquals('application/pdf', $values['file']->typeClientSide);
+        $this->assertEquals('text/plain', $values['file']->typeServerSide);
+        $this->assertEquals(35, $values['file']->size);
+        $this->assertEquals(UPLOAD_ERR_OK, $values['file']->error);
+        $this->assertEquals(str_repeat('x', 35), file_get_contents($values['file']->tmp_name));
+        $this->assertEquals(['field' => 'file', 'type' => 'accept', 'formats' => ['.pdf', '.docx']],
+            $form->getDescription()['rules'][1]);
+        
+    }
+    
+    /**
+     * Test extension invalide
+     */
+    public function testExtensionError() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="file" id="file" accept=".png,.docx" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true];
+        $this->addFile('file', 'Fichier.pdf', 35);
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'file' => ['file: invalid file type']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'file', 'type' => 'accept', 'formats' => ['.png', '.docx']],
+            $form->getDescription()['rules'][1]);
+        
+    }
+    
+    /**
+     * Test extension invalide message custom
+     */
+    public function testExtensionErrorCustom() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="file" id="file" accept=".png,.docx" accept-message="Type invalide" />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true];
+        $this->addFile('file', 'Fichier.pdf', 35);
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'file' => ['Type invalide']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'file', 'type' => 'accept', 'formats' => ['.png', '.docx'], 'message' => 'Type invalide'],
+            $form->getDescription()['rules'][1]);
+        
+    }
+    
+    /**
+     * Test extension valide, champ multiple
+     */
+    public function testExtensionOkMultiple() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="file" id="file" accept=".pdf,.docx" multiple />
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true];
+        $this->addFile('file[]', 'Fichier.pdf', 35);
+        $this->addFile('file[]', 'Fichier2.pdf', 35);
+        $this->addFile('file[]', 'Fichier3.docx', 35);
+        $this->addFile('file[]', 'Fichier4.docx', 35);
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertTrue($form->isSubmitted());
+        $this->assertTrue($form->validate());
+        $this->assertEmpty($form->handler()->getErrorMessages());
+        $this->assertEquals(['field' => 'file[]', 'type' => 'accept', 'formats' => ['.pdf', '.docx']],
+            $form->getDescription()['rules'][1]);
+        
+    }
+    
+    /**
+     * Test extension invalide, champ Multiple
+     */
+    public function testExtensionErrorMultiple() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="file" name="file" id="file" accept=".png,.docx" multiple/>
+    <button type="submit" name="ok">OK</button>
+</form>
+HTML;
+        $_POST = ['csrf' => 'test', 'ok' => true];
+        $this->addFile('file[]', 'Fichier.pdf', 35);
+        $this->addFile('file[]', 'Fichier2.pdf', 35);
+        $this->addFile('file[]', 'Fichier3.docx', 35);
+        $this->addFile('file[]', 'Fichier4.doc', 35);
+        
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->validate());
+        $this->assertEquals([
+            'file' => ['file: invalid file type']
+        ], $form->handler()->getErrorMessages());
+        $this->assertEmpty($form->exportValues());
+        $this->assertEquals(['field' => 'file[]', 'type' => 'accept', 'formats' => ['.png', '.docx']],
+            $form->getDescription()['rules'][1]);
+        
+    }
+    
 }

@@ -329,7 +329,7 @@ class Handler
             $name = $rule['field'];
             $cleanName = str_replace('[]', '', $name);
             $value = $this->getInArray($data, $name);
-            if ($rule['type'] === 'required' || !empty($value) || $value === '0') { // Ignore rule if field is empty
+            if ($rule['type'] === 'required' || !$this->valueIsEmpty($value)) { // Ignore rule if field is empty
                 $result = $validator->validate($rule, $value);
                 if ($result === true) {
                     // OK
@@ -346,6 +346,31 @@ class Handler
         }
         
         $this->validationRun = true;
+    }
+    
+    /**
+     * Return true if a form value is empty.
+     * Handle File object, array of file objects, array of scalar, scalar
+     * @param mixed $value
+     * @return bool
+     */
+    protected function valueIsEmpty($value) : bool
+    {
+        if ($value instanceof \HuaForms\File) {
+            return !$value->isUploaded();
+        } else if (is_array($value)) {
+            if (isset($value[0]) && $value[0] instanceof \HuaForms\File) {
+                foreach ($value as $oneFile) {
+                    if (!$oneFile->isUploaded()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return empty($value);
+        } else {
+            return empty($value) && $value !== '0';
+        }
     }
     
     /**

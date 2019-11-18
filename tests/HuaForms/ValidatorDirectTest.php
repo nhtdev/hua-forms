@@ -672,4 +672,167 @@ class ValidatorDirectTest extends \Tests\HuaForms\HuaFormsTestCase
         $validator->validate(['type' => 'datetime-local'], ['2019-01-01T01:23']);
     }
     
+    /**
+     * Test direct du validator "upload-error"
+     * @dataProvider uploaderrorProvider
+     */
+    public function testValidatorUploadError($files, $expected) : void
+    {
+        $validator = new \HuaForms\Validator();
+        $result = $validator->validate(['type' => 'upload-error'], $files);
+        $this->assertEquals($expected, $result);
+    }
+    public function uploaderrorProvider() : array
+    {
+        $tmpName = '/tmp/upload_'.uniqid();
+        file_put_contents($tmpName, 'xxx');
+        $result = [
+            [new \HuaForms\File(['error' => UPLOAD_ERR_OK, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false), true],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_OK, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], true), false],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_OK, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName.'x', 'size' => 3, 'type' => 'application/pdf'], false), false],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_CANT_WRITE, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false), false],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_EXTENSION, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false), false],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_FORM_SIZE, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false), false],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_INI_SIZE, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false), false],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_NO_FILE, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false), false],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_NO_TMP_DIR, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false), false],
+            [new \HuaForms\File(['error' => UPLOAD_ERR_PARTIAL, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false), false],
+        ];
+        // Idem en upload multiple avec un fichier valide + celui valide ou non
+        $result2 = $result;
+        foreach ($result as $row) {
+            $newRow = [
+                [$row[0], new \HuaForms\File(['error' => UPLOAD_ERR_OK, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false)],
+                $row[1]
+            ];
+            $result2[] = $newRow;
+        }
+        return $result2;
+    }
+    
+    /**
+     * Test direct du validator "upload-error" : exception si la valeur n'est pas un fichier
+     */
+    public function testValidatorUploadErrorException() : void
+    {
+        $validator = new \HuaForms\Validator();
+        $this->expectException(\InvalidArgumentException::class);
+        $validator->validate(['type' => 'upload-error'], 'test');
+    }
+    
+    /**
+     * Test direct du validator "upload-error" : exception si la valeur est un tableau et qu'une entrée n'est pas un fichier
+     */
+    public function testValidatorUploadErrorMultipleException() : void
+    {
+        $validator = new \HuaForms\Validator();
+        $this->expectException(\InvalidArgumentException::class);
+        $validator->validate(['type' => 'upload-error'], 
+            [
+                new \HuaForms\File(['error' => UPLOAD_ERR_NO_FILE, 'name' => '', 'tmp_name' => '', 'size' => 0, 'type' => ''], false),
+                'test'
+            ]);
+    }
+    /**
+     * Test direct du validator "accept"
+     * @dataProvider acceptProvider
+     */
+    public function testValidatorAccept(array $formats, $files, $expected) : void
+    {
+        $validator = new \HuaForms\Validator();
+        $result = $validator->validate(['type' => 'accept', 'formats' => $formats], $files);
+        $this->assertEquals($expected, $result);
+    }
+    public function acceptProvider() : array
+    {
+        $tmpName = '/tmp/upload_pdf';
+        file_put_contents($tmpName, 'xxx'); // text/plain
+        $pdfFile = new \HuaForms\File(['error' => UPLOAD_ERR_OK, 'name' => 'Fichier.pdf', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'application/pdf'], false);
+        
+        $tmpName = '/tmp/upload_png';
+        file_put_contents($tmpName, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg==')); // image/png
+        $pngFile = new \HuaForms\File(['error' => UPLOAD_ERR_OK, 'name' => 'Fichier.png', 'tmp_name' => $tmpName, 'size' => 3, 'type' => 'image/png'], false);
+        
+        $pngFileError = clone $pngFile;
+        $pngFileError->error = UPLOAD_ERR_CANT_WRITE;
+        
+        $pngFileUppercase = clone $pngFile;
+        $pngFileUppercase->name = 'FICHIER.PNG';
+        
+        return [
+            [['.pdf'], $pdfFile, true],
+            [['.docx'], $pdfFile, false],
+            [['text/plain'], $pdfFile, true],
+            [['text/autre'], $pdfFile, false],
+            [['text/*'], $pdfFile, false],
+            [['.png'], $pngFile, true],
+            [['.png'], $pngFileUppercase, true],
+            [['.PNG'], $pngFile, true],
+            [['.PNG'], $pngFileUppercase, true],
+            [['.jpg'], $pngFile, false],
+            [['image/png'], $pngFile, true],
+            [['image/gif'], $pngFile, false],
+            [['image/*'], $pngFile, true],
+            [['.pdf'], [$pdfFile, $pdfFile, $pdfFile], true],
+            [['.pdf'], [$pdfFile, $pdfFile, $pngFile], false],
+            [['.pdf', '.png'], [$pdfFile, $pdfFile, $pngFile, $pngFile], true],
+            [['.pdf', '.png'], [$pdfFile, $pdfFile, $pngFile, $pngFileUppercase], true],
+            [['.PDF', '.PNG'], [$pdfFile, $pdfFile, $pngFile, $pngFile], true],
+            [['.PDF', '.PNG'], [$pdfFile, $pdfFile, $pngFile, $pngFileUppercase], true],
+            [['.pdf', 'image/png'], [$pdfFile, $pdfFile, $pngFile], true],
+            [['.pdf', 'image/*'], [$pdfFile, $pdfFile, $pngFile], true],
+            [['text/plain', 'image/*'], [$pdfFile, $pdfFile, $pngFile], true],
+            [['text/plain', 'image/png'], [$pdfFile, $pdfFile, $pngFile], true],
+            [['text/plain', 'image/other'], [$pdfFile, $pdfFile, $pngFile], false],
+            [['.pdf', '.png'], [$pdfFile, $pdfFile, $pngFile, $pngFileError], true], // File with error ignored
+            [[], $pngFileError, true], // File with error ignored
+            [[], [$pngFileError, $pdfFile], false], // File with error ignored
+            
+        ];
+    }
+    
+    /**
+     * Test direct du validator "accept" : exception si la valeur n'est pas un fichier
+     */
+    public function testValidatorAcceptException() : void
+    {
+        $validator = new \HuaForms\Validator();
+        $this->expectException(\InvalidArgumentException::class);
+        $validator->validate(['type' => 'accept', 'formats' => ['.pdf']], 'test');
+    }
+    
+    /**
+     * Test direct du validator "accept" : exception si la valeur est un tableau et qu'une entrée n'est pas un fichier
+     */
+    public function testValidatorAcceptMultipleException() : void
+    {
+        $validator = new \HuaForms\Validator();
+        $this->expectException(\InvalidArgumentException::class);
+        $validator->validate(['type' => 'accept', 'formats' => ['.pdf']],
+            [
+                new \HuaForms\File(['error' => UPLOAD_ERR_NO_FILE, 'name' => '', 'tmp_name' => '', 'size' => 0, 'type' => ''], false),
+                'test'
+            ]);
+    }
+    
+    /**
+     * Test direct du validator "accept" : exception si pas de paramètre "formats"
+     */
+    public function testValidatorAcceptException2() : void
+    {
+        $validator = new \HuaForms\Validator();
+        $this->expectException(\InvalidArgumentException::class);
+        $validator->validate(['type' => 'accept'], new \HuaForms\File(['error' => UPLOAD_ERR_NO_FILE, 'name' => '', 'tmp_name' => '', 'size' => 0, 'type' => ''], false));
+    }
+    
+    /**
+     * Test direct du validator "accept" : exception si le paramètre "formats" n'est pas un tableau
+     */
+    public function testValidatorAcceptException3() : void
+    {
+        $validator = new \HuaForms\Validator();
+        $this->expectException(\InvalidArgumentException::class);
+        $validator->validate(['type' => 'accept', 'formats' => '.pdf'], new \HuaForms\File(['error' => UPLOAD_ERR_NO_FILE, 'name' => '', 'tmp_name' => '', 'size' => 0, 'type' => ''], false));
+    }
+    
 }

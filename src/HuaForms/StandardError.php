@@ -43,6 +43,8 @@ class StandardError
         'datetime-local-min'  => '{label}: value must be greater than or equal to {min}',
         'datetime-local-max'  => '{label}: value must be less than or equal to {max}',
         'datetime-local-step' => '{label}: value is not allowed',
+        'upload-error'        => '{label}: error during file upload',
+        'accept'              => '{label}: invalid file type',
     ];
     
     /**
@@ -54,7 +56,7 @@ class StandardError
     public function get(string $ruleType) : string
     {
         if (!isset($this->msg[$ruleType])) {
-            throw new \InvalidArgumentException('StandardError : invalid rule type "'.$ruleType.'"');
+            throw new \InvalidArgumentException('StandardError : no message for rule type "'.$ruleType.'"');
         }
         return $this->msg[$ruleType];
     }

@@ -105,6 +105,15 @@ class File
     }
     
     /**
+     * Return the file extension, for example "pdf"
+     * @return string
+     */
+    public function getExtension() : string
+    {
+        return pathinfo($this->name, PATHINFO_EXTENSION);
+    }
+    
+    /**
      * Save the uploaded file on disk
      * @param string $fileName
      * @param bool $deleteTmpFile If true, the temporary file will be deleted

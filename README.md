@@ -44,6 +44,12 @@ if ($form->isSubmitted() && $form->validate()) {
 }
 ```
 
+## Utilisation
+
+TODO à expliquer avec des exemples
+
+Expliquer la gestion des fichiers
+
 ## Fonctionnalités
 
 ### Correction automatique
@@ -138,6 +144,8 @@ number | tag | Le champ doit contenir un nombre. Défini automatiquement pour le
 number/min | number | Le champ doit contenir un nombre de valeur supérieure ou égale au nombre spécifié
 number/max | number | Le champ doit contenir un nombre de valeur inférieure ou égale au nombre spécifié
 number/step | number | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. 
+accept | string | Pour les champs de type fichier, types de fichiers acceptés. Voir https://developer.mozilla.org/fr/docs/Web/HTML/Element/input/file#accept
+upload-error-message | string | Pour les champs de type fichier, message d'erreur à afficher si erreur lors de l'upload
 
 Pour chaque règle de validation, un attribut "rulename-message" peut être défini pour préciser un message d'erreur en remplacement du message standard.
 

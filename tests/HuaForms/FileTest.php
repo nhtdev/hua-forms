@@ -36,6 +36,7 @@ class FileTest extends \Tests\HuaForms\HuaFormsTestCase
         $file = new \HuaForms\File($f, false);
         
         $this->assertEquals('Test.pdf', $file->name);
+        $this->assertEquals('pdf', $file->getExtension());
         $this->assertEquals($tmpName, $file->tmp_name);
         $this->assertEquals('application/pdf', $file->typeClientSide);
         $this->assertEquals('text/plain', $file->typeServerSide);
@@ -115,6 +116,7 @@ class FileTest extends \Tests\HuaForms\HuaFormsTestCase
         $file = new \HuaForms\File($f, false);
         
         $this->assertEquals('Test.pdf', $file->name);
+        $this->assertEquals('pdf', $file->getExtension());
         $this->assertEquals($tmpName, $file->tmp_name);
         $this->assertEquals('application/pdf', $file->typeClientSide);
         $this->assertFalse($file->typeServerSide);
@@ -147,6 +149,7 @@ class FileTest extends \Tests\HuaForms\HuaFormsTestCase
         $file = new \HuaForms\File($f, false);
         
         $this->assertEquals('Test.pdf', $file->name);
+        $this->assertEquals('pdf', $file->getExtension());
         $this->assertEquals($tmpName, $file->tmp_name);
         $this->assertEquals('application/pdf', $file->typeClientSide);
         $this->assertFalse($file->typeServerSide);
@@ -210,6 +213,7 @@ class FileTest extends \Tests\HuaForms\HuaFormsTestCase
         $file = new \HuaForms\File($f, true);
         
         $this->assertEquals('Test.pdf', $file->name);
+        $this->assertEquals('pdf', $file->getExtension());
         $this->assertEquals($tmpName, $file->tmp_name);
         $this->assertEquals('application/pdf', $file->typeClientSide);
         $this->assertFalse($file->typeServerSide);

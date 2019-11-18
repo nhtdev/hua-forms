@@ -648,6 +648,18 @@ class Parser
                         // Keep required attribute in html
                     }
                     
+                    if ($type === 'file') {
+                        $rule = ['field' => $name, 'type' => 'upload-error'];
+                        $rules[] = $rule;
+                    }
+                    
+                    if ($type === 'file' && $node->hasAttribute('accept')) {
+                        $formats = explode(',', $node->getAttribute('accept'));
+                        $rule = ['field' => $name, 'type' => 'accept', 'formats' => $formats];
+                        $rules[] = $rule;
+                        // Keep accept attribute in html
+                    }
+                    
                     if ($node->hasAttribute('maxlength')) {
                         $value = (int) $node->getAttribute('maxlength');
                         $rule = ['field' => $name, 'type' => 'maxlength', 'maxlength' => $value];
