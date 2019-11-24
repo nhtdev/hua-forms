@@ -163,15 +163,14 @@ class Parser
     }
     
     /**
-     * Add a "name" attribute to any submit button
+     * Add a "name" attribute to any submit or image button
      * @param \DOMDocument $dom
      */
     protected function addNameToSubmits(\DOMDocument $dom) : void
     {
         $cpt = 0;
         $this->walkElements($dom, function (\DOMElement $node) use (&$cpt) {
-            if ( ($node->nodeName === 'input' || $node->nodeName === 'button')
-                && $node->getAttribute('type') === 'submit') {
+            if ($this->isSubmitNode($node)) {
                 if (!$node->hasAttribute('name')) {
                     $cpt++;
                     $name = 'submit'.($cpt === 1 ? '' : $cpt);
@@ -410,7 +409,7 @@ class Parser
      */
     protected function isInputNode(\DOMElement $node) : bool
     {
-        if ($node->nodeName === 'input') {
+        if ($node->nodeName === 'input' && $node->getAttribute('type') !== 'image') {
             return true;
         } else if ($node->nodeName === 'textarea'
             || $node->nodeName === 'select') {
@@ -445,8 +444,10 @@ class Parser
      */
     protected function isSubmitNode(\DOMElement $node) : bool
     {
-        if ($node->nodeName === 'button') {
-            return !$this->isButtonNode($node);
+        if ($node->nodeName === 'button' && $node->getAttribute('type') === 'submit') {
+            return true;
+        } else if ($node->nodeName === 'input' && $node->getAttribute('type') === 'image') {
+            return true;
         } else {
             return false;
         }
@@ -481,8 +482,21 @@ class Parser
      */
     protected function buildJsonSubmit(\DOMElement $node, array &$data) : void
     {
+        // Type (submit/image)
+        $type = $node->getAttribute('type');
+        
         // Label
-        $label = $node->nodeValue;
+        $label = '';
+        if ($type === 'submit') {
+            $label = $node->nodeValue;
+        } else {
+            // image
+            if ($node->hasAttribute('title')) {
+                $label = $node->getAttribute('title');
+            } else if ($node->hasAttribute('alt')) {
+                $label = $node->getAttribute('alt');
+            }
+        }
         
         // Name
         if ($node->hasAttribute('name')) {
@@ -490,7 +504,7 @@ class Parser
         }
         
         // Save
-        $data['submits'][] = ['label' => $label, 'name' => $name];
+        $data['submits'][] = ['type' => $type, 'label' => $label, 'name' => $name];
     }
     
     /**
@@ -1009,7 +1023,8 @@ class Parser
             if ($node->nodeName === 'input' && $node->hasAttribute('name')
                 && $node->getAttribute('type') !== 'checkbox'
                 && $node->getAttribute('type') !== 'radio'
-                && $node->getAttribute('type') !== 'file') {
+                && $node->getAttribute('type') !== 'file'
+                && $node->getAttribute('type') !== 'image') {
                 $name = $node->getAttribute('name');
                 $phpCode = 'echo htmlentities($this->getValue('.$this->quotePhpVar($name).'));';
                 $node->setAttribute('value', self::PHP_CODE.'="'.$phpCode.'"');

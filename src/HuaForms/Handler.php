@@ -110,23 +110,93 @@ class Handler
      */
     public function isSubmitted() : bool
     {
-        return ( $this->getSubmittedButton() !== null);
+        return ( $this->getSubmittedName() !== null);
+    }
+    
+    /**
+     * Return the information of the submit button which has been clicked to submit the form
+     * @return array|NULL
+     */
+    public function getSubmittedInfo() : ?array
+    {
+        $data = $this->getRawData();
+        foreach ($this->conf['submits'] as $submit) {
+            if ($submit['type'] === 'submit') {
+                $submitName = $submit['name'];
+                if (isset($data[$submitName])) {
+                    return $submit;
+                }
+            } else {
+                // image
+                $submitName = $submit['name'];
+                if (isset($data[$submitName.'_x'])) {
+                    return $submit;
+                }
+            }
+        }
+        return null;
     }
     
     /**
      * Return the name of the submit button which has been clicked to submit the form
      * @return string|NULL
      */
-    public function getSubmittedButton() : ?string
+    public function getSubmittedName() : ?string
     {
-        $data = $this->getRawData();
-        foreach ($this->conf['submits'] as $submit) {
-            $submitName = $submit['name'];
-            if (isset($data[$submitName])) {
-                return $submitName;
-            }
+        $infos = $this->getSubmittedInfo();
+        if ($infos === null) {
+            return null;
+        } else {
+            return $infos['name'];
         }
-        return null;
+    }
+    
+    /**
+     * Return the label of the submit button which has been clicked to submit the form
+     * @return string|NULL
+     */
+    public function getSubmittedLabel() : ?string
+    {
+        $infos = $this->getSubmittedInfo();
+        if ($infos === null) {
+            return null;
+        } else {
+            return $infos['label'];
+        }
+    }
+    
+    /**
+     * Return the type (submit/image) of the submit button which has been clicked to submit the form
+     * @return string|NULL
+     */
+    public function getSubmittedType() : ?string
+    {
+        $infos = $this->getSubmittedInfo();
+        if ($infos === null) {
+            return null;
+        } else {
+            return $infos['type'];
+        }
+    }
+    
+    /**
+     * Return the position on the click, when the form is submitted via a <input type="image">
+     * @return array|NULL [x, y]
+     */
+    public function getSubmittedPos() : ?array
+    {
+        $infos = $this->getSubmittedInfo();
+        if ($infos === null) {
+            return null;
+        } else {
+            if ($infos['type'] === 'image') {
+                $rawData = $this->getRawData();
+                $x = $rawData[$infos['name'].'_x'] ?? 0;
+                $y = $rawData[$infos['name'].'_y'] ?? 0;
+                return [$x, $y];
+            }
+            return null;
+        }
     }
     
     /**
@@ -140,16 +210,22 @@ class Handler
         foreach ($this->conf['submits'] as $submit) {
             $oneSubmitName = $submit['name'];
             if ($submitName === null || $oneSubmitName === $submitName) {
-                $this->rawData[$oneSubmitName] = true;
+                if ($submit['type'] === 'submit') {
+                    $this->rawData[$oneSubmitName] = true;
+                } else {
+                    // image
+                    $this->rawData[$oneSubmitName.'_x'] = 0;
+                    $this->rawData[$oneSubmitName.'_y'] = 0;
+                }
                 $found = true;
                 break;
             }
         }
         if (!$found) {
             if ($submitName === null) {
-                throw new \RuntimeException('forceSubmit: no submit button found in form');
+                throw new \RuntimeException('forceSubmit: no submit element found in form');
             } else {
-                throw new \RuntimeException('forceSubmit: submit button "'.$submitName.'" not found in form');
+                throw new \RuntimeException('forceSubmit: submit element "'.$submitName.'" not found in form');
             }
         }
     }

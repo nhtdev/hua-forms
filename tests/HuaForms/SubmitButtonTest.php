@@ -23,7 +23,10 @@ HTML;
         $form = $this->buildTestForm($html);
         
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals('btn1', $form->handler()->getSubmittedButton());
+        $this->assertEquals('submit', $form->handler()->getSubmittedType());
+        $this->assertEquals('btn1', $form->handler()->getSubmittedName());
+        $this->assertEquals('OK', $form->handler()->getSubmittedLabel());
+        $this->assertNull($form->handler()->getSubmittedPos());
         
     }
     
@@ -45,7 +48,9 @@ HTML;
         $form = $this->buildTestForm($html);
         
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals('btn2', $form->handler()->getSubmittedButton());
+        $this->assertEquals('submit', $form->handler()->getSubmittedType());
+        $this->assertEquals('btn2', $form->handler()->getSubmittedName());
+        $this->assertEquals('OK 2', $form->handler()->getSubmittedLabel());
         
     }
     
@@ -67,7 +72,10 @@ HTML;
         $form = $this->buildTestForm($html);
         
         $this->assertFalse($form->isSubmitted());
-        $this->assertNull($form->handler()->getSubmittedButton());
+        $this->assertNull($form->handler()->getSubmittedType());
+        $this->assertNull($form->handler()->getSubmittedName());
+        $this->assertNull($form->handler()->getSubmittedLabel());
+        $this->assertNull($form->handler()->getSubmittedPos());
         
     }
     
@@ -87,7 +95,9 @@ HTML;
         $form = $this->buildTestForm($html);
         
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals('submit', $form->handler()->getSubmittedButton());
+        $this->assertEquals('submit', $form->handler()->getSubmittedType());
+        $this->assertEquals('submit', $form->handler()->getSubmittedName());
+        $this->assertEquals('OK', $form->handler()->getSubmittedLabel());
         
         // Test de rendu du formulaire
         
@@ -120,7 +130,9 @@ HTML;
         $form = $this->buildTestForm($html);
         
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals('submit2', $form->handler()->getSubmittedButton());
+        $this->assertEquals('submit', $form->handler()->getSubmittedType());
+        $this->assertEquals('submit2', $form->handler()->getSubmittedName());
+        $this->assertEquals('OK 2', $form->handler()->getSubmittedLabel());
         
         // Test de rendu du formulaire
         
@@ -156,12 +168,16 @@ HTML;
         $form = $this->buildTestForm($html);
         
         $this->assertFalse($form->isSubmitted());
-        $this->assertNull($form->handler()->getSubmittedButton());
+        $this->assertNull($form->handler()->getSubmittedType());
+        $this->assertNull($form->handler()->getSubmittedName());
+        $this->assertNull($form->handler()->getSubmittedLabel());
         
         $form->handler()->forceSubmit('btn2');
         
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals('btn2', $form->handler()->getSubmittedButton());
+        $this->assertEquals('submit', $form->handler()->getSubmittedType());
+        $this->assertEquals('btn2', $form->handler()->getSubmittedName());
+        $this->assertEquals('OK 2', $form->handler()->getSubmittedLabel());
         
     }
     
@@ -183,12 +199,16 @@ HTML;
         $form = $this->buildTestForm($html);
         
         $this->assertFalse($form->isSubmitted());
-        $this->assertNull($form->handler()->getSubmittedButton());
+        $this->assertNUll($form->handler()->getSubmittedType());
+        $this->assertNull($form->handler()->getSubmittedName());
+        $this->assertNull($form->handler()->getSubmittedLabel());
         
         $form->handler()->forceSubmit();
         
         $this->assertTrue($form->isSubmitted());
-        $this->assertEquals('btn1', $form->handler()->getSubmittedButton());
+        $this->assertEquals('submit', $form->handler()->getSubmittedType());
+        $this->assertEquals('btn1', $form->handler()->getSubmittedName());
+        $this->assertEquals('OK 1', $form->handler()->getSubmittedLabel());
         
     }
     
@@ -210,10 +230,94 @@ HTML;
         $form = $this->buildTestForm($html);
         
         $this->assertFalse($form->isSubmitted());
-        $this->assertNull($form->handler()->getSubmittedButton());
+        $this->assertNull($form->handler()->getSubmittedType());
+        $this->assertNull($form->handler()->getSubmittedName());
+        $this->assertNull($form->handler()->getSubmittedLabel());
         
         $this->expectException(\RuntimeException::class);
         $form->handler()->forceSubmit('btn4');
+        
+    }
+    
+    /**
+     * Test submit plusieurs images
+     */
+    public function testSubmitManyButtonsImages() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="text" name="field1" id="field1" value=""/>
+    <input type="image" src="test.png" name="img1" id="img1" title="Image 1"/>
+    <input type="image" src="test.png" name="img2" id="img2" title="Image 2"/>
+    <input type="image" src="test.png" name="img3" id="img3" title="Image 3"/>
+</form>
+HTML;
+        
+        $_POST = ['csrf' => 'test', 'field1' => 'Test', 'img2_x' => 10, 'img2_y' => 20];
+        $form = $this->buildTestForm($html);
+        
+        $this->assertTrue($form->isSubmitted());
+        $this->assertEquals('image', $form->handler()->getSubmittedType());
+        $this->assertEquals('img2', $form->handler()->getSubmittedName());
+        $this->assertEquals('Image 2', $form->handler()->getSubmittedLabel());
+        $this->assertEquals([10, 20], $form->handler()->getSubmittedPos());
+        
+    }
+    
+    /**
+     * Test submit plusieurs images
+     */
+    public function testSubmitManyButtonsImagesAlt() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="text" name="field1" id="field1" value=""/>
+    <input type="image" src="test.png" name="img1" id="img1" alt="Image 1"/>
+    <input type="image" src="test.png" name="img2" id="img2" alt="Image 2"/>
+    <input type="image" src="test.png" name="img3" id="img3" alt="Image 3"/>
+</form>
+HTML;
+        
+        $_POST = ['csrf' => 'test', 'field1' => 'Test', 'img2_x' => 10, 'img2_y' => 20];
+        $form = $this->buildTestForm($html);
+        
+        $this->assertTrue($form->isSubmitted());
+        $this->assertEquals('image', $form->handler()->getSubmittedType());
+        $this->assertEquals('img2', $form->handler()->getSubmittedName());
+        $this->assertEquals('Image 2', $form->handler()->getSubmittedLabel());
+        $this->assertEquals([10, 20], $form->handler()->getSubmittedPos());
+        
+    }
+    
+    /**
+     * Test submit plusieurs images => échec sauf si force submit
+     */
+    public function testSubmitForceSubmitImageInvalid() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="text" name="field1" id="field1" value=""/>
+    <input type="image" src="test.png" name="img1" id="img1" title="Image 1"/>
+    <input type="image" src="test.png" name="img2" id="img2" title="Image 2"/>
+    <input type="image" src="test.png" name="img3" id="img3" title="Image 3"/>
+</form>
+HTML;
+        
+        $_POST = ['csrf' => 'test', 'field1' => 'Test', 'img1' => 'NON'];
+        $form = $this->buildTestForm($html);
+        
+        $this->assertFalse($form->isSubmitted());
+        $this->assertNUll($form->handler()->getSubmittedType());
+        $this->assertNull($form->handler()->getSubmittedName());
+        $this->assertNull($form->handler()->getSubmittedLabel());
+        
+        $form->handler()->forceSubmit('img3');
+        
+        $this->assertTrue($form->isSubmitted());
+        $this->assertEquals('image', $form->handler()->getSubmittedType());
+        $this->assertEquals('img3', $form->handler()->getSubmittedName());
+        $this->assertEquals('Image 3', $form->handler()->getSubmittedLabel());
+        $this->assertEquals([0, 0], $form->handler()->getSubmittedPos());
         
     }
     

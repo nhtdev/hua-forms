@@ -73,6 +73,7 @@ TODO mettre des patterns pour les champs non gérés
 TODO zones répétées ??
 TODO optgroup
 TODO options coté code
+TODO upload asynchrone ?
 
 
 ## Types des champs
@@ -91,7 +92,7 @@ TODO options coté code
 <input type="file" />
 <input type="file" multiple/>
 <input type="hidden" />
-<input type="image" /> TODO
+<input type="image" />
 <input type="month" />
 <input type="number" />
 <input type="password" />
@@ -107,6 +108,8 @@ TODO options coté code
 
 <select presentation="radio"> TODO
 <select presentation="checkbox" multiple> TODO
+<input type="date" presentation="text"> TODO
+<input type="date" presentation="select"> TODO
 ```
 
 ## Attributs

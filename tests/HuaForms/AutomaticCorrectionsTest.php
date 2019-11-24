@@ -162,7 +162,7 @@ HTML;
     }
     
     /**
-     * Add a "name" attribute to any submit button
+     * Add a "name" attribute to any submit or image button
      */
     public function testAddNameToSubmits() : void
     {
@@ -170,6 +170,7 @@ HTML;
 <form method="post" action="">
     <button type="submit">Test 1</button>
     <button type="submit">Test 2</button>
+    <input type="image" src="test.png"/>
 </form>
 HTML;
         
@@ -180,6 +181,7 @@ HTML;
 <input type="hidden" name="csrf" value="test"/>
     <button type="submit" name="submit" id="submit">Test 1</button>
     <button type="submit" name="submit2" id="submit2">Test 2</button>
+    <input type="image" src="test.png" name="submit3" id="submit3"/>
 </form>
 HTML;
         $this->assertEquals($expected, $form->render());

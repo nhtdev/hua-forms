@@ -14,6 +14,7 @@ if ($form->isSubmitted() && $form->validate()) {
     $data = $form->exportValues();
     $ok = true;
 }
+//var_dump($_POST);
 
 ?>
 <!doctype html>
@@ -32,15 +33,30 @@ if ($form->isSubmitted() && $form->validate()) {
     <h1>Hello, world!</h1>
 
 	<?php if ($ok): ?>
-		<h2>Success (<?php echo $form->handler()->getSubmittedButton(); ?> clicked)</h2>
+		<h2>Success</h2>
+		<?php if ($form->handler()->getSubmittedType() === 'image'): ?>
+			<h3>
+				<?php echo $form->handler()->getSubmittedLabel(); ?> 
+				(<?php echo $form->handler()->getSubmittedName(); ?>) 
+				clicked at (<?php echo implode(', ', $form->handler()->getSubmittedPos()); ?>)
+			</h3>
+		<?php else: ?>
+			<h3>
+    			<?php echo $form->handler()->getSubmittedLabel(); ?> 
+    			(<?php echo $form->handler()->getSubmittedName(); ?>) clicked
+			</h3>
+		<?php endif; ?>
+		
 		<pre><?php var_dump($data); ?></pre>
 		<?php if ($data['field-file']->isUploaded()): ?>
 			<h2>field-file</h2>
 			<pre><?php echo file_get_contents($data['field-file']->tmp_name); ?></pre>
 		<?php endif; ?>
 		<?php foreach ($data['field-file2'] as $file): ?>
-			<h2>field-file2</h2>
-			<pre><?php echo file_get_contents($file->tmp_name); ?></pre>
+    		<?php if ($file->isUploaded()): ?>
+    			<h2>field-file2</h2>
+    			<pre><?php echo file_get_contents($file->tmp_name); ?></pre>
+			<?php endif; ?>
 		<?php endforeach; ?>
 	<?php endif; ?>
 	
