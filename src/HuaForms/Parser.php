@@ -15,12 +15,6 @@ class Parser
     protected $inputFile;
     
     /**
-     * Internal counter for submit buttons
-     * @var integer
-     */
-    protected $submitCpt = 1;
-    
-    /**
      * Tag used for injecting PHP code into the template file
      * @var string
      */
@@ -111,7 +105,9 @@ class Parser
     {
         $this->setEncTypeIfFileInput($dom);
         $this->addTypeToInput($dom);
+        $this->addTypeToButton($dom);
         $this->addNameToSubmits($dom);
+        $this->convertToButton($dom);
         $this->fixSelectAndFileMultipleName($dom);
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
@@ -154,6 +150,19 @@ class Parser
     }
     
     /**
+     * Add a "type=button" attribute to any button without "type" attribute
+     * @param \DOMDocument $dom
+     */
+    protected function addTypeToButton(\DOMDocument $dom) : void
+    {
+        $this->walkElements($dom, function (\DOMElement $node) {
+            if ($node->nodeName === 'button' && !$node->hasAttribute('type')) {
+                $node->setAttribute('type', 'button');
+            }
+        });
+    }
+    
+    /**
      * Add a "name" attribute to any submit button
      * @param \DOMDocument $dom
      */
@@ -170,6 +179,64 @@ class Parser
                 }
             }
         });
+    }
+    
+    /**
+     * Convert <input> type "submit", "button", "reset" to <button>
+     * @param \DOMDocument $dom
+     */
+    protected function convertToButton(\DOMDocument $dom) : void
+    {
+        do {
+            $changed = false;
+            $this->walkElements($dom, function (\DOMElement $node) use (&$changed) {
+                if ( $node->nodeName === 'input'
+                    && ($node->getAttribute('type') === 'submit'
+                        || $node->getAttribute('type') === 'button'
+                        || $node->getAttribute('type') === 'reset')) {
+                            
+                        $newNode = $this->changeNodeName($node, 'button');
+                        $label = ' ';
+                        if ($newNode->hasAttribute('value')) {
+                            $label = $newNode->getAttribute('value');
+                            $newNode->removeAttribute('value');
+                        } elseif ($newNode->getAttribute('type') === 'submit') {
+                            $label = 'OK';
+                        } elseif ($newNode->getAttribute('type') === 'reset') {
+                            $label = 'Reset';
+                        }
+                        $newNode->textContent = $label;
+                        
+                        $changed = true;
+                    }
+            });
+        } while ($changed); // When one node type is changed, the "walkElements" loop is stopped
+    }
+    
+    /**
+     * Change the nodeName of a DomElement
+     * @param \DOMElement $node Element to modify
+     * @param string $name New nodeName
+     * @return \DOMElement Reference to the new node
+     */
+    protected function changeNodeName(\DOMElement $node, string $name) : \DOMElement
+    {
+        $childnodes = array();
+        foreach ($node->childNodes as $child){
+            $childnodes[] = $child;
+        }
+        $newnode = $node->ownerDocument->createElement($name);
+        foreach ($childnodes as $child){
+            $child2 = $node->ownerDocument->importNode($child, true);
+            $newnode->appendChild($child2);
+        }
+        foreach ($node->attributes as $attrName => $attrNode) {
+            $attrName = $attrNode->nodeName;
+            $attrValue = $attrNode->nodeValue;
+            $newnode->setAttribute($attrName, $attrValue);
+        }
+        $node->parentNode->replaceChild($newnode, $node);
+        return $newnode;
     }
     
     /**
@@ -344,12 +411,6 @@ class Parser
     protected function isInputNode(\DOMElement $node) : bool
     {
         if ($node->nodeName === 'input') {
-            if ($node->hasAttribute('type')) {
-                $type = $node->getAttribute('type');
-                if ($type === 'button' || $type === 'submit') {
-                    return false;
-                }
-            }
             return true;
         } else if ($node->nodeName === 'textarea'
             || $node->nodeName === 'select') {
@@ -367,24 +428,11 @@ class Parser
     protected function isButtonNode(\DOMElement $node) : bool
     {
         if ($node->nodeName === 'button') {
-            if ($node->hasAttribute('type')) {
-                $type = $node->getAttribute('type');
-                if ($type === 'submit') {
-                    return false;
-                }
-                return true;
-            } else {
-                return true;
+            $type = $node->getAttribute('type');
+            if ($type === 'submit') {
+                return false;
             }
-            
-        } else if ($node->nodeName === 'input') {
-            if ($node->hasAttribute('type')) {
-                $type = $node->getAttribute('type');
-                if ($type === 'button') {
-                    return true;
-                }
-            }
-            return false;
+            return true;
         } else {
             return false;
         }
@@ -399,29 +447,6 @@ class Parser
     {
         if ($node->nodeName === 'button') {
             return !$this->isButtonNode($node);
-            
-        } else if ($node->nodeName === 'input') {
-            if ($node->hasAttribute('type')) {
-                $type = $node->getAttribute('type');
-                if ($type === 'submit') {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Return true if the given DOM node is a field label
-     * @param \DOMElement $node
-     * @return bool
-     */
-    protected function isLabelNode(\DOMElement $node) : bool
-    {
-        if ($node->nodeName === 'label') {
-            return true;
         } else {
             return false;
         }
@@ -457,22 +482,12 @@ class Parser
     protected function buildJsonSubmit(\DOMElement $node, array &$data) : void
     {
         // Label
-        if ($node->nodeName === 'input') {
-            $label = '';
-            if ($node->hasAttribute('value')) {
-                $label = $node->getAttribute('value');
-            }
-        } else { // <button>
-            $label = $node->nodeValue;
-        }
+        $label = $node->nodeValue;
         
         // Name
         if ($node->hasAttribute('name')) {
             $name = $node->getAttribute('name');
-        } else {
-            $name = 'submit'.$this->submitCpt;
         }
-        $this->submitCpt++;
         
         // Save
         $data['submits'][] = ['label' => $label, 'name' => $name];
@@ -500,7 +515,7 @@ class Parser
             'hidden', 'image', 'month', 'number', 'password', 'radio', 'range', 'search', 
             'select', 'tel', 'text', 'textarea', 'time', 'url', 'week', 
         ])) {
-            $this->triggerWarning('Ivalid input type "'.$type.'"', $node);
+            $this->triggerWarning('Invalid input type "'.$type.'"', $node);
             $type = 'text';
         }
         

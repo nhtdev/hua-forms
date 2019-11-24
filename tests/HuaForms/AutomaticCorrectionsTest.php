@@ -161,4 +161,85 @@ HTML;
         
     }
     
+    /**
+     * Add a "name" attribute to any submit button
+     */
+    public function testAddNameToSubmits() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <button type="submit">Test 1</button>
+    <button type="submit">Test 2</button>
+</form>
+HTML;
+        
+        $form = $this->buildTestForm($html);
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <button type="submit" name="submit" id="submit">Test 1</button>
+    <button type="submit" name="submit2" id="submit2">Test 2</button>
+</form>
+HTML;
+        $this->assertEquals($expected, $form->render());
+        
+    }
+    
+    /**
+     * Convert <input> type "submit", "button", "reset" to <button>
+     */
+    public function testConvertToButton() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="submit" name="submit-btn1"/>
+    <input type="submit" value="Submit" name="submit-btn2"/>
+    <input type="button"/>
+    <input type="button" value="Button"/>
+    <input type="reset"/>
+    <input type="reset" value="Reset 2"/>
+</form>
+HTML;
+        
+        $form = $this->buildTestForm($html);
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <button type="submit" name="submit-btn1" id="submit-btn1">OK</button>
+    <button type="submit" name="submit-btn2" id="submit-btn2">Submit</button>
+    <button type="button"> </button>
+    <button type="button">Button</button>
+    <button type="reset">Reset</button>
+    <button type="reset">Reset 2</button>
+</form>
+HTML;
+        $this->assertEquals($expected, $form->render());
+        
+    }
+    
+    /**
+     * Add a "type=button" attribute to any button without "type" attribute
+     */
+    public function testAddTypeToButton() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <button>Test</button>
+</form>
+HTML;
+        
+        $form = $this->buildTestForm($html);
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <button type="button">Test</button>
+</form>
+HTML;
+        $this->assertEquals($expected, $form->render());
+        
+    }
+    
 }

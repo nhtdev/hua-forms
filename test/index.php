@@ -32,7 +32,7 @@ if ($form->isSubmitted() && $form->validate()) {
     <h1>Hello, world!</h1>
 
 	<?php if ($ok): ?>
-		<h2>Success</h2>
+		<h2>Success (<?php echo $form->handler()->getSubmittedButton(); ?> clicked)</h2>
 		<pre><?php var_dump($data); ?></pre>
 		<?php if ($data['field-file']->isUploaded()): ?>
 			<h2>field-file</h2>
