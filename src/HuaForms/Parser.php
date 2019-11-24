@@ -111,6 +111,7 @@ class Parser
     {
         $this->setEncTypeIfFileInput($dom);
         $this->addTypeToInput($dom);
+        $this->addNameToSubmits($dom);
         $this->fixSelectAndFileMultipleName($dom);
         $this->addIdAttributes($dom);
         $this->addAlertDivIfNotFound($dom);
@@ -140,7 +141,7 @@ class Parser
     }
     
     /**
-     * Add a "type=text" attribute input without "type" attribute
+     * Add a "type=text" attribute to any input without "type" attribute
      * @param \DOMDocument $dom
      */
     protected function addTypeToInput(\DOMDocument $dom) : void
@@ -148,6 +149,25 @@ class Parser
         $this->walkElements($dom, function (\DOMElement $node) {
             if ($node->nodeName === 'input' && !$node->hasAttribute('type')) {
                 $node->setAttribute('type', 'text');
+            }
+        });
+    }
+    
+    /**
+     * Add a "name" attribute to any submit button
+     * @param \DOMDocument $dom
+     */
+    protected function addNameToSubmits(\DOMDocument $dom) : void
+    {
+        $cpt = 0;
+        $this->walkElements($dom, function (\DOMElement $node) use (&$cpt) {
+            if ( ($node->nodeName === 'input' || $node->nodeName === 'button')
+                && $node->getAttribute('type') === 'submit') {
+                if (!$node->hasAttribute('name')) {
+                    $cpt++;
+                    $name = 'submit'.($cpt === 1 ? '' : $cpt);
+                    $node->setAttribute('name', $name);
+                }
             }
         });
     }

@@ -70,6 +70,10 @@ TODO Affichage conditionnel
 TODO options dynamiques
 TODO préfixe id
 TODO mettre des patterns pour les champs non gérés
+TODO zones répétées ??
+TODO optgroup
+TODO options coté code
+
 
 ## Types des champs
 

@@ -108,6 +108,8 @@ HTML;
             'field10' => '3'
         ];
         
+        $form = $this->buildTestForm($html);
+        
         $this->assertTrue($form->isSubmitted());
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());

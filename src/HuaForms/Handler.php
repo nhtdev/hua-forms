@@ -56,6 +56,12 @@ class Handler
     protected $formattedData = null;
     
     /**
+     * Form submitted data (not validated or formatted)
+     * @var array
+     */
+    protected $rawData = [];
+    
+    /**
      * Constructor
      * @param string $file File name containing the JSON description of the form
      * @throws \RuntimeException
@@ -70,6 +76,12 @@ class Handler
             throw new \RuntimeException('Json decode of file "'.$file.'" error : '.json_last_error_msg());
         }
         $this->conf = $conf;
+        
+        if ($this->conf['method'] === 'get') {
+            $this->rawData = $_GET;
+        } else {
+            $this->rawData = $_POST;
+        }
     }
     
     /**
@@ -111,10 +123,35 @@ class Handler
         foreach ($this->conf['submits'] as $submit) {
             $submitName = $submit['name'];
             if (isset($data[$submitName])) {
-                return $data[$submitName];
+                return $submitName;
             }
         }
         return null;
+    }
+    
+    /**
+     * Simulate the form submit
+     * @param string|null $submitName Name of the submitted button, or null for the first form button 
+     * @throws \RuntimeException
+     */
+    public function forceSubmit(string $submitName=null) : void
+    {
+        $found = false;
+        foreach ($this->conf['submits'] as $submit) {
+            $oneSubmitName = $submit['name'];
+            if ($submitName === null || $oneSubmitName === $submitName) {
+                $this->rawData[$oneSubmitName] = true;
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            if ($submitName === null) {
+                throw new \RuntimeException('forceSubmit: no submit button found in form');
+            } else {
+                throw new \RuntimeException('forceSubmit: submit button "'.$submitName.'" not found in form');
+            }
+        }
     }
     
     /**
@@ -123,11 +160,7 @@ class Handler
      */
     public function getRawData() : array
     {
-        if ($this->conf['method'] === 'get') {
-            return $_GET;
-        } else {
-            return $_POST;
-        }
+        return $this->rawData;
     }
     
     /**
