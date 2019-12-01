@@ -57,21 +57,21 @@ Expliquer la gestion des fichiers
 * Ajoute et vérifie automatique un jeton de protection CSRF
 * Ajoute automatiquement un attribut "id" correspondant au "name"
 * Ajoute au type "text" aux champs input sans type
-* Ajoute automatiquement un attribut "for" à l'élément `<label>` TODO à améliorer
+* Ajoute automatiquement un attribut "for" à l'élément `<label>`
 * Ajoute automatiquement "[]" au name des `<select multiple>` et `<input type="file" multiple>`
 * Définit automatiquement l'attribut "enctype" du formulaire s'il contient au moins un champ de type fichier
 
+* TODO préfixe id
 * TODO Convertit un attribut "label" en un élément html `<label>`
-* TODO Ajoute automatiquement un `<div>` englobant l'élément et son label
+* TODO mettre des patterns pour les champs non gérés
+* TODO optgroup
 * TODO Gestion behaviours
+* TODO Ajoute automatiquement un `<div>` englobant l'élément et son label
 * TODO Bootstrap auto via behaviour, ajout div englobant
 * TODO Validation du HTML et du contenu des attributs
 * TODO Affichage conditionnel
 * TODO options dynamiques
-* TODO préfixe id
-* TODO mettre des patterns pour les champs non gérés
 * TODO zones répétées ??
-* TODO optgroup
 * TODO options coté code
 * TODO upload asynchrone ?
 

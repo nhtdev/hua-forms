@@ -71,6 +71,74 @@ HTML;
     }
     
     /**
+     * Ajoute automatiquement un attribut "for" à l'élément <label>
+     * sans qu'ils ne soient dans des div englobants
+     */
+    public function testAddForInLabelNodesSameLevel() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <label>Test</label>
+    <input type="text" name="field" id="field-id" value=""/>
+    <label>Test 2</label>
+    <input type="text" name="field2" id="field-id2" value=""/>
+    <label>Test 3</label>
+    <input type="text" name="field3" id="field-id3" value=""/>
+</form>
+HTML;
+        
+        $form = $this->buildTestForm($html);
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <label for="field-id">Test</label>
+    <input type="text" name="field" id="field-id" value=""/>
+    <label for="field-id2">Test 2</label>
+    <input type="text" name="field2" id="field-id2" value=""/>
+    <label for="field-id3">Test 3</label>
+    <input type="text" name="field3" id="field-id3" value=""/>
+</form>
+HTML;
+        $this->assertEquals($expected, $form->render());
+        
+    }
+    
+    /**
+     * Ajoute automatiquement un attribut "for" à l'élément <label>
+     * pour des cases à cocher (case à cocher avant le label)
+     */
+    public function testAddForInLabelNodesSameLevelCheckboxes() : void
+    {
+        $html = <<<HTML
+<form method="post" action="">
+    <input type="checkbox" name="field" id="field-id"/>
+    <label>Test</label>
+    <input type="checkbox" name="field2" id="field-id2"/>
+    <label>Test 2</label>
+    <input type="checkbox" name="field3" id="field-id3"/>
+    <label>Test 3</label>
+</form>
+HTML;
+        
+        $form = $this->buildTestForm($html);
+        
+        $expected = <<<HTML
+<form method="post" action="">
+<input type="hidden" name="csrf" value="test"/>
+    <input type="checkbox" name="field" id="field-id"/>
+    <label for="field-id">Test</label>
+    <input type="checkbox" name="field2" id="field-id2"/>
+    <label for="field-id2">Test 2</label>
+    <input type="checkbox" name="field3" id="field-id3"/>
+    <label for="field-id3">Test 3</label>
+</form>
+HTML;
+        $this->assertEquals($expected, $form->render());
+        
+    }
+    
+    /**
      * Remplit la valeur d'un champ <select>
      */
     public function testSetSelected() : void

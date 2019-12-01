@@ -951,30 +951,79 @@ class Parser
     }
     
     /**
-     * Search form DOM Node of the label associated to an input field
+     * Search DOM Node of the label associated to an input field, via the "for" attribute if possible
      * @param \DOMElement $input
      * @return \DOMNode|NULL
      */
     protected function findLabelNode(\DOMElement $input) : ?\DOMNode
     {
-        // TODO : + intelligent
-        
-        // Previous sibling
-        $prev = $input;
-        do {
-            $prev = $prev->previousSibling;
-        } while ($prev !== null && $prev->nodeName === '#text');
-        if ($prev !== null && $prev->nodeName === 'label') {
-            return $prev;
+        $result = $this->findLabelNodeByForAttribute($input);
+        if ($result !== null) {
+            return $result;
+        }
+        return $this->guessLabelNode($input);
+    }
+    
+    /**
+     * Search DOM Node of the label associated to an input field via the "for" attribute
+     * @param \DOMElement $input
+     * @return \DOMNode|NULL
+     */
+    protected function findLabelNodeByForAttribute(\DOMElement $input) : ?\DOMNode
+    {
+        if ($input->hasAttribute('id')) {
+            $searchId = $input->getAttribute('id');
+        } else {
+            return null;
+        }
+        $result = null;
+        $this->walkElements($input->ownerDocument, function (\DOMElement $element) use ($searchId, &$result) {
+            if ($element->nodeName === 'label' && $element->hasAttribute('for') && $element->getAttribute('for') === $searchId) {
+                $result = $element;
+                return false;
+            }
+        });
+        return $result;
+    }
+    
+    /**
+     * Search DOM Node of the label associated to an input field
+     * @param \DOMElement $input
+     * @return \DOMNode|NULL
+     */
+    protected function guessLabelNode(\DOMElement $input) : ?\DOMNode
+    {
+        if ($input->hasAttribute('type') 
+            && ($input->getAttribute('type') === 'checkbox' || $input->getAttribute('type') === 'radio')) {
+            $order = ['next', 'prev'];
+        } else {
+            $order = ['prev', 'next'];
         }
         
-        // Next sibling
-        $next = $input;
-        do {
-            $next = $next->nextSibling;
-        } while ($next !== null && $next->nodeName === '#text');
-        if ($next !== null && $next->nodeName === 'label') {
-            return $next;
+        foreach ($order as $dir) {
+            
+            // Previous sibling
+            if ($dir === 'prev') {
+                $prev = $input;
+                do {
+                    $prev = $prev->previousSibling;
+                } while ($prev !== null && $prev->nodeName !== 'label');
+                if ($prev !== null && $prev->nodeName === 'label' && !$prev->hasAttribute('for')) {
+                    return $prev;
+                }
+            }
+            
+            // Next sibling
+            if ($dir === 'next') {
+                $next = $input;
+                do {
+                    $next = $next->nextSibling;
+                } while ($next !== null && $next->nodeName !== 'label');
+                if ($next !== null && $next->nodeName === 'label' && !$next->hasAttribute('for')) {
+                    return $next;
+                }
+            }
+            
         }
         
         // Not found
