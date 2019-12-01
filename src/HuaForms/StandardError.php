@@ -17,6 +17,7 @@ class StandardError
         'required'            => '{label}: field is required',
         'maxlength'           => '{label}: maximum {maxlength} characters',
         'minlength'           => '{label}: minimum {minlength} characters',
+        'pattern'             => '{label}: invalid format',
         'inarray'             => '{label}: value is not allowed',
         'email'               => '{label}: invalid email',
         'url'                 => '{label}: invalid url',

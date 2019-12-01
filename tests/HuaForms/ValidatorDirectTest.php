@@ -835,4 +835,46 @@ class ValidatorDirectTest extends \Tests\HuaForms\HuaFormsTestCase
         $validator->validate(['type' => 'accept', 'formats' => '.pdf'], new \HuaForms\File(['error' => UPLOAD_ERR_NO_FILE, 'name' => '', 'tmp_name' => '', 'size' => 0, 'type' => ''], false));
     }
     
+    
+    /**
+     * Test direct du validator "pattern"
+     * @dataProvider patternProvider
+     */
+    public function testValidatorPattern(string $pattern, string $value, bool $expected) : void
+    {
+        $validator = new \HuaForms\Validator();
+        $result = $validator->validate(['type' => 'pattern', 'pattern' => $pattern], $value);
+        $this->assertEquals($expected, $result);
+    }
+    public function patternProvider() : array
+    {
+        return [
+            ['.*', '123 *ùdsf / \\^$', true],
+            ['\d\d\d', '123', true],
+            ['\d\d\d', '12', false],
+            ['\d\d\d', '1234', false],
+            ['\d\d\d', 'abc', false],
+        ];
+    }
+    
+    /**
+     * Test direct du validator "pattern" : exception si la valeur est un tableau
+     */
+    public function testValidatorPatternException() : void
+    {
+        $validator = new \HuaForms\Validator();
+        $this->expectException(\InvalidArgumentException::class);
+        $validator->validate(['type' => 'pattern', 'pattern' => '.*'], ['test']);
+    }
+    
+    /**
+     * Test direct du validator "pattern" : exception paramètre pattern incomplet
+     */
+    public function testValidatorPatternException2() : void
+    {
+        $validator = new \HuaForms\Validator();
+        $this->expectException(\InvalidArgumentException::class);
+        $validator->validate(['type' => 'pattern'], 'test');
+    }
+    
 }

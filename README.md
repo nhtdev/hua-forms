@@ -76,6 +76,9 @@ Expliquer la gestion des fichiers
 * TODO upload asynchrone ?
 * TODO option "frozen" (readonly, disabled, type hidden)
 * TODO output, meter, progress
+* TODO alertes sur l'utilisation d'attributs incorrects
+* TODO mode debug
+* Patterns prédéfinis sur les mots de passe
 
 
 ## Types des champs
@@ -125,6 +128,7 @@ Nom de l'attribut | Type | Description
 required | tag | Champ obligatoire
 maxlength | int | Taille maximale d'un champ texte
 minlength | int | Taille minimale d'un champ texte
+pattern | string | Expression régulière à laquelle la valeur doit correspondre. Par exemple "[a-z]{4,8}" pour 4 à 8 lettres en minuscule
 maxoptions TODO | int | Nombre maximal d'options pour un champ select multiple
 minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
 minsize TODO | string | Taille minimale d'un champ fichier. Exemple : 1024, 1024B, 100KB, 1MB, 1GB...

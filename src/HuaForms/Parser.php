@@ -723,6 +723,13 @@ class Parser
                         // Keep minlength attribute in html
                     }
                     
+                    if ($node->hasAttribute('pattern')) {
+                        $pattern = $node->getAttribute('pattern');
+                        $rule = ['field' => $name, 'type' => 'pattern', 'pattern' => $pattern];
+                        $rules[] = $rule;
+                        // Keep pattern attribute in html
+                    }
+                    
                     if ($node->hasAttribute('inarray')) {
                         $values = explode(',', $node->getAttribute('inarray'));
                         $rule = ['field' => $name, 'type' => 'inarray', 'values' => $values];

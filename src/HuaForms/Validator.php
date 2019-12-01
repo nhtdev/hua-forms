@@ -571,4 +571,25 @@ class Validator
         
     }
     
+    /**
+     * Pattern : the string value must match the given pattern
+     * @param array $rule ['pattern' => regex]
+     * @param mixed $value Field value
+     * @return bool True if value is valid, false otherwise
+     */
+    protected function validatePattern(array $rule, $value) : bool
+    {
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException('Rule pattern : value must be a string');
+        }
+        if (!isset($rule['pattern'])) {
+            throw new \InvalidArgumentException('Rule pattern : missing param "pattern"');
+        }
+        if (preg_match('/^'.$rule['pattern'].'$/', $value)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
 }
