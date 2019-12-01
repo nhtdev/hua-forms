@@ -112,9 +112,9 @@ class Facade
      */
     protected function handleCsrf() : void
     {
-        $csrfKey = isset($this->options['csrfKey']) ? $this->options['csrfKey'] : 'csrf';
-        $csrfClass = isset($this->options['csrfClass']) ? $this->options['csrfClass'] : \HuaForms\Csrf\PhpSession::class;
-        $csrfOptions = isset($this->options['csrfOptions']) ? $this->options['csrfOptions'] : [];
+        $csrfKey = $this->options['csrfKey'] ?? '_csrf_token_';
+        $csrfClass = $this->options['csrfClass'] ?? \HuaForms\ServerStorage\PhpSession::class;
+        $csrfOptions = $this->options['csrfOptions'] ?? [];
         $csrf = new $csrfClass($csrfOptions);
         
         if (empty($_POST) || !$csrf->exists($csrfKey)) {
