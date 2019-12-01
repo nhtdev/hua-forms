@@ -63,17 +63,17 @@ Expliquer la gestion des fichiers
 
 * TODO Convertit un attribut "label" en un élément html `<label>`
 * TODO Ajoute automatiquement un `<div>` englobant l'élément et son label
-TODO Gestion behaviours
-TODO Bootstrap auto via behaviour, ajout div englobant
-TODO Validation du HTML et du contenu des attributs
-TODO Affichage conditionnel
-TODO options dynamiques
-TODO préfixe id
-TODO mettre des patterns pour les champs non gérés
-TODO zones répétées ??
-TODO optgroup
-TODO options coté code
-TODO upload asynchrone ?
+* TODO Gestion behaviours
+* TODO Bootstrap auto via behaviour, ajout div englobant
+* TODO Validation du HTML et du contenu des attributs
+* TODO Affichage conditionnel
+* TODO options dynamiques
+* TODO préfixe id
+* TODO mettre des patterns pour les champs non gérés
+* TODO zones répétées ??
+* TODO optgroup
+* TODO options coté code
+* TODO upload asynchrone ?
 
 
 ## Types des champs
