@@ -74,6 +74,8 @@ Expliquer la gestion des fichiers
 * TODO zones répétées ??
 * TODO options coté code
 * TODO upload asynchrone ?
+* TODO option "frozen" (readonly, disabled, type hidden)
+* TODO output, meter, progress
 
 
 ## Types des champs
@@ -116,11 +118,13 @@ Expliquer la gestion des fichiers
 
 ### Règles de validation
 
+Avancement : https://docs.google.com/spreadsheets/d/1QIE2pBO4QaZscYjnFgyP4sRwQ3k-Pv2CqI3gk062Jfg/edit?usp=sharing
+
 Nom de l'attribut | Type | Description
 --- | --- | ---
 required | tag | Champ obligatoire
 maxlength | int | Taille maximale d'un champ texte
-minlength | int | Taille maximale d'un champ texte
+minlength | int | Taille minimale d'un champ texte
 maxoptions TODO | int | Nombre maximal d'options pour un champ select multiple
 minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
 minsize TODO | string | Taille minimale d'un champ fichier. Exemple : 1024, 1024B, 100KB, 1MB, 1GB...
