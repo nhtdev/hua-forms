@@ -78,7 +78,8 @@ Expliquer la gestion des fichiers
 * TODO output, meter, progress
 * TODO alertes sur l'utilisation d'attributs incorrects
 * TODO mode debug
-* Patterns prédéfinis sur les mots de passe
+* TODO Patterns prédéfinis sur les mots de passe
+* TODO captcha
 
 
 ## Types des champs
