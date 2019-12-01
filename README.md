@@ -57,12 +57,12 @@ Expliquer la gestion des fichiers
 * Ajoute et vérifie automatique un jeton de protection CSRF
 * Ajoute automatiquement un attribut "id" correspondant au "name"
 * Ajoute au type "text" aux champs input sans type
-* Ajoute automatiquement un attribut "for" à l'élément <label> TODO à améliorer
-* Ajoute automatiquement "[]" au name des <select multiple> et <input type="file" multiple>
+* Ajoute automatiquement un attribut "for" à l'élément `<label>` TODO à améliorer
+* Ajoute automatiquement "[]" au name des `<select multiple>` et `<input type="file" multiple>`
 * Définit automatiquement l'attribut "enctype" du formulaire s'il contient au moins un champ de type fichier
 
-* TODO Convertit un attribut "label" en un élément html <label>
-* TODO Ajoute automatiquement un <div> englobant l'élément et son label
+* TODO Convertit un attribut "label" en un élément html `<label>`
+* TODO Ajoute automatiquement un `<div>` englobant l'élément et son label
 TODO Gestion behaviours
 TODO Bootstrap auto via behaviour, ajout div englobant
 TODO Validation du HTML et du contenu des attributs
@@ -125,31 +125,31 @@ maxoptions TODO | int | Nombre maximal d'options pour un champ select multiple
 minoptions TODO | int | Nombre minimal d'options pour un champ select multiple
 minsize TODO | string | Taille minimale d'un champ fichier. Exemple : 1024, 1024B, 100KB, 1MB, 1GB...
 maxsize TODO | string | Taille maximale d'un champ fichier. Exemple : 1024, 1024B, 100KB, 1MB, 1GB...
-inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type <select>
-email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments <input type="email"/>
-url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments <input type="url"/>
-color | tag | Le champ doit contenir une couleur au format #1234ab. Défini automatiquement pour les éléments <input type="color"/>
-month | tag | Le champ doit contenir un mois + année. Défini automatiquement pour les éléments <input type="month"/>
+inarray | string | Liste des valeurs acceptées, séparées par des virgules. Défini automatiquement pour les éléments de type `<select>`
+email | tag | Le champ doit contenir une adresse mail. Défini automatiquement pour les éléments `<input type="email"/>`
+url | tag | Le champ doit contenir une URL. Défini automatiquement pour les éléments `<input type="url"/>`
+color | tag | Le champ doit contenir une couleur au format #1234ab. Défini automatiquement pour les éléments `<input type="color"/>`
+month | tag | Le champ doit contenir un mois + année. Défini automatiquement pour les éléments `<input type="month"/>`
 month/min | string | Mois minimum au format "yyyy-mm"
 month/max | string | Mois maximum au format "yyyy-mm"
 month/step | string | Non géré
-week | tag | Le champ doit contenir un numéro de semaine + année. Défini automatiquement pour les éléments <input type="week"/>
+week | tag | Le champ doit contenir un numéro de semaine + année. Défini automatiquement pour les éléments `<input type="week"/>`
 week/min | string | Numéro de semaine minimum au format "yyyy-Wnn"
 week/max | string | Numéro de semaine maximum au format "yyyy-Wnn"
 week/step | string | Non géré
-date | tag | Le champ doit contenir une date (yyyy-mm-dd). Défini automatiquement pour les éléments <input type="date"/>
+date | tag | Le champ doit contenir une date (yyyy-mm-dd). Défini automatiquement pour les éléments `<input type="date"/>`
 date/min | string | Date minimum au format "yyyy-mm-dd"
 date/max | string | Date maximum au format "yyyy-mm-dd"
 date/step | string | Non géré
-time | tag | Le champ doit contenir une heure (hh:mm). Défini automatiquement pour les éléments <input type="time"/>
+time | tag | Le champ doit contenir une heure (hh:mm). Défini automatiquement pour les éléments `<input type="time"/>`
 time/min | string | Heure minimum au format "hh:mm"
 time/max | string | Heure maximum au format "hh:mm"
 time/step | string | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. Pour les champs de type time, la valeur de l'attribut step est exprimée en secondes (avec un facteur de multiplication de 1000). Par défaut, la valeur de l'incrément est 60, ce qui correspond à 1 minute.
-datetime-local | tag | Le champ doit contenir une date + heure (yyyy-mm-ddThh:mm). Défini automatiquement pour les éléments <input type="datetime-local"/>
+datetime-local | tag | Le champ doit contenir une date + heure (yyyy-mm-ddThh:mm). Défini automatiquement pour les éléments `<input type="datetime-local"/>`
 datetime-local/min | string | Date et heure minimum au format "yyyy-mm-ddThh:mm"
 datetime-local/max | string | Date et heure maximum au format "yyyy-mm-ddThh:mm"
 datetime-local/step | string | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. Pour les champs datetime-local, la valeur de l'attribut step est exprimée en secondes avec un facteur d'amplification de 1000 (pour passer des millisecondes aux secondes). La valeur par défaut de step est 60 (soit 1 minute ou 60 000 millisecondes). Géré pour les heures seulement
-number | tag | Le champ doit contenir un nombre. Défini automatiquement pour les éléments <input type="number"/> et <input type="range"/>
+number | tag | Le champ doit contenir un nombre. Défini automatiquement pour les éléments `<input type="number"/>` et `<input type="range"/>`
 number/min | number | Le champ doit contenir un nombre de valeur supérieure ou égale au nombre spécifié
 number/max | number | Le champ doit contenir un nombre de valeur inférieure ou égale au nombre spécifié
 number/step | number | L'attribut step est un nombre qui définit la granularité de la valeur ou le mot-clé any. Seule les valeurs qui sont des multiples de cet attribut depuis le seuil min sont valides. Lorsque la chaîne de caractères any est utilisée, cela indique qu'aucun incrément spécifique n'est défini et que toute valeur (comprise entre min et max) est valide. 
@@ -166,7 +166,7 @@ trim | tag | Supprimer les espaces en début et fin d'un champ texte
 uppercase | tag | Texte mis en majuscules TODO
 lowercase | tag | Texte mis en majuscules TODO
 capitalize | tag | Première lettre de chaque mot mise en majuscules TODO
-number | tag | La valeur sera convertie en type numérique (int ou float). Défini automatiquement pour les éléments <input type="number"/> et <input type="range"/>
+number | tag | La valeur sera convertie en type numérique (int ou float). Défini automatiquement pour les éléments `<input type="number"/> et <input type="range"/>`
 
 ## Options de configuration
 
