@@ -18,13 +18,13 @@ class ValidatorMaxlengthTest extends \Tests\HuaForms\HuaFormsTestCase
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
-        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '123456789012345'];
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '123456789012ééé'];
         
         $form = $this->buildTestForm($html);
         
         $this->assertTrue($form->validate());
         $this->assertEmpty($form->handler()->getErrorMessages());
-        $this->assertEquals(['field1' => '123456789012345'], $form->exportValues());
+        $this->assertEquals(['field1' => '123456789012ééé'], $form->exportValues());
         $this->assertEquals(['field' => 'field1', 'type' => 'maxlength', 'maxlength' => 15],
             $form->getDescription()['rules'][0]);
     }

@@ -40,7 +40,7 @@ HTML;
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
-        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '1234'];
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '12éé'];
         
         $form = $this->buildTestForm($html);
         
@@ -64,7 +64,7 @@ HTML;
     <button type="submit" name="ok">OK</button>
 </form>
 HTML;
-        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '1234'];
+        $_POST = ['csrf' => 'test', 'ok' => true, 'field1' => '12éé'];
         
         $form = $this->buildTestForm($html);
         
