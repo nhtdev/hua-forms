@@ -186,8 +186,8 @@ srcExtension | form.html | Extension des fichiers sources des formulaires
 builtPath | forms/built | Répertoire de compilation des formulaires
 builtTplExtension | form.php | Extension pour les fichiers compilés Template PHP
 builtJsonExtension | form.json | extension pour les fichiers compilés JSON
+storageClass | \HuaForms\ServerStorage\PhpSession | Classe utilisée pour le stockage serveur des tokens CSRF et des valeurs frozen
 csrfKey | csrf | Clé des tokens CSRF
-csrfClass | \HuaForms\Csrf\PhpSession | Classe utilisée pour le stockage serveur des tokens CSRF
 csrfOptions | [] | Options pour le stockage des tokens CSRF
 cache | true | Mise en cache du parsing du formulaire
 

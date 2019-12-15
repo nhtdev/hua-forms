@@ -16,7 +16,7 @@ class HuaFormsTestCase extends TestCase
         if (!is_dir($cachedir)) {
             mkdir($cachedir);
         }
-        \HuaForms\Factory::setOptions(['formPath' => $tmpdir, 'cache' => false, 'csrfClass' => \HuaForms\ServerStorage\UnitTest::class]);
+        \HuaForms\Factory::setOptions(['formPath' => $tmpdir, 'cache' => false, 'storageClass' => \HuaForms\ServerStorage\UnitTest::class]);
         $formId = uniqid('form_');
         file_put_contents($tmpdir.$formId.'.form.html', $html);
         $form = \HuaForms\Factory::form($formId);

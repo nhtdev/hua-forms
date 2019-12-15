@@ -113,9 +113,9 @@ class Facade
     protected function handleCsrf() : void
     {
         $csrfKey = $this->options['csrfKey'] ?? '_csrf_token_';
-        $csrfClass = $this->options['csrfClass'] ?? \HuaForms\ServerStorage\PhpSession::class;
+        $storageClass = $this->options['storageClass'] ?? \HuaForms\ServerStorage\PhpSession::class;
         $csrfOptions = $this->options['csrfOptions'] ?? [];
-        $csrf = new $csrfClass($csrfOptions);
+        $csrf = new $storageClass($csrfOptions);
         
         if (empty($_POST) || !$csrf->exists($csrfKey)) {
             // Generate new CSRF
