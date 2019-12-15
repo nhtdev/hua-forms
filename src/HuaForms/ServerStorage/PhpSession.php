@@ -3,7 +3,7 @@
 namespace HuaForms\ServerStorage;
 
 /**
- * Storage engine for CSRF token & fronzen fields : store in PHP sessions
+ * Storage engine for CSRF token & frozen fields : store in PHP sessions
  *
  */
 class PhpSession implements ServerStorageInterface

@@ -3,7 +3,7 @@
 namespace HuaForms\ServerStorage;
 
 /**
- * Storage engine for CSRF token & fronzen fields : store in variables for PHPunit tests
+ * Storage engine for CSRF token & frozen fields : store in variables for PHPunit tests
  *
  */
 class UnitTest implements ServerStorageInterface
@@ -23,7 +23,7 @@ class UnitTest implements ServerStorageInterface
     }
     
     /**
-     * Set ta value
+     * Set a value
      * @param string $key key
      * @param string $value value
      */
