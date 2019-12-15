@@ -591,12 +591,29 @@ class Parser
             }
         }
         
+        // Frozen
+        $frozen = false;
+        if ($node->nodeName === 'input' && $node->getAttribute('type') === 'hidden') {
+            if (!$node->hasAttribute('frozen') || $node->getAttribute('frozen') !== 'false') {
+                $frozen = true;
+            }
+        } else if ($node->hasAttribute('frozen')) {
+            if ($node->getAttribute('frozen') !== 'false') {
+                $frozen = true;
+            }
+        } else if ($node->hasAttribute('readonly')) {
+            if (!$node->hasAttribute('frozen') || $node->getAttribute('frozen') !== 'false') {
+                $frozen = true;
+            }
+        }
+        
         // Save
         $result = [
             'label' => $label,
             'name' => $name,
             'type' => $type,
-            'value' => $value
+            'value' => $value,
+            'frozen' => $frozen
         ];
         $data['fields'][] = $result;
         
