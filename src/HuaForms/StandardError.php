@@ -14,6 +14,7 @@ class StandardError
      */
     protected $msg = [
         'csrf'                => 'Invalid CSRF token',
+        'frozen-token'        => 'Invalid Frozen token',
         'required'            => '{label}: field is required',
         'maxlength'           => '{label}: maximum {maxlength} characters',
         'minlength'           => '{label}: minimum {minlength} characters',

@@ -1075,6 +1075,7 @@ class Parser
         $this->injectSelectedIntoDom($dom);
         $this->injectCheckedIntoDom($dom);
         $this->injectCsrfIntoDom($dom);
+        $this->injectFrozenTokenIntoDom($dom);
         $this->injectCodeAroundFormErrors($dom);
         
         $html = $dom->saveXML($dom->documentElement);
@@ -1175,6 +1176,35 @@ class Parser
                 $csrf = $node->insertBefore($csrf, $node->firstChild);
                 
                 $node->insertBefore($node->ownerDocument->createTextNode("\n"), $csrf);
+            }
+        });
+    }
+    
+    /**
+     * Search DOM document for all forms, and add to each of them
+     * PHP code for the frozen token
+     * @param \DOMDocument $dom
+     */
+    protected function injectFrozenTokenIntoDom(\DOMDocument $dom) : void
+    {
+        $this->walkElements($dom, function (\DOMElement $node) {
+            if ($node->nodeName === 'form') {
+                
+                $token = $node->ownerDocument->createElement('input');
+                $token->setAttribute('type', 'hidden');
+                $token->setAttribute('name', self::PHP_CODE.'="echo htmlentities($this->getFrozenKey());"');
+                $token->setAttribute('value', self::PHP_CODE.'="echo htmlentities($this->getFrozenToken());"');
+                $token = $node->insertBefore($token, $node->firstChild);
+                
+                $node->insertBefore($node->ownerDocument->createTextNode("\n"), $token);
+                
+                $codeBefore = self::PHP_CODE.'="if ($this->hasFrozenValues()):"';
+                $nodeBefore = $token->ownerDocument->createTextNode($codeBefore);
+                $token->parentNode->insertBefore($nodeBefore, $token);
+                
+                $codeAfter = self::PHP_CODE.'="endif;"';
+                $nodeAfter = $token->ownerDocument->createTextNode($codeAfter);
+                $token->parentNode->insertBefore($nodeAfter, $token->nextSibling);
             }
         });
     }

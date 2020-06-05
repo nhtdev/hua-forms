@@ -129,6 +129,61 @@ class Facade
         $this->renderer->setCsrf($csrfKey, $csrfValue);
     }
     
+    protected function getFrozenStorage() : \HuaForms\ServerStorage\ServerStorageInterface
+    {
+        $storageClass = $this->options['storageClass'] ?? \HuaForms\ServerStorage\PhpSession::class;
+        $csrfOptions = $this->options['csrfOptions'] ?? [];
+        $storage = new $storageClass($csrfOptions);
+        return $storage;
+    }
+    
+    /**
+     * Save the frozen values
+     * Generate and handle the frozen token in both Handler and Renderer objects.
+     */
+    protected function handleFrozenRender() : void
+    {
+        $frozenNames = $this->handler->getFrozenNames();
+        if (!empty($frozenNames)) {
+            
+            // Build array of frozen values
+            $frozenValues = [];
+            foreach ($frozenNames as $name) {
+                $value = $this->renderer->getValue($name);
+                $frozenValues[$name] = $value;
+            }
+            
+            // Generate new token
+            $frozenToken = base64_encode( openssl_random_pseudo_bytes(32));
+            
+            // Save to storage
+            $frozenKey = $this->options['frozenKey'] ?? '_frozen_token_';
+            $storage = $this->getFrozenStorage();
+            $storage->set($frozenKey, ['token' => $frozenToken, 'values' => $frozenValues]);
+            
+            // Give token to render object
+            $this->renderer->setFrozenToken($frozenKey, $frozenToken);
+            
+        }
+    }
+    
+    protected function handleFrozenValidate() : void
+    {
+        $frozenNames = $this->handler->getFrozenNames();
+        if (!empty($frozenNames)) {
+            $frozenKey = $this->options['frozenKey'] ?? '_frozen_token_';
+            $storage = $this->getFrozenStorage();
+            $rawData = $this->handler->getRawData();
+            
+            if (isset($rawData[$frozenKey])) {
+                $stored = $storage->get($frozenKey);
+                if ($stored['token'] === $rawData[$frozenKey]) {
+                    $this->handler->addFrozenValues($frozenKey, $stored['token'], $stored['values']);
+                }
+            }
+        }
+    }
+    
     /**
      * Set the default values of the form field
      * @param array $values Form default values
@@ -154,6 +209,7 @@ class Facade
     public function validate() : bool
     {
         if (!$this->validationRun) {
+            $this->handleFrozenValidate();
             $this->validationResult = $this->handler->isValid();
             if (!$this->validationResult) {
                 $errors = $this->handler->getErrorMessages();
@@ -185,6 +241,7 @@ class Facade
      */
     public function render() : string
     {
+        $this->handleFrozenRender();
         return $this->renderer->render();
     }
     

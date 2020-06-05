@@ -29,6 +29,12 @@ class Handler
      */
     protected $csrfValue = '';
     
+    protected $frozenKey = '';
+    
+    protected $frozenValues = [];
+    
+    protected $frozenData = [];
+    
     /**
      * True if the form validation has already been executed
      * @var bool
@@ -102,6 +108,12 @@ class Handler
     {
         $this->csrfKey = $key;
         $this->csrfValue = $value;
+    }
+    
+    public function addFrozenValues(string $key, string $token, array $values) : void
+    {
+        $this->frozenKey = $key;
+        $this->frozenValues[] = ['token' => $token, 'values' => $values];
     }
     
     /**
@@ -231,6 +243,21 @@ class Handler
     }
     
     /**
+     * Return the names of all frozen fields
+     * @return array
+     */
+    public function getFrozenNames() : array
+    {
+        $result = [];
+        foreach ($this->conf['fields'] as $field) {
+            if ($field['frozen']) {
+                $result[] = $field['name'];
+            }
+        }
+        return array_unique($result);
+    }
+    
+    /**
      * Return the form submitted data, without any formatting or validation
      * @return array
      */
@@ -344,7 +371,7 @@ class Handler
     public function getSelectiveData() : array
     {
         $selectiveData = [];
-        $rawData = $this->getRawData();
+        $rawData = array_merge($this->getRawData(), $this->frozenData);
         $rawFiles = $this->getRawFiles();
         foreach ($this->conf['fields'] as $field) {
             $name = $field['name'];
@@ -431,6 +458,35 @@ class Handler
             $this->validationMsg[''][] = $stdError->get('csrf');
             return;
         }
+        
+        // Load frozen values
+        $frozenNames = $this->getFrozenNames();
+        $this->frozenData = [];
+        if (!empty($frozenNames)) {
+            $valid = false;
+            if (isset($this->rawData[$this->frozenKey])) {
+                $frozenToken = $this->rawData[$this->frozenKey];
+                foreach ($this->frozenValues as $frozenRow) {
+                    if ($frozenRow['token'] === $frozenToken) {
+                        foreach ($frozenNames as $name) {
+                            if (!isset($frozenRow['values'][$name])) {
+                                break 2;
+                            }
+                        }
+                        $valid = true;
+                        $this->frozenData = $frozenRow['values'];
+                    }
+                }
+            }
+            if (!$valid) {
+                $this->validationResult = false;
+                $stdError = new StandardError();
+                $this->validationMsg[''][] = $stdError->get('frozen-token');
+                return;
+            }
+        }
+        
+        //
         
         $data = $this->getFormattedData();
         $validator = new Validator();

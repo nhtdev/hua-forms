@@ -39,6 +39,24 @@ class Renderer
     protected $csrfValue = '';
     
     /**
+     * Key of the Frozen token
+     * @var string
+     */
+    protected $frozenKey = '';
+    
+    /**
+     * Value of the frozen token
+     * @var string
+     */
+    protected $frozenToken = '';
+    
+    /**
+     * True if there are frozen values for this form
+     * @var bool
+     */
+    protected $hasFrozenValues = false;
+    
+    /**
      * Constructor
      * @param string $file File name containing the php template of the form
      * @throws \RuntimeException
@@ -96,6 +114,46 @@ class Renderer
     public function getCsrfValue() : string
     {
         return $this->csrfValue;
+    }
+    
+    
+    /**
+     * Set the frozen token
+     * @param string $key Key of the Frozen token
+     * @param array $token Frozen values
+     */
+    public function setFrozenToken(string $key, string $token) : void
+    {
+        $this->frozenKey = $key;
+        $this->frozenToken = $token;
+        $this->hasFrozenValues = true;
+    }
+    
+    /**
+     * Return the key for the frozen token
+     * @return string
+     */
+    public function getFrozenKey() : string
+    {
+        return $this->frozenKey;
+    }
+    
+    /**
+     * Return the frozen token
+     * @return string
+     */
+    public function getFrozenToken() : string
+    {
+        return $this->frozenToken;
+    }
+    
+    /**
+     * Return true if a frozen token and values are defined for this form
+     * @return bool
+     */
+    public function hasFrozenValues() : bool
+    {
+        return $this->hasFrozenValues;
     }
     
     /**

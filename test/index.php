@@ -15,6 +15,8 @@ if ($form->isSubmitted() && $form->validate()) {
     $ok = true;
 }
 //var_dump($_POST);
+// $_SESSION = [];
+//var_dump($_SESSION);
 
 ?>
 <!doctype html>
